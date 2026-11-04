@@ -15,3 +15,9 @@ export function mainContent(html: string): string {
   if (!match) throw new Error('Page has no <main> element');
   return match[1];
 }
+
+/** Render a single component with `props`, for states a page cannot be put into from a test. */
+export async function renderComponent(component: AstroComponentFactory, props: Record<string, unknown>): Promise<string> {
+  const container = await AstroContainer.create();
+  return container.renderToString(component, { props });
+}
