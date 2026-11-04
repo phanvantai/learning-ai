@@ -1,16 +1,84 @@
 ---
-import { baiChiaSeHref, type BaiChiaSe } from '../bai-chia-se';
+import { baiChiaSeHref, chuDeHref, tatCaChuDe, type BaiChiaSe } from '../bai-chia-se';
 import PublishedDate from './PublishedDate.astro';
 
 interface Props {
   bai: BaiChiaSe;
+  /** Cấp tiêu đề của bài, theo cấu trúc trang chứa thẻ này. */
+  headingLevel?: 'h2' | 'h3';
 }
 
-const { bai } = Astro.props;
+const { bai, headingLevel: Heading = 'h2' } = Astro.props;
 ---
 
-<article class="card">
-  <p class="meta"><PublishedDate date={bai.data.date} /></p>
-  <h3><a href={baiChiaSeHref(bai)}>{bai.data.title}</a></h3>
-  <p>{bai.data.description}</p>
+<article class="bai-chia-se-card">
+  <p class="date"><PublishedDate date={bai.data.date} /></p>
+  <Heading class="title"><a href={baiChiaSeHref(bai)}>{bai.data.title}</a></Heading>
+  <p class="description">{bai.data.description}</p>
+  <ul class="tags" aria-label="Thẻ chủ đề">
+    {
+      tatCaChuDe([bai]).map((the) => (
+        <li>
+          <a href={chuDeHref(the)}>{the.ten}</a>
+        </li>
+      ))
+    }
+  </ul>
 </article>
+
+<style>
+  .bai-chia-se-card {
+    padding: 1.25rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .date {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.875rem;
+  }
+
+  .title {
+    margin: 0.25rem 0 0.5rem;
+    font-size: 1.25rem;
+  }
+
+  .title a {
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .title a:hover {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+
+  .description {
+    margin: 0 0 0.75rem;
+    color: var(--muted);
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .tags a {
+    display: inline-block;
+    padding: 0.1rem 0.6rem;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .tags a:hover {
+    text-decoration: underline;
+  }
+</style>

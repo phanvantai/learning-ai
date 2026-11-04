@@ -1,0 +1,23 @@
+---
+import type { BaiChiaSe } from '../bai-chia-se';
+import BaiChiaSeCard from './BaiChiaSeCard.astro';
+
+interface Props {
+  tatCaBai: BaiChiaSe[];
+  headingLevel?: 'h2' | 'h3';
+}
+
+const { tatCaBai, headingLevel } = Astro.props;
+---
+
+{
+  tatCaBai.length > 0 ? (
+    <div class="bai-chia-se-list">
+      {tatCaBai.map((bai) => (
+        <BaiChiaSeCard bai={bai} headingLevel={headingLevel} />
+      ))}
+    </div>
+  ) : (
+    <p class="lead">Chưa có Bài chia sẻ nào. Bài đầu tiên sắp lên!</p>
+  )
+}

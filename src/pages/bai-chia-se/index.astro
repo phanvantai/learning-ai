@@ -1,7 +1,8 @@
 ---
-import BaiChiaSeCard from '../../components/BaiChiaSeCard.astro';
+import BaiChiaSeList from '../../components/BaiChiaSeList.astro';
+import ChuDeFilter from '../../components/ChuDeFilter.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getTatCaBaiChiaSe } from '../../bai-chia-se';
+import { getTatCaBaiChiaSe, tatCaChuDe } from '../../bai-chia-se';
 
 const tatCaBai = await getTatCaBaiChiaSe();
 ---
@@ -9,7 +10,11 @@ const tatCaBai = await getTatCaBaiChiaSe();
 <BaseLayout title="Bài chia sẻ">
   <section class="page-header">
     <h1>Bài chia sẻ</h1>
-    <p class="lead">Mỗi tuần 2 bài về cách dùng AI cho công việc hằng ngày.</p>
+    <p class="lead">
+      Mỗi tuần 2 bài về cách dùng AI cho công việc hằng ngày: cái gì hiệu quả, và cả những thứ mình đã thử
+      mà chưa ổn.
+    </p>
   </section>
-  {tatCaBai.map((bai) => <BaiChiaSeCard bai={bai} />)}
+  <ChuDeFilter chuDe={tatCaChuDe(tatCaBai)} />
+  <BaiChiaSeList tatCaBai={tatCaBai} />
 </BaseLayout>
