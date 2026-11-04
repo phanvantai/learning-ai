@@ -18,6 +18,10 @@ _Avoid_: client, công ty đối tác
 Nội dung công khai, miễn phí (bài viết, video, hướng dẫn) về ứng dụng AI trong công việc.
 _Avoid_: blog post, tài liệu
 
+**Thẻ chủ đề**:
+Nhãn chủ đề gắn cho một Bài chia sẻ để người đọc lọc các bài cùng chủ đề; không dùng để ghi đối tượng người đọc.
+_Avoid_: tag, category, danh mục
+
 **Tư vấn qua chat**:
 Hỏi đáp miễn phí, không đặt lịch, qua kênh nhắn tin (Zalo, Telegram, LinkedIn…) để trả lời câu hỏi và gợi ý hướng đi; không bao gồm việc build hộ hay gọi riêng.
 _Avoid_: buổi tư vấn, consulting, tư vấn miễn phí
