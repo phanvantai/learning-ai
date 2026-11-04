@@ -1,4 +1,6 @@
 ---
+import BusinessContactForm from '../components/BusinessContactForm.astro';
+import { BUSINESS_CONTACT_FORM_ENDPOINT } from '../contact-form';
 import BaseLayout from '../layouts/BaseLayout.astro';
 
 interface CapDo {
@@ -76,9 +78,21 @@ const CAP_DO: readonly CapDo[] = [
       trao đổi riêng theo quy mô và nhu cầu.
     </p>
   </section>
+
+  <section aria-labelledby="lien-he-heading">
+    <h2 id="lien-he-heading">Liên hệ thí điểm</h2>
+    <p>
+      Để lại vài thông tin về đội ngũ và nhu cầu của bạn, mình sẽ liên hệ lại để trao đổi cụ thể.
+    </p>
+    <BusinessContactForm endpoint={BUSINESS_CONTACT_FORM_ENDPOINT} />
+  </section>
 </BaseLayout>
 
 <style>
+  section + section {
+    margin-top: 2.5rem;
+  }
+
   .page-header .badge {
     margin-bottom: 0.5rem;
   }

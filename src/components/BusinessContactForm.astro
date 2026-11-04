@@ -1,0 +1,208 @@
+---
+import { configuredEndpoint } from '../contact-form';
+
+interface Props {
+  /** Địa chỉ dịch vụ form; chưa hợp lệ thì form bị khóa. */
+  endpoint: string;
+}
+
+const endpoint = configuredEndpoint(Astro.props.endpoint) ?? undefined;
+const QUY_MO = ['Dưới 10 người', '10–50 người', '51–200 người', 'Trên 200 người'];
+---
+
+<form class="contact-form" method="post" action={endpoint} data-business-contact-form>
+  {
+    !endpoint && (
+      <p class="form-notice">
+        Form liên hệ đang được hoàn thiện nên chưa gửi được. Trong lúc chờ, bạn{' '}
+        <a href="/">nhắn cho mình qua các kênh chat ở Trang chủ</a>.
+      </p>
+    )
+  }
+  <fieldset disabled={!endpoint}>
+    <legend class="visually-hidden">Thông tin liên hệ</legend>
+    <input type="hidden" name="_subject" value="Khách hàng doanh nghiệp liên hệ từ website Learning AI" />
+
+    <div class="field">
+      <label for="lh-ten">Họ tên</label>
+      <input id="lh-ten" name="ten" type="text" autocomplete="name" required />
+    </div>
+
+    <div class="field">
+      <label for="lh-cong-ty">Công ty</label>
+      <input id="lh-cong-ty" name="cong_ty" type="text" autocomplete="organization" required />
+    </div>
+
+    <div class="field">
+      <label for="lh-quy-mo">Quy mô nhân sự</label>
+      <select id="lh-quy-mo" name="quy_mo" required>
+        <option value="" selected disabled>Chọn quy mô</option>
+        {QUY_MO.map((quyMo) => <option>{quyMo}</option>)}
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="lh-nhu-cau">Nhu cầu</label>
+      <textarea
+        id="lh-nhu-cau"
+        name="nhu_cau"
+        rows="5"
+        required
+        placeholder="Đội ngũ của bạn làm gì, muốn dùng AI vào việc gì, quan tâm Cấp độ nào…"></textarea>
+    </div>
+
+    <div class="field">
+      <label for="lh-lien-he">Liên hệ</label>
+      <input
+        id="lh-lien-he"
+        name="lien_he"
+        type="text"
+        required
+        aria-describedby="lh-lien-he-goi-y"
+      />
+      <p id="lh-lien-he-goi-y" class="field-hint">Email, số điện thoại hoặc Zalo để mình liên hệ lại.</p>
+    </div>
+
+    <!-- Bẫy spam: người thật không thấy ô này; Formspree bỏ qua bài gửi có điền ô này. -->
+    <div class="visually-hidden" aria-hidden="true">
+      <label for="lh-gotcha">Đừng điền ô này</label>
+      <input id="lh-gotcha" name="_gotcha" type="text" tabindex="-1" autocomplete="off" />
+    </div>
+
+    <button class="button" type="submit">Gửi thông tin</button>
+  </fieldset>
+  <p class="form-status" role="status" data-form-status></p>
+</form>
+
+<script>
+  import { submitContactForm } from '../contact-form';
+
+  for (const form of document.querySelectorAll<HTMLFormElement>('form[data-business-contact-form]')) {
+    const endpoint = form.getAttribute('action');
+    const status = form.querySelector<HTMLElement>('[data-form-status]');
+    const button = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+    if (!endpoint || !status || !button) continue;
+
+    const label = button.textContent;
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      button.disabled = true;
+      button.textContent = 'Đang gửi…';
+      status.textContent = '';
+
+      const result = await submitContactForm(endpoint, new FormData(form));
+
+      status.textContent = result.message;
+      status.dataset.state = result.ok ? 'success' : 'error';
+      if (result.ok) form.reset();
+      button.disabled = false;
+      button.textContent = label;
+    });
+  }
+</script>
+
+<style>
+  .contact-form fieldset {
+    display: grid;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-width: 0;
+  }
+
+  .contact-form fieldset:disabled {
+    opacity: 0.6;
+  }
+
+  .field {
+    display: grid;
+    gap: 0.3rem;
+  }
+
+  .field label {
+    font-weight: 600;
+  }
+
+  .field input,
+  .field select,
+  .field textarea {
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    color: var(--text);
+    font: inherit;
+  }
+
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+
+  .field textarea {
+    resize: vertical;
+  }
+
+  .field-hint {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  .contact-form .button {
+    justify-self: start;
+    border: 0;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .contact-form .button:disabled {
+    cursor: not-allowed;
+  }
+
+  .form-notice {
+    margin: 0 0 1rem;
+    padding: 0.75rem 1rem;
+    border-left: 3px solid var(--accent);
+    border-radius: var(--radius);
+    background: var(--accent-soft);
+  }
+
+  .form-status:empty {
+    display: none;
+  }
+
+  .form-status {
+    margin: 1rem 0 0;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+  }
+
+  .form-status[data-state='success'] {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+
+  .form-status[data-state='error'] {
+    border-color: #b3261e;
+    color: inherit;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>
