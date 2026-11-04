@@ -34,7 +34,7 @@ export interface ChatChannel {
 /**
  * Kênh Tư vấn qua chat, theo đúng thứ tự hiển thị trong `docs/specs/website.md`.
  * Đây là chỗ duy nhất cấu hình link chat. Kênh còn `null` vẫn hiện nhưng ghi "sắp có" và không bấm
- * được, để khách không bao giờ gặp link hỏng.
+ * được, để người xem trang không bao giờ gặp link hỏng.
  */
 export const CHAT_CHANNELS: readonly ChatChannel[] = [
   // TODO(owner): link Zalo, dạng https://zalo.me/<số điện thoại>

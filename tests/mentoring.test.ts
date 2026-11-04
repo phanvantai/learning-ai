@@ -2,21 +2,32 @@ import { describe, expect, it } from 'vitest';
 import Mentoring from '../src/pages/mentoring.astro';
 import { mainContent, renderPage } from './render';
 
-/** Chữ khách nhìn thấy trong nội dung chính của trang Mentoring (bỏ thẻ HTML, gộp khoảng trắng). */
-async function visibleText() {
-  const html = mainContent(await renderPage(Mentoring, '/mentoring/'));
+let page: Promise<string> | undefined;
+
+/** Nội dung chính của trang Mentoring, render một lần cho cả file. */
+function mentoringMain() {
+  page ??= renderPage(Mentoring, '/mentoring/').then(mainContent);
+  return page;
+}
+
+/** Chữ người xem thấy trong một đoạn HTML (bỏ thẻ, gộp khoảng trắng). */
+function toText(html: string) {
   return html
     .replace(/<[^>]*>/g, ' ')
     .replace(/&times;/g, '×')
     .replace(/\s+/g, ' ');
 }
 
-/** Nội dung của mục có tiêu đề `<h2>` chứa `heading`, tới trước `<h2>` kế tiếp. */
+/** Chữ người xem thấy trong nội dung chính của trang Mentoring. */
+async function visibleText() {
+  return toText(await mentoringMain());
+}
+
+/** Chữ trong mục có tiêu đề `<h2>` chứa `heading`, tới trước `<h2>` kế tiếp. */
 async function section(heading: string) {
-  const html = mainContent(await renderPage(Mentoring, '/mentoring/'));
-  const parts = html.split(/(?=<h2[\s>])/);
+  const parts = (await mentoringMain()).split(/(?=<h2[\s>])/);
   const part = parts.find((p) => p.match(/^<h2[^>]*>([\s\S]*?)<\/h2>/)?.[1].includes(heading));
-  return part?.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ');
+  return part === undefined ? undefined : toText(part);
 }
 
 describe('trang Mentoring: gói beta', () => {

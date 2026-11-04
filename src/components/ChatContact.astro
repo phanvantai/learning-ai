@@ -1,13 +1,11 @@
 ---
-import { CHAT_CHANNELS, type ChatChannel } from '../site';
+import { CHAT_CHANNELS } from '../site';
 
 interface Props {
   title: string;
-  /** Mặc định lấy từ `CHAT_CHANNELS` trong `src/site.ts`, chỗ duy nhất cấu hình link chat. */
-  channels?: readonly ChatChannel[];
 }
 
-const { title, channels = CHAT_CHANNELS } = Astro.props;
+const { title } = Astro.props;
 ---
 
 <section class="chat-contact" aria-labelledby="chat-contact-title">
@@ -15,7 +13,7 @@ const { title, channels = CHAT_CHANNELS } = Astro.props;
   <slot />
   <ul class="chat-buttons" aria-label="Kênh Tư vấn qua chat">
     {
-      channels.map(({ name, href }) => (
+      CHAT_CHANNELS.map(({ name, href }) => (
         <li>
           {href ? (
             <a class="button" href={href} target="_blank" rel="noopener noreferrer">
