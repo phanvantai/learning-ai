@@ -7,7 +7,7 @@ const baiChiaSe = defineCollection({
   schema: z.object({
     title: z.string(),
     date: z.coerce.date(),
-    tags: z.array(z.string()),
+    tags: z.array(z.string().min(1)).min(1),
     description: z.string(),
   }),
 });

@@ -57,6 +57,10 @@ const { Content } = await render(bai);
   }
 
   /* Nội dung Markdown: không có class riêng nên phải dùng :global. */
+  .prose {
+    overflow-wrap: break-word;
+  }
+
   .prose :global(h2) {
     margin: 2.25rem 0 0.75rem;
     font-size: 1.4rem;
