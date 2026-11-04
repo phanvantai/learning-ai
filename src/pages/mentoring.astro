@@ -1,8 +1,128 @@
 ---
-import ComingSoon from '../components/ComingSoon.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ChatContact from '../components/ChatContact.astro';
+import { FOUNDER } from '../site';
+
+/** Gói Mentoring beta (`docs/specs/services.md`). Đổi giá hay số suất thì chỉ sửa ở đây. */
+const BETA = { price: '1 triệu đồng', slots: 5, sessions: 4, minutes: 60, period: '1 tháng' } as const;
 ---
 
-<ComingSoon
+<BaseLayout
   title="Mentoring"
-  summary="Mentoring theo buổi có lịch hẹn: cùng bạn build một tool, automation hoặc skill AI cho công việc."
-/>
+  description={`Mentoring có lịch hẹn: cùng bạn build một tool, automation hoặc skill AI chạy được cho công việc. Gói beta ${BETA.price}, giới hạn ${BETA.slots} suất.`}
+>
+  <section class="page-header">
+    <p class="eyebrow">Mentoring</p>
+    <h1>Cùng bạn build một tool AI cho công việc của chính bạn</h1>
+    <p class="lead">
+      Mentoring là các buổi làm việc riêng có lịch hẹn giữa bạn và mình, <strong>{FOUNDER.name}</strong>.
+      Mình không chỉ giảng lý thuyết: hai bên cùng build cho tới khi bạn có một tool, automation hoặc
+      skill AI chạy được cho công việc hằng ngày.
+    </p>
+  </section>
+
+  <section aria-labelledby="goi-beta">
+    <h2 id="goi-beta">Gói beta</h2>
+    <div class="price-card">
+      <p class="price"><strong>{BETA.price}</strong> / gói</p>
+      <p class="badge">Giới hạn {BETA.slots} suất đầu tiên</p>
+      <ul>
+        <li>
+          {BETA.sessions} buổi &times; {BETA.minutes} phút trong {BETA.period}, gọi online và chia sẻ màn
+          hình.
+        </li>
+        <li>Kết quả: một tool, automation hoặc skill AI chạy được cho công việc của bạn.</li>
+      </ul>
+    </div>
+
+    <h3>Điều kiện của giá beta</h3>
+    <p>
+      Giá beta thấp vì mình đang xây những case study đầu tiên. Đổi lại, học viên beta cam kết cho mình
+      viết case study và để lại lời nhận xét về quá trình làm việc. Để mỗi người được làm kỹ, mình chỉ
+      nhận tối đa 1–2 học viên Mentoring cùng lúc.
+    </p>
+
+    <h3>Thanh toán</h3>
+    <p>
+      Thanh toán bằng chuyển khoản. Website không thanh toán online.
+    </p>
+
+    <h3>Buổi lẻ</h3>
+    <p>
+      Buổi lẻ chỉ bán thêm cho học viên đã mua gói, khi bạn muốn làm tiếp sau {BETA.sessions} buổi. Mentoring không có
+      buổi thử riêng: Tư vấn qua chat là bước thử.
+    </p>
+  </section>
+
+  <section aria-labelledby="quy-trinh">
+    <h2 id="quy-trinh">Quy trình</h2>
+    <ol class="steps">
+      <li>
+        <strong>Nhắn tin hỏi trước (Tư vấn qua chat, miễn phí).</strong> Kể mình nghe công việc của bạn
+        và việc bạn muốn AI làm giúp. Mình trả lời và gợi ý hướng đi, không cần đặt lịch.
+      </li>
+      <li>
+        <strong>Chuyển sang Mentoring khi cần.</strong> Khi việc cần gọi riêng, chia sẻ màn hình hoặc
+        build hộ, mình đề xuất gói Mentoring và cùng bạn chốt mục tiêu.
+      </li>
+      <li>
+        <strong>Cùng build.</strong> {BETA.sessions} buổi trong {BETA.period}, kết quả là một tool,
+        automation hoặc skill AI chạy được cho công việc của bạn.
+      </li>
+    </ol>
+    <p>
+      Tư vấn qua chat chính là bước thử: bạn xem cách mình trả lời có hợp với mình không rồi mới quyết
+      định mua Mentoring.
+    </p>
+  </section>
+
+  <section aria-labelledby="case-study">
+    <h2 id="case-study">Case study</h2>
+    <p class="empty-state">
+      Chưa có case study nào. {BETA.slots} học viên beta đầu tiên sẽ là những case study đầu tiên ở đây, và bạn có
+      thể là một trong số đó.
+    </p>
+  </section>
+
+  <ChatContact title="Bắt đầu bằng một tin nhắn">
+    <p>
+      Chọn kênh bạn quen dùng và nhắn cho mình. Tư vấn qua chat không mất phí; nếu việc của bạn cần
+      Mentoring, mình sẽ nói rõ trước khi bạn trả tiền.
+    </p>
+  </ChatContact>
+</BaseLayout>
+
+<style>
+  .price-card {
+    padding: 1.25rem 1.5rem;
+    border: 1px solid var(--accent);
+    border-radius: var(--radius);
+    background: var(--surface);
+  }
+
+  .price {
+    margin: 0 0 0.5rem;
+    font-size: 1.15rem;
+  }
+
+  .price strong {
+    font-size: 1.75rem;
+    color: var(--accent);
+  }
+
+  .price-card ul {
+    margin: 1rem 0 0;
+    padding-left: 1.25rem;
+  }
+
+  .steps li + li {
+    margin-top: 0.75rem;
+  }
+
+  .empty-state {
+    padding: 1rem 1.25rem;
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+    color: var(--muted);
+  }
+</style>

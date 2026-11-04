@@ -1,0 +1,76 @@
+---
+import { CHAT_CHANNELS } from '../site';
+
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<section class="chat-contact" aria-labelledby="chat-contact-title">
+  <h2 id="chat-contact-title">{title}</h2>
+  <slot />
+  <ul class="chat-buttons" aria-label="Kênh Tư vấn qua chat">
+    {
+      CHAT_CHANNELS.map(({ name, href }) => (
+        <li>
+          {href ? (
+            <a class="button" href={href} target="_blank" rel="noopener noreferrer">
+              {name}
+            </a>
+          ) : (
+            <span class="button button-pending" aria-disabled="true">
+              {name} <small>(sắp có)</small>
+            </span>
+          )}
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style>
+  .chat-contact {
+    margin-top: 3rem;
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+  }
+
+  .chat-contact h2 {
+    margin-top: 0;
+  }
+
+  .chat-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin: 1.25rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .button-pending {
+    background: transparent;
+    color: var(--muted);
+    border: 1px dashed var(--border);
+    cursor: not-allowed;
+  }
+
+  .button-pending small {
+    font-weight: 400;
+  }
+
+  @media (max-width: 30rem) {
+    .chat-buttons li {
+      flex: 1 1 calc(50% - 0.75rem);
+    }
+
+    .chat-buttons .button {
+      display: block;
+      text-align: center;
+    }
+  }
+</style>
