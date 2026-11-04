@@ -1,5 +1,5 @@
 ---
-import { getTatCaBaiChiaSe } from '../bai-chia-se';
+import { DANH_SACH_HREF, getTatCaBaiChiaSe } from '../bai-chia-se';
 import BaiChiaSeList from './BaiChiaSeList.astro';
 
 /** Số Bài chia sẻ mới nhất hiện trên Trang chủ. */
@@ -11,7 +11,7 @@ const moiNhat = (await getTatCaBaiChiaSe()).slice(0, SO_BAI);
 <section class="latest-bai-chia-se" aria-labelledby="latest-bai-chia-se">
   <h2 id="latest-bai-chia-se">Bài chia sẻ mới nhất</h2>
   <BaiChiaSeList tatCaBai={moiNhat} headingLevel="h3" />
-  <p><a href="/bai-chia-se/">Xem tất cả Bài chia sẻ →</a></p>
+  <p><a href={DANH_SACH_HREF}>Xem tất cả Bài chia sẻ →</a></p>
 </section>
 
 <style>

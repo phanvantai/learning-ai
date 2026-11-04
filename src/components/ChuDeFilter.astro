@@ -1,5 +1,6 @@
 ---
-import { chuDeHref, type ChuDe } from '../bai-chia-se';
+import { DANH_SACH_HREF } from '../bai-chia-se';
+import { chuDeHref, type ChuDe } from '../chu-de';
 
 interface Props {
   chuDe: ChuDe[];
@@ -12,12 +13,12 @@ const { chuDe, current } = Astro.props;
 
 <nav class="chu-de-filter" aria-label="Lọc theo thẻ chủ đề">
   <ul>
-    <li><a href="/bai-chia-se/" aria-current={current ? undefined : 'page'}>Tất cả</a></li>
+    <li><a href={DANH_SACH_HREF} aria-current={current ? undefined : 'page'}>Tất cả</a></li>
     {
-      chuDe.map((the) => (
+      chuDe.map((muc) => (
         <li>
-          <a href={chuDeHref(the)} aria-current={the.slug === current ? 'page' : undefined}>
-            {the.ten}
+          <a href={chuDeHref(muc)} aria-current={muc.slug === current ? 'page' : undefined}>
+            {muc.ten}
           </a>
         </li>
       ))

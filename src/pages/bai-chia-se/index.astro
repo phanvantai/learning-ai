@@ -2,7 +2,8 @@
 import BaiChiaSeList from '../../components/BaiChiaSeList.astro';
 import ChuDeFilter from '../../components/ChuDeFilter.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getTatCaBaiChiaSe, tatCaChuDe } from '../../bai-chia-se';
+import { getTatCaBaiChiaSe } from '../../bai-chia-se';
+import { tatCaChuDe } from '../../chu-de';
 
 const tatCaBai = await getTatCaBaiChiaSe();
 ---

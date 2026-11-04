@@ -1,7 +1,7 @@
 ---
-title: Dùng AI tóm tắt email dài trong 2 phút (và chỗ mình từng làm sai)
+title: Dùng AI tóm tắt email dài trong vài phút (và chỗ mình từng làm sai)
 date: 2026-11-04
-tags: [Email, Prompt mẫu, Dân văn phòng]
+tags: [Email, Tóm tắt, Prompt mẫu]
 description: Một câu lệnh mẫu để AI tóm tắt chuỗi email dài thành việc cần làm, hạn chót và người phụ trách, kèm những lỗi mình đã gặp khi thử.
 ---
 
@@ -39,6 +39,6 @@ Hai câu cuối của câu lệnh là quan trọng nhất. Lúc đầu mình kh�
 
 ## Kết quả thực tế
 
-Với một chuỗi khoảng 25 thư, mình mất chừng 2 phút để dán, đọc tóm tắt và đối chiếu, thay vì 15–20 phút đọc từng thư. Bản tóm tắt không hoàn hảo: thỉnh thoảng nó bỏ sót một câu hỏi nằm lẫn giữa thư. Nhưng nó cho mình một "bản đồ" để biết cần đọc kỹ thư nào.
+Với một chuỗi khoảng 25 thư, mình mất chừng 5 phút để dán, đọc tóm tắt và mở lại vài thư quan trọng để đối chiếu, thay vì 15–20 phút đọc từng thư. Bản tóm tắt không hoàn hảo: thỉnh thoảng nó bỏ sót một câu hỏi nằm lẫn giữa thư. Nhưng nó cho mình một "bản đồ" để biết cần đọc kỹ thư nào.
 
 Nếu bạn thử và có cách viết câu lệnh hay hơn, nhắn cho mình nhé. Mình cũng đang học mỗi tuần.

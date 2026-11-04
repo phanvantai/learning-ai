@@ -4,7 +4,7 @@ import { getEntry, render } from 'astro:content';
 import ChuDeTags from '../../components/ChuDeTags.astro';
 import PublishedDate from '../../components/PublishedDate.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getTatCaBaiChiaSe } from '../../bai-chia-se';
+import { DANH_SACH_HREF, getTatCaBaiChiaSe } from '../../bai-chia-se';
 
 export const getStaticPaths = (async () => {
   const tatCaBai = await getTatCaBaiChiaSe();
@@ -21,7 +21,7 @@ const { Content } = await render(bai);
 
 <BaseLayout title={bai.data.title} description={bai.data.description}>
   <article class="bai-chia-se">
-    <p class="back"><a href="/bai-chia-se/">← Tất cả Bài chia sẻ</a></p>
+    <p class="back"><a href={DANH_SACH_HREF}>← Tất cả Bài chia sẻ</a></p>
     <header>
       <h1>{bai.data.title}</h1>
       <p class="date"><PublishedDate date={bai.data.date} /></p>

@@ -1,5 +1,6 @@
 ---
-import { chuDeHref, chuDeSlug, type BaiChiaSe } from '../bai-chia-se';
+import type { BaiChiaSe } from '../bai-chia-se';
+import { chuDeHref, taoChuDe } from '../chu-de';
 
 interface Props {
   bai: BaiChiaSe;
@@ -7,14 +8,14 @@ interface Props {
 
 const { bai } = Astro.props;
 // Giữ thứ tự thẻ như người viết ghi trong frontmatter.
-const chuDe = bai.data.tags.map((ten) => ({ ten, slug: chuDeSlug(ten) }));
+const chuDe = bai.data.tags.map(taoChuDe);
 ---
 
 <ul class="chu-de-tags" aria-label="Thẻ chủ đề">
   {
-    chuDe.map((the) => (
+    chuDe.map((muc) => (
       <li>
-        <a href={chuDeHref(the)}>{the.ten}</a>
+        <a href={chuDeHref(muc)}>{muc.ten}</a>
       </li>
     ))
   }

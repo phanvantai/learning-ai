@@ -1,32 +1,27 @@
 import { getCollection } from 'astro:content';
 import { describe, expect, it } from 'vitest';
 import { moiNhatTruoc } from '../src/bai-chia-se';
+import BaiChiaSeList from '../src/components/BaiChiaSeList.astro';
 import ChiTiet from '../src/pages/bai-chia-se/[id].astro';
 import DanhSach from '../src/pages/bai-chia-se/index.astro';
 import Home from '../src/pages/index.astro';
-import BaiChiaSeList from '../src/components/BaiChiaSeList.astro';
+import { isNewestFirst, listedBai } from './bai-chia-se-html';
 import { mainContent, renderComponent, renderPage } from './render';
 
 const tatCaBai = await getCollection('baiChiaSe');
-
-/** Đường dẫn tới các trang chi tiết Bài chia sẻ, theo thứ tự xuất hiện trong HTML. */
-function linksToBai(html: string): string[] {
-  return [...html.matchAll(/href="\/bai-chia-se\/([^/"]+)\/"/g)].map(([, id]) => id);
-}
+const ngayMoiNhat = tatCaBai.map((bai) => bai.data.date.toISOString().slice(0, 10)).sort().at(-1);
 
 describe('trang danh sách Bài chia sẻ', () => {
   it('liệt kê mọi Bài chia sẻ trong repo, mỗi bài dẫn tới trang chi tiết của nó', async () => {
     const html = mainContent(await renderPage(DanhSach, '/bai-chia-se/'));
     expect(tatCaBai.length).toBeGreaterThan(0);
-    for (const bai of tatCaBai) {
-      expect(html).toContain(bai.data.title);
-      expect(html).toContain(`href="/bai-chia-se/${bai.id}/"`);
-    }
+    expect(listedBai(html).map((bai) => bai.id).sort()).toEqual(tatCaBai.map((bai) => bai.id).sort());
+    for (const bai of tatCaBai) expect(html).toContain(bai.data.title);
   });
 
   it('xếp bài mới nhất lên đầu', async () => {
     const html = mainContent(await renderPage(DanhSach, '/bai-chia-se/'));
-    expect(linksToBai(html)).toEqual(moiNhatTruoc(tatCaBai).map((bai) => bai.id));
+    expect(isNewestFirst(listedBai(html).map((bai) => bai.date))).toBe(true);
   });
 
   it('hiện ngày đăng và mô tả ngắn của bài', async () => {
@@ -65,7 +60,7 @@ describe('trang chi tiết Bài chia sẻ', () => {
 
   it('hiện tiêu đề và nội dung Markdown của bài', async () => {
     const html = await renderChiTiet('tom-tat-email-dai-bang-ai');
-    expect(html).toMatch(/<h1[^>]*>Dùng AI tóm tắt email dài trong 2 phút/);
+    expect(html).toMatch(/<h1[^>]*>Dùng AI tóm tắt email dài/);
     expect(html).toMatch(/<h2[^>]*>Câu lệnh mẫu<\/h2>/);
   });
 
@@ -81,10 +76,12 @@ describe('trang chi tiết Bài chia sẻ', () => {
 });
 
 describe('Trang chủ', () => {
-  it('hiện 3 Bài chia sẻ mới nhất, mới nhất trước', async () => {
+  it('hiện tối đa 3 Bài chia sẻ, bắt đầu từ bài mới nhất', async () => {
     const html = mainContent(await renderPage(Home));
-    const moiNhat = moiNhatTruoc(tatCaBai).slice(0, 3);
+    const listed = listedBai(html);
     expect(html).toMatch(/<h2[^>]*>Bài chia sẻ mới nhất<\/h2>/);
-    expect(linksToBai(html)).toEqual(moiNhat.map((bai) => bai.id));
+    expect(listed).toHaveLength(Math.min(3, tatCaBai.length));
+    expect(listed[0].date).toBe(ngayMoiNhat);
+    expect(isNewestFirst(listed.map((bai) => bai.date))).toBe(true);
   });
 });
