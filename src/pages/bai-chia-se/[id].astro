@@ -1,6 +1,7 @@
 ---
 import type { GetStaticPaths } from 'astro';
 import { getEntry, render } from 'astro:content';
+import PublishedDate from '../../components/PublishedDate.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getTatCaBaiChiaSe } from '../../bai-chia-se';
 
@@ -19,6 +20,7 @@ const { Content } = await render(bai);
 
 <BaseLayout title={bai.data.title} description={bai.data.description}>
   <article>
+    <p class="meta"><PublishedDate date={bai.data.date} /></p>
     <h1>{bai.data.title}</h1>
     <Content />
   </article>

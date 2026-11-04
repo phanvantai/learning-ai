@@ -1,5 +1,6 @@
 ---
 import { baiChiaSeHref, type BaiChiaSe } from '../bai-chia-se';
+import PublishedDate from './PublishedDate.astro';
 
 interface Props {
   bai: BaiChiaSe;
@@ -9,6 +10,7 @@ const { bai } = Astro.props;
 ---
 
 <article class="card">
+  <p class="meta"><PublishedDate date={bai.data.date} /></p>
   <h3><a href={baiChiaSeHref(bai)}>{bai.data.title}</a></h3>
   <p>{bai.data.description}</p>
 </article>
