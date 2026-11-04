@@ -47,6 +47,14 @@ describe('gửi form liên hệ doanh nghiệp', () => {
     expect(result.message).not.toContain('should be');
   });
 
+  it.each([[403], [404]])('không đổ lỗi cho khách khi dịch vụ form từ chối vì cấu hình (HTTP %i)', async (status) => {
+    const result = await submitContactForm(ENDPOINT, formData(), fakeFetch(status, { error: 'Form not found' }).fetchFn);
+    expect(result.ok).toBe(false);
+    expect(result.message).toContain('Chưa gửi được');
+    expect(result.message).not.toContain('kiểm tra lại thông tin');
+    expect(result.message).toContain('chat');
+  });
+
   it('báo lỗi khi dịch vụ gặp sự cố', async () => {
     const result = await submitContactForm(ENDPOINT, formData(), fakeFetch(500).fetchFn);
     expect(result.ok).toBe(false);

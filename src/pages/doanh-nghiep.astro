@@ -4,35 +4,35 @@ import { BUSINESS_CONTACT_FORM_ENDPOINT } from '../contact-form';
 import BaseLayout from '../layouts/BaseLayout.astro';
 
 interface CapDo {
-  ma: string;
-  ten: string;
-  noiDung: string;
-  thoiLuong: string;
-  ghiChu?: string;
+  code: string;
+  name: string;
+  summary: string;
+  duration: string;
+  note?: string;
 }
 
 const CAP_DO: readonly CapDo[] = [
   {
-    ma: 'Lv0',
-    ten: 'AI là gì, sử dụng cơ bản',
-    noiDung:
+    code: 'Lv0',
+    name: 'AI là gì, sử dụng cơ bản',
+    summary:
       'Hiểu AI làm được gì và không làm được gì, dùng an toàn, viết yêu cầu rõ ràng để nhận câu trả lời hữu ích ngay trong buổi.',
-    thoiLuong: 'nửa ngày',
+    duration: 'nửa ngày',
   },
   {
-    ma: 'Lv1',
-    ten: 'Tối ưu công việc cá nhân',
-    noiDung:
+    code: 'Lv1',
+    name: 'Tối ưu công việc cá nhân',
+    summary:
       'Mỗi người mang việc thật của mình vào buổi: email, báo cáo, tổng hợp tài liệu, bảng tính… và ra về với cách làm nhanh hơn bằng AI.',
-    thoiLuong: 'một ngày',
+    duration: 'một ngày',
   },
   {
-    ma: 'Lv2',
-    ten: 'Đưa AI vào quy trình doanh nghiệp',
-    noiDung:
+    code: 'Lv2',
+    name: 'Đưa AI vào quy trình doanh nghiệp',
+    summary:
       'Chọn một quy trình cụ thể của doanh nghiệp, cùng thiết kế lại với AI và tự động hóa những bước phù hợp.',
-    thoiLuong: 'nhiều buổi, kèm tư vấn quy trình',
-    ghiChu:
+    duration: 'nhiều buổi, kèm tư vấn quy trình',
+    note:
       'Lv2 chỉ mở sau khi mình đã tự đưa AI vào một quy trình doanh nghiệp thật ít nhất một lần. Hiện mình nhận thí điểm Lv0 và Lv1.',
   },
 ];
@@ -59,11 +59,11 @@ const CAP_DO: readonly CapDo[] = [
         CAP_DO.map((capDo) => (
           <li class="cap-do-card">
             <h3>
-              <span class="cap-do-ma">{capDo.ma}</span> {capDo.ten}
+              <span class="cap-do-ma">{capDo.code}</span> {capDo.name}
             </h3>
-            <p>{capDo.noiDung}</p>
-            <p class="cap-do-thoi-luong">Thời lượng tham khảo: {capDo.thoiLuong}</p>
-            {capDo.ghiChu && <p class="cap-do-ghi-chu">{capDo.ghiChu}</p>}
+            <p>{capDo.summary}</p>
+            <p class="cap-do-thoi-luong">Thời lượng tham khảo: {capDo.duration}</p>
+            {capDo.note && <p class="cap-do-ghi-chu">{capDo.note}</p>}
           </li>
         ))
       }
@@ -125,7 +125,7 @@ const CAP_DO: readonly CapDo[] = [
     display: inline-block;
     margin-right: 0.35rem;
     padding: 0 0.5rem;
-    border-radius: 6px;
+    border-radius: var(--radius);
     background: var(--accent-soft);
     color: var(--accent);
     font-size: 0.95rem;

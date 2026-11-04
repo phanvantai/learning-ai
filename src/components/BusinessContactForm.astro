@@ -6,7 +6,7 @@ interface Props {
   endpoint: string;
 }
 
-const endpoint = configuredEndpoint(Astro.props.endpoint) ?? undefined;
+const endpoint = configuredEndpoint(Astro.props.endpoint);
 const QUY_MO = ['Dưới 10 người', '10–50 người', '51–200 người', 'Trên 200 người'];
 ---
 
@@ -189,9 +189,18 @@ const QUY_MO = ['Dưới 10 người', '10–50 người', '51–200 người', 
     background: var(--accent-soft);
   }
 
+  .contact-form {
+    --error: #b3261e;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .contact-form {
+      --error: #f2b8b5;
+    }
+  }
+
   .form-status[data-state='error'] {
-    border-color: #b3261e;
-    color: inherit;
+    border-color: var(--error);
   }
 
   .visually-hidden {

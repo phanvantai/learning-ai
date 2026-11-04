@@ -13,12 +13,12 @@
  */
 export const BUSINESS_CONTACT_FORM_ENDPOINT = '';
 
-/** Địa chỉ nhận form nếu đã cấu hình hợp lệ (URL https), ngược lại `null`. */
-export function configuredEndpoint(endpoint: string): string | null {
+/** Địa chỉ nhận form nếu đã cấu hình hợp lệ (URL https), ngược lại `undefined`. */
+export function configuredEndpoint(endpoint: string): string | undefined {
   try {
-    return new URL(endpoint).protocol === 'https:' ? endpoint : null;
+    return new URL(endpoint).protocol === 'https:' ? endpoint : undefined;
   } catch {
-    return null;
+    return undefined;
   }
 }
 
@@ -45,8 +45,9 @@ export async function submitContactForm(
   if (response.ok) {
     return { ok: true, message: 'Cảm ơn bạn! Mình đã nhận được thông tin và sẽ liên hệ lại sớm.' };
   }
-  if (response.status >= 500) {
-    return { ok: false, message: `Chưa gửi được vì dịch vụ form đang trục trặc, bạn thử lại sau ít phút. ${FALLBACK}` };
+  // 422 là lỗi dữ liệu khách điền; các lỗi khác (403/404 do cấu hình form, 5xx) không phải lỗi của khách.
+  if (response.status === 422) {
+    return { ok: false, message: `Chưa gửi được, bạn kiểm tra lại thông tin rồi thử lại. ${FALLBACK}` };
   }
-  return { ok: false, message: `Chưa gửi được, bạn kiểm tra lại thông tin rồi thử lại. ${FALLBACK}` };
+  return { ok: false, message: `Chưa gửi được vì dịch vụ form đang trục trặc, bạn thử lại sau ít phút. ${FALLBACK}` };
 }
