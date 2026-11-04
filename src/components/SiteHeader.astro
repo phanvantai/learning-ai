@@ -1,11 +1,7 @@
 ---
 import { NAV_ITEMS, SITE } from '../site';
 
-interface Props {
-  currentPath?: string;
-}
-
-const { currentPath = '/' } = Astro.props;
+const currentPath = Astro.url.pathname;
 ---
 
 <header class="site-header">

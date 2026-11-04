@@ -3,14 +3,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 interface Props {
   title: string;
-  currentPath: string;
   summary: string;
 }
 
-const { title, currentPath, summary } = Astro.props;
+const { title, summary } = Astro.props;
 ---
 
-<BaseLayout title={title} currentPath={currentPath}>
+<BaseLayout title={title}>
   <section class="page-header">
     <h1>{title}</h1>
     <p class="badge">Sắp ra mắt</p>

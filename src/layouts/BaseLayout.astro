@@ -6,10 +6,9 @@ import '../styles/global.css';
 interface Props {
   title?: string;
   description?: string;
-  currentPath?: string;
 }
 
-const { title, description = SITE.description, currentPath } = Astro.props;
+const { title, description = SITE.description } = Astro.props;
 const fullTitle = title ? `${title} · ${SITE.name}` : SITE.name;
 ---
 
@@ -22,7 +21,7 @@ const fullTitle = title ? `${title} · ${SITE.name}` : SITE.name;
     <meta name="description" content={description} />
   </head>
   <body>
-    <SiteHeader currentPath={currentPath} />
+    <SiteHeader />
     <main class="container">
       <slot />
     </main>

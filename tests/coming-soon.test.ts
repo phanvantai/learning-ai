@@ -14,4 +14,9 @@ describe('trang chưa làm', () => {
     expect(html).toContain(title);
     expect(html).toContain('Sắp ra mắt');
   });
+
+  it('trang Doanh nghiệp nói rõ đang nhận thí điểm', async () => {
+    const html = mainContent(await renderPage(DoanhNghiep));
+    expect(html).toContain('đang nhận doanh nghiệp thí điểm');
+  });
 });

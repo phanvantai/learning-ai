@@ -23,7 +23,7 @@ Hỏi đáp miễn phí, không đặt lịch, qua kênh nhắn tin (Zalo, Teleg
 _Avoid_: buổi tư vấn, consulting, tư vấn miễn phí
 
 **Mentoring**:
-Hỗ trợ 1:1 trả phí theo từng buổi có lịch hẹn, gồm cả việc cùng build tool hoặc skill cho Học viên cá nhân. Mọi buổi làm việc riêng có lịch hẹn đều là Mentoring.
+Dịch vụ 1:1 trả phí theo từng buổi có lịch hẹn, gồm cả việc cùng build tool hoặc skill cho Học viên cá nhân. Mọi buổi làm việc riêng có lịch hẹn đều là Mentoring.
 _Avoid_: coaching, hỗ trợ 1:1, kèm cặp
 
 **Khóa đào tạo**:

@@ -7,7 +7,7 @@ Website chia sẻ, mentoring và đào tạo ứng dụng AI cho công việc h�
 
 ## Phát triển
 
-Cần Node.js ≥ 22.23.4 (xem `.node-version`).
+Cần Node.js 24 (xem `.node-version`; Astro yêu cầu tối thiểu 22.23.4).
 
 ```sh
 npm install

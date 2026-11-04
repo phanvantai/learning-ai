@@ -23,5 +23,4 @@ export const SITE = {
  */
 export const FOUNDER = {
   name: 'TODO(owner): tên thật của bạn',
-  role: 'Kỹ sư phần mềm',
 } as const;
