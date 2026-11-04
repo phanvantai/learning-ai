@@ -2,6 +2,13 @@
 import { NAV_ITEMS, SITE } from '../site';
 
 const currentPath = Astro.url.pathname;
+
+/** `page` cho đúng trang đang xem; `true` khi đang ở trang con của mục đó (vd. một Bài chia sẻ). */
+function ariaCurrent(href: string): 'page' | 'true' | undefined {
+  if (href === currentPath) return 'page';
+  if (href !== '/' && currentPath.startsWith(href)) return 'true';
+  return undefined;
+}
 ---
 
 <header class="site-header">
@@ -12,7 +19,7 @@ const currentPath = Astro.url.pathname;
         {
           NAV_ITEMS.map((item) => (
             <li>
-              <a href={item.href} aria-current={item.href === currentPath ? 'page' : undefined}>{item.label}</a>
+              <a href={item.href} aria-current={ariaCurrent(item.href)}>{item.label}</a>
             </li>
           ))
         }

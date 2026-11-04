@@ -1,0 +1,45 @@
+---
+import { chuDeHref, tatCaChuDe, type BaiChiaSe } from '../bai-chia-se';
+
+interface Props {
+  bai: BaiChiaSe;
+}
+
+const { bai } = Astro.props;
+---
+
+<ul class="chu-de-tags" aria-label="Thẻ chủ đề">
+  {
+    tatCaChuDe([bai]).map((the) => (
+      <li>
+        <a href={chuDeHref(the)}>{the.ten}</a>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  a {
+    display: inline-block;
+    padding: 0.1rem 0.6rem;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+</style>

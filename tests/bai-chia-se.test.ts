@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { moiNhatTruoc } from '../src/bai-chia-se';
 import ChiTiet from '../src/pages/bai-chia-se/[id].astro';
 import DanhSach from '../src/pages/bai-chia-se/index.astro';
+import Home from '../src/pages/index.astro';
 import { mainContent, renderPage } from './render';
 
 const tatCaBai = await getCollection('baiChiaSe');
@@ -24,8 +25,7 @@ describe('trang danh sách Bài chia sẻ', () => {
 
   it('xếp bài mới nhất lên đầu', async () => {
     const html = mainContent(await renderPage(DanhSach, '/bai-chia-se/'));
-    const theoNgay = [...tatCaBai].sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
-    expect(linksToBai(html)).toEqual(theoNgay.map((bai) => bai.id));
+    expect(linksToBai(html)).toEqual(moiNhatTruoc(tatCaBai).map((bai) => bai.id));
   });
 
   it('hiện ngày đăng và mô tả ngắn của bài', async () => {
@@ -64,5 +64,19 @@ describe('trang chi tiết Bài chia sẻ', () => {
   it('hiện ngày đăng', async () => {
     const html = await renderChiTiet('tom-tat-email-dai-bang-ai');
     expect(html).toMatch(/<time datetime="2026-11-04"[^>]*>4 tháng 11, 2026<\/time>/);
+  });
+
+  it('hiện thẻ chủ đề của bài, dẫn tới trang thẻ đó', async () => {
+    const html = await renderChiTiet('tom-tat-email-dai-bang-ai');
+    expect(html).toMatch(/<a[^>]*href="\/bai-chia-se\/chu-de\/prompt-mau\/"[^>]*>Prompt mẫu<\/a>/);
+  });
+});
+
+describe('Trang chủ', () => {
+  it('hiện 3 Bài chia sẻ mới nhất, mới nhất trước', async () => {
+    const html = mainContent(await renderPage(Home));
+    const moiNhat = moiNhatTruoc(tatCaBai).slice(0, 3);
+    expect(html).toMatch(/<h2[^>]*>Bài chia sẻ mới nhất<\/h2>/);
+    expect(linksToBai(html)).toEqual(moiNhat.map((bai) => bai.id));
   });
 });

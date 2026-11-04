@@ -1,6 +1,6 @@
 import { getCollection } from 'astro:content';
 import { describe, expect, it } from 'vitest';
-import { chuDeSlug, tatCaChuDe } from '../src/bai-chia-se';
+import { chuDeSlug, moiNhatTruoc, tatCaChuDe } from '../src/bai-chia-se';
 import TheoChuDe from '../src/pages/bai-chia-se/chu-de/[slug].astro';
 import DanhSach from '../src/pages/bai-chia-se/index.astro';
 import { mainContent, renderPage } from './render';
@@ -38,9 +38,7 @@ describe('lọc Bài chia sẻ theo thẻ chủ đề', () => {
   it('mỗi trang thẻ chủ đề chỉ liệt kê các bài có thẻ đó, mới nhất trước', async () => {
     for (const slug of new Set(tatCaBai.flatMap((bai) => bai.data.tags.map(chuDeSlug)))) {
       const html = await renderChuDe(slug);
-      const coThe = tatCaBai
-        .filter((bai) => bai.data.tags.map(chuDeSlug).includes(slug))
-        .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+      const coThe = moiNhatTruoc(tatCaBai.filter((bai) => bai.data.tags.map(chuDeSlug).includes(slug)));
       expect(linksToBai(html), slug).toEqual(coThe.map((bai) => bai.id));
     }
   });

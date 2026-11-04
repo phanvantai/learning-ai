@@ -1,5 +1,6 @@
 ---
-import { baiChiaSeHref, chuDeHref, tatCaChuDe, type BaiChiaSe } from '../bai-chia-se';
+import { baiChiaSeHref, type BaiChiaSe } from '../bai-chia-se';
+import ChuDeTags from './ChuDeTags.astro';
 import PublishedDate from './PublishedDate.astro';
 
 interface Props {
@@ -15,15 +16,7 @@ const { bai, headingLevel: Heading = 'h2' } = Astro.props;
   <p class="date"><PublishedDate date={bai.data.date} /></p>
   <Heading class="title"><a href={baiChiaSeHref(bai)}>{bai.data.title}</a></Heading>
   <p class="description">{bai.data.description}</p>
-  <ul class="tags" aria-label="Thẻ chủ đề">
-    {
-      tatCaChuDe([bai]).map((the) => (
-        <li>
-          <a href={chuDeHref(the)}>{the.ten}</a>
-        </li>
-      ))
-    }
-  </ul>
+  <ChuDeTags bai={bai} />
 </article>
 
 <style>
@@ -56,29 +49,5 @@ const { bai, headingLevel: Heading = 'h2' } = Astro.props;
   .description {
     margin: 0 0 0.75rem;
     color: var(--muted);
-  }
-
-  .tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .tags a {
-    display: inline-block;
-    padding: 0.1rem 0.6rem;
-    border-radius: 999px;
-    background: var(--accent-soft);
-    color: var(--accent);
-    font-size: 0.8rem;
-    font-weight: 600;
-    text-decoration: none;
-  }
-
-  .tags a:hover {
-    text-decoration: underline;
   }
 </style>
