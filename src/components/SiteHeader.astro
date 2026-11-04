@@ -1,0 +1,22 @@
+---
+import { NAV_ITEMS, SITE } from '../site';
+
+const currentPath = Astro.url.pathname;
+---
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/">{SITE.name}</a>
+    <nav aria-label="Điều hướng chính">
+      <ul class="nav-list">
+        {
+          NAV_ITEMS.map((item) => (
+            <li>
+              <a href={item.href} aria-current={item.href === currentPath ? 'page' : undefined}>{item.label}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+</header>
