@@ -1,0 +1,60 @@
+---
+import { DANH_SACH_HREF } from '../bai-chia-se';
+import { chuDeHref, type ChuDe } from '../chu-de';
+
+interface Props {
+  chuDe: ChuDe[];
+  /** Slug của thẻ đang xem; bỏ trống khi đang xem tất cả. */
+  current?: string;
+}
+
+const { chuDe, current } = Astro.props;
+---
+
+<nav class="chu-de-filter" aria-label="Lọc theo thẻ chủ đề">
+  <ul>
+    <li><a href={DANH_SACH_HREF} aria-current={current ? undefined : 'page'}>Tất cả</a></li>
+    {
+      chuDe.map((muc) => (
+        <li>
+          <a href={chuDeHref(muc)} aria-current={muc.slug === current ? 'page' : undefined}>
+            {muc.ten}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<style>
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0 0 2rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  a {
+    display: inline-block;
+    padding: 0.3rem 0.8rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--surface);
+    color: var(--muted);
+    font-size: 0.9rem;
+    text-decoration: none;
+  }
+
+  a:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  a[aria-current='page'] {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: var(--accent-contrast);
+  }
+</style>

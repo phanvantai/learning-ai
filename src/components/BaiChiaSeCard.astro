@@ -1,0 +1,53 @@
+---
+import { baiChiaSeHref, type BaiChiaSe } from '../bai-chia-se';
+import ChuDeTags from './ChuDeTags.astro';
+import PublishedDate from './PublishedDate.astro';
+
+interface Props {
+  bai: BaiChiaSe;
+  /** Cấp tiêu đề của bài, theo cấu trúc trang chứa thẻ này. */
+  headingLevel?: 'h2' | 'h3';
+}
+
+const { bai, headingLevel: Heading = 'h2' } = Astro.props;
+---
+
+<article class="bai-chia-se-card">
+  <p class="date"><PublishedDate date={bai.data.date} /></p>
+  <Heading class="title"><a href={baiChiaSeHref(bai)}>{bai.data.title}</a></Heading>
+  <p class="description">{bai.data.description}</p>
+  <ChuDeTags bai={bai} />
+</article>
+
+<style>
+  .bai-chia-se-card {
+    padding: 1.25rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .date {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.875rem;
+  }
+
+  .title {
+    margin: 0.25rem 0 0.5rem;
+    font-size: 1.25rem;
+  }
+
+  .title a {
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .title a:hover {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+
+  .description {
+    margin: 0 0 0.75rem;
+    color: var(--muted);
+  }
+</style>

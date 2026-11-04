@@ -1,0 +1,12 @@
+---
+interface Props {
+  date: Date;
+}
+
+const { date } = Astro.props;
+// Ngày trong frontmatter là ngày lịch (00:00 UTC), nên định dạng theo UTC để không lệch ngày.
+const iso = date.toISOString().slice(0, 10);
+const label = new Intl.DateTimeFormat('vi-VN', { dateStyle: 'long', timeZone: 'UTC' }).format(date);
+---
+
+<time datetime={iso}>{label}</time>

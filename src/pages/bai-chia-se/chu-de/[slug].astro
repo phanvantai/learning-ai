@@ -1,0 +1,31 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaiChiaSeList from '../../../components/BaiChiaSeList.astro';
+import ChuDeFilter from '../../../components/ChuDeFilter.astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { DANH_SACH_HREF, getTatCaBaiChiaSe } from '../../../bai-chia-se';
+import { baiThuocChuDe, tatCaChuDe } from '../../../chu-de';
+
+export const getStaticPaths = (async () => {
+  const chuDe = tatCaChuDe(await getTatCaBaiChiaSe());
+  return chuDe.map(({ slug }) => ({ params: { slug } }));
+}) satisfies GetStaticPaths;
+
+/** Trang tự tìm thẻ chủ đề theo `slug` trên đường dẫn, không nhận props. */
+type Props = Record<string, never>;
+
+const tatCaBai = await getTatCaBaiChiaSe();
+const chuDe = tatCaChuDe(tatCaBai);
+const dangXem = chuDe.find(({ slug }) => slug === Astro.params.slug);
+if (!dangXem) throw new Error(`Không có thẻ chủ đề "${Astro.params.slug}"`);
+const title = `Bài chia sẻ về “${dangXem.ten}”`;
+---
+
+<BaseLayout title={title}>
+  <section class="page-header">
+    <h1>{title}</h1>
+    <p><a href={DANH_SACH_HREF}>← Xem tất cả Bài chia sẻ</a></p>
+  </section>
+  <ChuDeFilter chuDe={chuDe} current={dangXem.slug} />
+  <BaiChiaSeList tatCaBai={baiThuocChuDe(tatCaBai, dangXem.slug)} />
+</BaseLayout>

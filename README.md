@@ -31,3 +31,31 @@ Web tĩnh không có backend, nên form liên hệ trên `/doanh-nghiep/` gửi 
 4. Trên bản preview của PR, gửi thử một lần và kiểm tra hộp thư (cả thư mục spam).
 
 Có JavaScript thì khách thấy thông báo thành công/lỗi bằng tiếng Việt ngay trên trang; tắt JavaScript thì form vẫn gửi được, nhưng khách sẽ thấy trang của Formspree (bằng tiếng Anh, có thể kèm bước xác minh chống spam) thay vì thông báo trên trang.
+
+## Viết Bài chia sẻ mới
+
+1. Tạo file Markdown trong `src/content/bai-chia-se/`. Tên file là đường dẫn của bài, viết không dấu, nối
+   bằng gạch ngang: `dung-ai-viet-bien-ban-hop.md` → `/bai-chia-se/dung-ai-viet-bien-ban-hop/`.
+2. Đầu file là frontmatter, đủ 4 mục:
+
+   ```md
+   ---
+   title: Dùng AI viết biên bản họp trong 5 phút
+   date: 2026-11-11
+   tags: [Họp, Prompt mẫu]
+   description: Một hai câu tóm tắt bài, hiện ở danh sách và Trang chủ.
+   ---
+
+   Nội dung bài viết bằng Markdown: ## tiêu đề mục, danh sách, **in đậm**, khối code...
+   ```
+
+   - `date`: ngày đăng, dạng `YYYY-MM-DD`. Danh sách xếp bài mới nhất lên đầu; Trang chủ hiện 3 bài mới nhất.
+   - `tags`: ít nhất một thẻ chủ đề (chủ đề của bài, ví dụ "Email", "Excel"; không phải đối tượng đọc),
+     viết có dấu như muốn hiển thị. Mỗi thẻ tự có trang lọc
+     (`Prompt mẫu` → `/bai-chia-se/chu-de/prompt-mau/`). Dùng lại đúng tên thẻ cũ để bài vào chung một nhóm.
+3. Chạy `npm run dev` để xem thử, rồi `npm test`: test báo lỗi nếu frontmatter thiếu mục, hoặc bài dùng
+   từ trong danh sách cần tránh của `tests/glossary.test.ts` (lấy từ `CONTEXT.md`, ví dụ "khóa học") hay
+   tự xưng "chuyên gia AI" (`docs/specs/positioning.md`). Test không thay được việc tự đọc lại bài.
+4. Commit và mở PR; merge vào `main` là bài lên web.
+
+Bài mẫu: `src/content/bai-chia-se/tom-tat-email-dai-bang-ai.md`.

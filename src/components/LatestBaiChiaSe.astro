@@ -1,0 +1,26 @@
+---
+import { DANH_SACH_HREF, getTatCaBaiChiaSe } from '../bai-chia-se';
+import BaiChiaSeList from './BaiChiaSeList.astro';
+
+/** Số Bài chia sẻ mới nhất hiện trên Trang chủ. */
+const SO_BAI = 3;
+
+const moiNhat = (await getTatCaBaiChiaSe()).slice(0, SO_BAI);
+---
+
+<section class="latest-bai-chia-se" aria-labelledby="latest-bai-chia-se">
+  <h2 id="latest-bai-chia-se">Bài chia sẻ mới nhất</h2>
+  <BaiChiaSeList tatCaBai={moiNhat} headingLevel="h3" />
+  <p><a href={DANH_SACH_HREF}>Xem tất cả Bài chia sẻ →</a></p>
+</section>
+
+<style>
+  .latest-bai-chia-se {
+    margin-top: 3.5rem;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 1.5rem;
+  }
+</style>
