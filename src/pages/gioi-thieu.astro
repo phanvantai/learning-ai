@@ -1,0 +1,39 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { FOUNDER } from '../site';
+---
+
+<BaseLayout
+  title="Giới thiệu"
+  currentPath="/gioi-thieu/"
+  description="Người đứng sau Learning AI: một kỹ sư phần mềm dùng AI mỗi ngày và học công khai."
+>
+  <article class="prose">
+    <h1>Giới thiệu</h1>
+    <p class="lead">
+      Chào bạn, mình là <strong>{FOUNDER.name}</strong>, một kỹ sư phần mềm dùng AI mỗi ngày trong
+      công việc.
+    </p>
+
+    <h2>Vì sao có Learning AI</h2>
+    <p>
+      Mình bắt đầu dùng AI để làm việc nhanh hơn, rồi hướng dẫn lại cho người thân và bạn bè, những
+      người không làm kỹ thuật. Learning AI là nơi mình ghi lại những gì thực sự hiệu quả để nhiều người
+      cùng dùng được.
+    </p>
+    <p class="todo">TODO(owner): kể câu chuyện của bạn: bắt đầu dùng AI khi nào, đã giúp ai, thay đổi gì.</p>
+
+    <h2>Học công khai</h2>
+    <p>
+      Mình không phải "chuyên gia" gì cả. Mình chia sẻ theo kiểu học công khai: thử gì thì kể nấy, kể
+      cả những thứ không thành công. Mỗi tuần 2 Bài chia sẻ cũng là cách mình tự học thêm.
+    </p>
+
+    <h2>Mình giúp được gì</h2>
+    <ul>
+      <li><strong>Bài chia sẻ</strong>: miễn phí, 2 bài mỗi tuần.</li>
+      <li><strong>Tư vấn qua chat</strong>: nhắn hỏi là mình trả lời, miễn phí.</li>
+      <li><strong>Mentoring</strong>: cùng bạn build một tool, automation hoặc skill AI cho công việc.</li>
+    </ul>
+  </article>
+</BaseLayout>

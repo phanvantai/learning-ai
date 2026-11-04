@@ -1,0 +1,33 @@
+---
+import SiteHeader from '../components/SiteHeader.astro';
+import { SITE } from '../site';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  currentPath?: string;
+}
+
+const { title, description = SITE.description, currentPath } = Astro.props;
+const fullTitle = title ? `${title} · ${SITE.name}` : SITE.name;
+---
+
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+  </head>
+  <body>
+    <SiteHeader currentPath={currentPath} />
+    <main class="container">
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <div class="container">© {new Date().getFullYear()} {SITE.name}</div>
+    </footer>
+  </body>
+</html>
