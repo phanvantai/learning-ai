@@ -4,7 +4,8 @@ import { moiNhatTruoc } from '../src/bai-chia-se';
 import ChiTiet from '../src/pages/bai-chia-se/[id].astro';
 import DanhSach from '../src/pages/bai-chia-se/index.astro';
 import Home from '../src/pages/index.astro';
-import { mainContent, renderPage } from './render';
+import BaiChiaSeList from '../src/components/BaiChiaSeList.astro';
+import { mainContent, renderComponent, renderPage } from './render';
 
 const tatCaBai = await getCollection('baiChiaSe');
 
@@ -32,6 +33,13 @@ describe('trang danh sách Bài chia sẻ', () => {
     const html = mainContent(await renderPage(DanhSach, '/bai-chia-se/'));
     expect(html).toMatch(/<time datetime="2026-11-04"[^>]*>4 tháng 11, 2026<\/time>/);
     expect(html).toContain('Một câu lệnh mẫu để AI tóm tắt chuỗi email dài');
+  });
+});
+
+describe('danh sách Bài chia sẻ trống', () => {
+  it('báo chưa có bài thay vì để trang trắng', async () => {
+    const html = await renderComponent(BaiChiaSeList, { tatCaBai: [] });
+    expect(html).toContain('Chưa có Bài chia sẻ nào');
   });
 });
 
