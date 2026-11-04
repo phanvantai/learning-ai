@@ -1,8 +1,15 @@
 ---
-import ComingSoon from '../../components/ComingSoon.astro';
+import BaiChiaSeCard from '../../components/BaiChiaSeCard.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getTatCaBaiChiaSe } from '../../bai-chia-se';
+
+const tatCaBai = await getTatCaBaiChiaSe();
 ---
 
-<ComingSoon
-  title="Bài chia sẻ"
-  summary="Mỗi tuần 2 bài về cách dùng AI cho công việc hằng ngày."
-/>
+<BaseLayout title="Bài chia sẻ">
+  <section class="page-header">
+    <h1>Bài chia sẻ</h1>
+    <p class="lead">Mỗi tuần 2 bài về cách dùng AI cho công việc hằng ngày.</p>
+  </section>
+  {tatCaBai.map((bai) => <BaiChiaSeCard bai={bai} />)}
+</BaseLayout>

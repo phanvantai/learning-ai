@@ -1,0 +1,25 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getEntry, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getTatCaBaiChiaSe } from '../../bai-chia-se';
+
+export const getStaticPaths = (async () => {
+  const tatCaBai = await getTatCaBaiChiaSe();
+  return tatCaBai.map((bai) => ({ params: { id: bai.id } }));
+}) satisfies GetStaticPaths;
+
+/** Trang tự tìm bài theo `id` trên đường dẫn, không nhận props. */
+type Props = Record<string, never>;
+
+const bai = await getEntry('baiChiaSe', Astro.params.id);
+if (!bai) throw new Error(`Không có Bài chia sẻ "${Astro.params.id}"`);
+const { Content } = await render(bai);
+---
+
+<BaseLayout title={bai.data.title} description={bai.data.description}>
+  <article>
+    <h1>{bai.data.title}</h1>
+    <Content />
+  </article>
+</BaseLayout>

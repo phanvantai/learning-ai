@@ -3,10 +3,15 @@ import type { AstroComponentFactory } from 'astro/runtime/server/index.js';
 
 /**
  * Render a page component to its HTML string, the way a visitor requesting `path` would receive it.
+ * Dynamic routes (e.g. `[id].astro`) also need the route `params` matched from that path.
  */
-export async function renderPage(page: AstroComponentFactory, path = '/'): Promise<string> {
+export async function renderPage(
+  page: AstroComponentFactory,
+  path = '/',
+  params?: Record<string, string>,
+): Promise<string> {
   const container = await AstroContainer.create();
-  return container.renderToString(page, { request: new Request(new URL(path, 'https://example.test')) });
+  return container.renderToString(page, { request: new Request(new URL(path, 'https://example.test')), params });
 }
 
 /** The visible main content of a rendered page (what is inside `<main>`). */

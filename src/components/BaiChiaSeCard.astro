@@ -1,0 +1,14 @@
+---
+import { baiChiaSeHref, type BaiChiaSe } from '../bai-chia-se';
+
+interface Props {
+  bai: BaiChiaSe;
+}
+
+const { bai } = Astro.props;
+---
+
+<article class="card">
+  <h3><a href={baiChiaSeHref(bai)}>{bai.data.title}</a></h3>
+  <p>{bai.data.description}</p>
+</article>
