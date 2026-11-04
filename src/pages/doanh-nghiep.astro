@@ -1,8 +1,131 @@
 ---
-import ComingSoon from '../components/ComingSoon.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+interface CapDo {
+  ma: string;
+  ten: string;
+  noiDung: string;
+  thoiLuong: string;
+  ghiChu?: string;
+}
+
+const CAP_DO: readonly CapDo[] = [
+  {
+    ma: 'Lv0',
+    ten: 'AI là gì, sử dụng cơ bản',
+    noiDung:
+      'Hiểu AI làm được gì và không làm được gì, dùng an toàn, viết yêu cầu rõ ràng để nhận câu trả lời hữu ích ngay trong buổi.',
+    thoiLuong: 'nửa ngày',
+  },
+  {
+    ma: 'Lv1',
+    ten: 'Tối ưu công việc cá nhân',
+    noiDung:
+      'Mỗi người mang việc thật của mình vào buổi: email, báo cáo, tổng hợp tài liệu, bảng tính… và ra về với cách làm nhanh hơn bằng AI.',
+    thoiLuong: 'một ngày',
+  },
+  {
+    ma: 'Lv2',
+    ten: 'Đưa AI vào quy trình doanh nghiệp',
+    noiDung:
+      'Chọn một quy trình cụ thể của doanh nghiệp, cùng thiết kế lại với AI và tự động hóa những bước phù hợp.',
+    thoiLuong: 'nhiều buổi, kèm tư vấn quy trình',
+    ghiChu:
+      'Lv2 chỉ mở sau khi mình đã tự đưa AI vào một quy trình doanh nghiệp thật ít nhất một lần. Hiện mình nhận thí điểm Lv0 và Lv1.',
+  },
+];
 ---
 
-<ComingSoon
+<BaseLayout
   title="Doanh nghiệp"
-  summary="Khóa đào tạo ứng dụng AI cho đội ngũ của bạn. Hiện mình đang nhận doanh nghiệp thí điểm."
-/>
+  description="Khóa đào tạo ứng dụng AI cho đội ngũ doanh nghiệp, chia theo 3 Cấp độ. Đang nhận doanh nghiệp thí điểm."
+>
+  <section class="page-header">
+    <p class="eyebrow">Doanh nghiệp</p>
+    <h1>Khóa đào tạo AI cho đội ngũ của bạn</h1>
+    <p class="badge">Đang nhận doanh nghiệp thí điểm</p>
+    <p class="lead">
+      Giúp nhân sự không chuyên kỹ thuật dùng AI vào chính công việc hằng ngày của họ. Khóa đào tạo
+      chia theo 3 Cấp độ, tổ chức trực tiếp tại doanh nghiệp hoặc online.
+    </p>
+  </section>
+
+  <section aria-labelledby="cap-do-heading">
+    <h2 id="cap-do-heading">3 Cấp độ</h2>
+    <ol class="cap-do-list">
+      {
+        CAP_DO.map((capDo) => (
+          <li class="cap-do-card">
+            <h3>
+              <span class="cap-do-ma">{capDo.ma}</span> {capDo.ten}
+            </h3>
+            <p>{capDo.noiDung}</p>
+            <p class="cap-do-thoi-luong">Thời lượng tham khảo: {capDo.thoiLuong}</p>
+            {capDo.ghiChu && <p class="cap-do-ghi-chu">{capDo.ghiChu}</p>}
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section aria-labelledby="thi-diem-heading">
+    <h2 id="thi-diem-heading">Giai đoạn thí điểm</h2>
+    <p>
+      Mình đang nhận một vài doanh nghiệp thí điểm đầu tiên cho Lv0 và Lv1. Nội dung được điều chỉnh
+      theo công việc thật của đội ngũ bạn, và vì đang thí điểm nên mình chưa công bố bảng giá: chi phí
+      trao đổi riêng theo quy mô và nhu cầu.
+    </p>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-header .badge {
+    margin-bottom: 0.5rem;
+  }
+
+  .cap-do-list {
+    display: grid;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .cap-do-card {
+    padding: 1.1rem 1.25rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+  }
+
+  .cap-do-card h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1.15rem;
+  }
+
+  .cap-do-card p {
+    margin: 0.5rem 0 0;
+  }
+
+  .cap-do-ma {
+    display: inline-block;
+    margin-right: 0.35rem;
+    padding: 0 0.5rem;
+    border-radius: 6px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 0.95rem;
+  }
+
+  .cap-do-thoi-luong {
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  .cap-do-ghi-chu {
+    padding: 0.6rem 0.8rem;
+    border-left: 3px solid var(--accent);
+    background: var(--accent-soft);
+    font-size: 0.95rem;
+  }
+</style>
