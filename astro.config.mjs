@@ -2,5 +2,5 @@
 import { defineConfig } from 'astro/config';
 
 export default defineConfig({
-  site: 'https://learning-ai.vercel.app',
+  site: 'https://learning-ai-bay.vercel.app',
 });
