@@ -2,9 +2,10 @@
 import type { GetStaticPaths } from 'astro';
 import { getEntry, render } from 'astro:content';
 import ChuDeTags from '../../components/ChuDeTags.astro';
+import Icon from '../../components/Icon.astro';
 import PublishedDate from '../../components/PublishedDate.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { DANH_SACH_HREF, getTatCaBaiChiaSe } from '../../bai-chia-se';
+import { DANH_SACH_HREF, getTatCaBaiChiaSe, soPhutDoc } from '../../bai-chia-se';
 
 export const getStaticPaths = (async () => {
   const tatCaBai = await getTatCaBaiChiaSe();
@@ -17,18 +18,34 @@ type Props = Record<string, never>;
 const bai = await getEntry('baiChiaSe', Astro.params.id);
 if (!bai) throw new Error(`Không có Bài chia sẻ "${Astro.params.id}"`);
 const { Content } = await render(bai);
+const phutDoc = soPhutDoc(bai.body ?? '');
 ---
 
 <BaseLayout title={bai.data.title} description={bai.data.description}>
   <article class="bai-chia-se">
-    <p class="back"><a href={DANH_SACH_HREF}>← Tất cả Bài chia sẻ</a></p>
-    <header>
-      <h1>{bai.data.title}</h1>
-      <p class="date"><PublishedDate date={bai.data.date} /></p>
-      <ChuDeTags bai={bai} />
+    <header class="page-hero">
+      <div class="container container-narrow">
+        <p class="back">
+          <a class="arrow-link" href={DANH_SACH_HREF}><Icon name="arrow-left" /> Tất cả Bài chia sẻ</a>
+        </p>
+        <ChuDeTags bai={bai} />
+        <h1>{bai.data.title}</h1>
+        <p class="description">{bai.data.description}</p>
+        <p class="meta">
+          <span><Icon name="calendar" /> <PublishedDate date={bai.data.date} /></span>
+          <span><Icon name="clock" /> {phutDoc} phút đọc</span>
+        </p>
+      </div>
     </header>
-    <div class="prose">
-      <Content />
+    <div class="container container-narrow page-body">
+      <div class="prose">
+        <Content />
+      </div>
+      <p class="end">
+        <a class="button button-secondary" href={DANH_SACH_HREF}>
+          <Icon name="arrow-left" /> Đọc thêm Bài chia sẻ khác
+        </a>
+      </p>
     </div>
   </article>
 </BaseLayout>
@@ -39,79 +56,41 @@ const { Content } = await render(bai);
     font-size: 0.95rem;
   }
 
-  header {
-    margin-bottom: 2rem;
-    padding-bottom: 1.25rem;
-    border-bottom: 1px solid var(--border);
-  }
-
   h1 {
-    font-size: clamp(1.6rem, 5vw, 2.25rem);
-    margin: 0 0 0.5rem;
+    margin: 1rem 0 0.75rem;
+    font-size: clamp(1.9rem, 5vw, 2.75rem);
   }
 
-  .date {
-    margin: 0 0 0.75rem;
+  .description {
+    margin: 0 0 1.25rem;
+    color: var(--muted);
+    font-size: 1.15rem;
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+    margin: 0;
     color: var(--muted);
     font-size: 0.9rem;
   }
 
-  /* Nội dung Markdown: không có class riêng nên phải dùng :global. */
-  .prose {
-    overflow-wrap: break-word;
+  .meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
   }
 
-  .prose :global(h2) {
-    margin: 2.25rem 0 0.75rem;
-    font-size: 1.4rem;
+  .meta :global(svg) {
+    width: 1rem;
+    height: 1rem;
+    color: var(--accent);
   }
 
-  .prose :global(h3) {
-    margin: 1.75rem 0 0.5rem;
-    font-size: 1.15rem;
-  }
-
-  .prose :global(li + li) {
-    margin-top: 0.35rem;
-  }
-
-  .prose :global(blockquote) {
-    margin: 1.5rem 0;
-    padding: 0.25rem 1rem;
-    border-left: 3px solid var(--accent);
-    color: var(--muted);
-  }
-
-  .prose :global(:not(pre) > code) {
-    padding: 0.1em 0.35em;
-    border-radius: 4px;
-    background: var(--accent-soft);
-    font-size: 0.9em;
-  }
-
-  .prose :global(pre) {
-    overflow-x: auto;
-    padding: 1rem;
-    border-radius: var(--radius);
-    font-size: 0.875rem;
-    line-height: 1.55;
-  }
-
-  .prose :global(img) {
-    max-width: 100%;
-    height: auto;
-    border-radius: var(--radius);
-  }
-
-  .prose :global(table) {
-    display: block;
-    overflow-x: auto;
-    border-collapse: collapse;
-  }
-
-  .prose :global(th),
-  .prose :global(td) {
-    padding: 0.4rem 0.75rem;
-    border: 1px solid var(--border);
+  .end {
+    margin: 3rem 0 0;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
   }
 </style>

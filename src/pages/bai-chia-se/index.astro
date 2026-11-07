@@ -9,13 +9,18 @@ const tatCaBai = await getTatCaBaiChiaSe();
 ---
 
 <BaseLayout title="Bài chia sẻ">
-  <section class="page-header">
-    <h1>Bài chia sẻ</h1>
-    <p class="lead">
-      Mỗi tuần 2 bài về cách dùng AI cho công việc hằng ngày: cái gì hiệu quả, và cả những thứ mình đã thử
-      mà chưa ổn.
-    </p>
+  <section class="page-hero">
+    <div class="container">
+      <p class="eyebrow">{tatCaBai.length} bài · cập nhật 2 bài mỗi tuần</p>
+      <h1>Bài chia sẻ</h1>
+      <p class="lead">
+        Mỗi tuần 2 bài về cách dùng AI cho công việc hằng ngày: cái gì hiệu quả, và cả những thứ mình đã thử
+        mà chưa ổn.
+      </p>
+    </div>
   </section>
-  <ChuDeFilter chuDe={tatCaChuDe(tatCaBai)} />
-  <BaiChiaSeList tatCaBai={tatCaBai} />
+  <div class="container page-body">
+    <ChuDeFilter chuDe={tatCaChuDe(tatCaBai)} />
+    <BaiChiaSeList tatCaBai={tatCaBai} />
+  </div>
 </BaseLayout>

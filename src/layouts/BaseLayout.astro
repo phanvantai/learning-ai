@@ -1,6 +1,11 @@
 ---
+import '@fontsource/be-vietnam-pro/400.css';
+import '@fontsource/be-vietnam-pro/500.css';
+import '@fontsource/be-vietnam-pro/600.css';
+import '@fontsource/be-vietnam-pro/700.css';
+import '@fontsource/be-vietnam-pro/800.css';
 import SiteHeader from '../components/SiteHeader.astro';
-import { SITE } from '../site';
+import { NAV_ITEMS, SITE } from '../site';
 import '../styles/global.css';
 
 interface Props {
@@ -19,14 +24,48 @@ const fullTitle = title ? `${title} · ${SITE.name}` : SITE.name;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
+    <meta name="theme-color" content="#fffaf3" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#14110e" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   </head>
   <body>
     <SiteHeader />
-    <main class="container">
+    <main class="site-main">
       <slot />
     </main>
     <footer class="site-footer">
-      <div class="container">© {new Date().getFullYear()} {SITE.name}</div>
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-about">
+            <a class="brand" href="/">{SITE.name}</a>
+            <p class="footer-tagline">
+              Kỹ sư phần mềm dùng AI mỗi ngày, học công khai: thử gì kể nấy, kể cả những thứ chưa thành
+              công.
+            </p>
+          </div>
+          <nav aria-label="Điều hướng chân trang">
+            <h2>Khám phá</h2>
+            <ul>
+              {
+                NAV_ITEMS.filter((item) => item.href !== '/').map((item) => (
+                  <li>
+                    <a href={item.href}>{item.label}</a>
+                  </li>
+                ))
+              }
+            </ul>
+          </nav>
+          <div>
+            <h2>Liên hệ</h2>
+            <ul>
+              <li><a href="/#lien-he">Tư vấn qua chat</a></li>
+              <li><a href="/mentoring/">Gói Mentoring</a></li>
+              <li><a href="/doanh-nghiep/#lien-he-heading">Doanh nghiệp thí điểm</a></li>
+            </ul>
+          </div>
+        </div>
+        <p class="footer-bottom">© {new Date().getFullYear()} {SITE.name}</p>
+      </div>
     </footer>
   </body>
 </html>

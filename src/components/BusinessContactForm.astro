@@ -121,6 +121,7 @@ const QUY_MO = ['Dưới 10 người', '10–50 người', '51–200 người', 
   }
 
   .field label {
+    font-size: 0.95rem;
     font-weight: 600;
   }
 
@@ -128,19 +129,21 @@ const QUY_MO = ['Dưới 10 người', '10–50 người', '51–200 người', 
   .field select,
   .field textarea {
     width: 100%;
-    padding: 0.6rem 0.75rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: var(--surface);
+    min-height: 2.9rem;
+    padding: 0.65rem 0.9rem;
+    border: 1.5px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    background: var(--bg);
     color: var(--text);
     font: inherit;
   }
 
-  .field input:focus,
-  .field select:focus,
-  .field textarea:focus {
-    outline: 2px solid var(--accent);
-    outline-offset: 1px;
+  .field input:focus-visible,
+  .field select:focus-visible,
+  .field textarea:focus-visible {
+    border-color: var(--accent);
+    outline: 3px solid var(--accent-soft);
+    outline-offset: 0;
   }
 
   .field textarea {
@@ -155,10 +158,8 @@ const QUY_MO = ['Dưới 10 người', '10–50 người', '51–200 người', 
 
   .contact-form .button {
     justify-self: start;
-    border: 0;
     font: inherit;
     font-weight: 600;
-    cursor: pointer;
   }
 
   .contact-form .button:disabled {

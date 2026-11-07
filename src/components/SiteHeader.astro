@@ -1,5 +1,6 @@
 ---
 import { NAV_ITEMS, SITE } from '../site';
+import Icon from './Icon.astro';
 
 const currentPath = Astro.url.pathname;
 
@@ -13,7 +14,10 @@ function ariaCurrent(href: string): 'page' | 'true' | undefined {
 
 <header class="site-header">
   <div class="container header-inner">
-    <a class="brand" href="/">{SITE.name}</a>
+    <a class="brand" href="/">
+      <span class="brand-mark"><Icon name="sparkles" /></span>
+      {SITE.name}
+    </a>
     <nav aria-label="Điều hướng chính">
       <ul class="nav-list">
         {

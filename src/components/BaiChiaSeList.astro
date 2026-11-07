@@ -18,6 +18,14 @@ const { tatCaBai, headingLevel } = Astro.props;
       ))}
     </div>
   ) : (
-    <p class="lead">Chưa có Bài chia sẻ nào. Bài đầu tiên sắp lên!</p>
+    <p class="empty-state">Chưa có Bài chia sẻ nào. Bài đầu tiên sắp lên!</p>
   )
 }
+
+<style>
+  .bai-chia-se-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+    gap: 1.25rem;
+  }
+</style>

@@ -19,3 +19,12 @@ export function moiNhatTruoc<T extends { id: string; data: { date: Date } }>(tat
 export async function getTatCaBaiChiaSe(): Promise<BaiChiaSe[]> {
   return moiNhatTruoc(await getCollection('baiChiaSe'));
 }
+
+/** Tốc độ đọc tiếng Việt trung bình, tính theo chữ (âm tiết) mỗi phút. */
+const CHU_MOI_PHUT = 220;
+
+/** Số phút đọc ước tính của nội dung Markdown, làm tròn lên, ít nhất 1 phút. */
+export function soPhutDoc(noiDung: string): number {
+  const soChu = noiDung.split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.ceil(soChu / CHU_MOI_PHUT));
+}

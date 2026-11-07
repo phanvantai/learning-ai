@@ -1,128 +1,275 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ChatContact from '../components/ChatContact.astro';
-import { FOUNDER } from '../site';
-
-/** Gói Mentoring beta (`docs/specs/services.md`). Đổi giá hay số suất thì chỉ sửa ở đây. */
-const BETA = { price: '1 triệu đồng', slots: 5, sessions: 4, minutes: 60, period: '1 tháng' } as const;
+import Icon from '../components/Icon.astro';
+import { FOUNDER, MENTORING_BETA as BETA } from '../site';
 ---
 
 <BaseLayout
   title="Mentoring"
   description={`Mentoring có lịch hẹn: cùng bạn build một tool, automation hoặc skill AI chạy được cho công việc. Gói beta ${BETA.price}, giới hạn ${BETA.slots} suất.`}
 >
-  <section class="page-header">
-    <p class="eyebrow">Mentoring</p>
-    <h1>Cùng bạn build một tool AI cho công việc của chính bạn</h1>
-    <p class="lead">
-      Mentoring là các buổi làm việc riêng có lịch hẹn giữa bạn và mình, <strong>{FOUNDER.name}</strong>.
-      Mình không chỉ giảng lý thuyết: hai bên cùng build cho tới khi bạn có một tool, automation hoặc
-      skill AI chạy được cho công việc hằng ngày.
-    </p>
-  </section>
+  <section class="page-hero">
+    <div class="container hero-grid">
+      <div>
+        <p class="eyebrow">Mentoring</p>
+        <h1>Cùng bạn build một tool AI cho công việc của chính bạn</h1>
+        <p class="lead">
+          Mentoring là các buổi làm việc riêng có lịch hẹn giữa bạn và mình, <strong>{FOUNDER.name}</strong>.
+          Mình không chỉ giảng lý thuyết: hai bên cùng build cho tới khi bạn có một tool, automation hoặc
+          skill AI chạy được cho công việc hằng ngày.
+        </p>
+      </div>
 
-  <section aria-labelledby="goi-beta">
-    <h2 id="goi-beta">Gói beta</h2>
-    <div class="price-card">
-      <p class="price"><strong>{BETA.price}</strong> / gói</p>
-      <p class="badge">Giới hạn {BETA.slots} suất đầu tiên</p>
-      <ul>
-        <li>
-          {BETA.sessions} buổi &times; {BETA.minutes} phút trong {BETA.period}, gọi online và chia sẻ màn
-          hình.
-        </li>
-        <li>Kết quả: một tool, automation hoặc skill AI chạy được cho công việc của bạn.</li>
-      </ul>
+      <section class="price-card" aria-labelledby="goi-beta">
+        <div class="price-card-top">
+          <h2 id="goi-beta">Gói beta</h2>
+          <p class="badge">Giới hạn {BETA.slots} suất đầu tiên</p>
+        </div>
+        <p class="price"><strong>{BETA.price}</strong> / gói</p>
+        <ul class="price-list">
+          <li>
+            <Icon name="calendar" />
+            <span>
+              {BETA.sessions} buổi &times; {BETA.minutes} phút trong {BETA.period}, gọi online và chia sẻ
+              màn hình.
+            </span>
+          </li>
+          <li>
+            <Icon name="wrench" />
+            <span>Kết quả: một tool, automation hoặc skill AI chạy được cho công việc của bạn.</span>
+          </li>
+          <li>
+            <Icon name="message" />
+            <span>Bắt đầu bằng Tư vấn qua chat miễn phí, chưa cần trả gì.</span>
+          </li>
+        </ul>
+        <a class="button price-cta" href="#lien-he">Nhắn để giữ suất <Icon name="arrow-right" /></a>
+      </section>
     </div>
-
-    <h3>Điều kiện của giá beta</h3>
-    <p>
-      Giá beta thấp vì mình đang xây những case study đầu tiên. Đổi lại, học viên beta cam kết cho mình
-      viết case study và để lại lời nhận xét về quá trình làm việc. Để mỗi người được làm kỹ, mình chỉ
-      nhận tối đa 1–2 học viên Mentoring cùng lúc.
-    </p>
-
-    <h3>Thanh toán</h3>
-    <p>
-      Thanh toán bằng chuyển khoản. Website không thanh toán online.
-    </p>
-
-    <h3>Buổi lẻ</h3>
-    <p>
-      Buổi lẻ chỉ bán thêm cho học viên đã mua gói, khi bạn muốn làm tiếp sau {BETA.sessions} buổi. Mentoring không có
-      buổi thử riêng: Tư vấn qua chat là bước thử.
-    </p>
   </section>
 
-  <section aria-labelledby="quy-trinh">
-    <h2 id="quy-trinh">Quy trình</h2>
-    <ol class="steps">
-      <li>
-        <strong>Nhắn tin hỏi trước (Tư vấn qua chat, miễn phí).</strong> Kể mình nghe công việc của bạn
-        và việc bạn muốn AI làm giúp. Mình trả lời và gợi ý hướng đi, không cần đặt lịch.
-      </li>
-      <li>
-        <strong>Chuyển sang Mentoring khi cần.</strong> Khi việc cần gọi riêng, chia sẻ màn hình hoặc
-        build hộ, mình đề xuất gói Mentoring và cùng bạn chốt mục tiêu.
-      </li>
-      <li>
-        <strong>Cùng build.</strong> {BETA.sessions} buổi trong {BETA.period}, kết quả là một tool,
-        automation hoặc skill AI chạy được cho công việc của bạn.
-      </li>
-    </ol>
-    <p>
-      Tư vấn qua chat chính là bước thử: bạn xem cách mình trả lời có hợp với mình không rồi mới quyết
-      định mua Mentoring.
-    </p>
-  </section>
+  <div class="container page-body">
+    <section aria-labelledby="dieu-khoan">
+      <div class="section-head">
+        <h2 id="dieu-khoan">Điều cần biết về gói beta</h2>
+      </div>
+      <div class="info-grid">
+        <div class="card info">
+          <span class="icon-tile"><Icon name="file-text" /></span>
+          <h3>Điều kiện của giá beta</h3>
+          <p>
+            Giá beta thấp vì mình đang xây những case study đầu tiên. Đổi lại, học viên beta cam kết cho
+            mình viết case study và để lại lời nhận xét về quá trình làm việc. Để mỗi người được làm kỹ,
+            mình chỉ nhận tối đa 1–2 học viên Mentoring cùng lúc.
+          </p>
+        </div>
+        <div class="card info">
+          <span class="icon-tile icon-tile-teal"><Icon name="wallet" /></span>
+          <h3>Thanh toán</h3>
+          <p>Thanh toán bằng chuyển khoản. Website không thanh toán online.</p>
+        </div>
+        <div class="card info">
+          <span class="icon-tile"><Icon name="plus" /></span>
+          <h3>Buổi lẻ</h3>
+          <p>
+            Buổi lẻ chỉ bán thêm cho học viên đã mua gói, khi bạn muốn làm tiếp sau {BETA.sessions} buổi.
+            Mentoring không có buổi thử riêng: Tư vấn qua chat là bước thử.
+          </p>
+        </div>
+      </div>
+    </section>
 
-  <section aria-labelledby="case-study">
-    <h2 id="case-study">Case study</h2>
-    <p class="empty-state">
-      Chưa có case study nào. {BETA.slots} học viên beta đầu tiên sẽ là những case study đầu tiên ở đây, và bạn có
-      thể là một trong số đó.
-    </p>
-  </section>
+    <section class="section" aria-labelledby="quy-trinh">
+      <div class="section-head">
+        <h2 id="quy-trinh">Quy trình</h2>
+      </div>
+      <ol class="steps">
+        <li>
+          <strong>Nhắn tin hỏi trước (Tư vấn qua chat, miễn phí).</strong> Kể mình nghe công việc của bạn
+          và việc bạn muốn AI làm giúp. Mình trả lời và gợi ý hướng đi, không cần đặt lịch.
+        </li>
+        <li>
+          <strong>Chuyển sang Mentoring khi cần.</strong> Khi việc cần gọi riêng, chia sẻ màn hình hoặc
+          build hộ, mình đề xuất gói Mentoring và cùng bạn chốt mục tiêu.
+        </li>
+        <li>
+          <strong>Cùng build.</strong> {BETA.sessions} buổi trong {BETA.period}, kết quả là một tool,
+          automation hoặc skill AI chạy được cho công việc của bạn.
+        </li>
+      </ol>
+      <p class="steps-note">
+        Tư vấn qua chat chính là bước thử: bạn xem cách mình trả lời có hợp với mình không rồi mới quyết
+        định mua Mentoring.
+      </p>
+    </section>
 
-  <ChatContact title="Bắt đầu bằng một tin nhắn">
-    <p>
-      Chọn kênh bạn quen dùng và nhắn cho mình. Tư vấn qua chat không mất phí; nếu việc của bạn cần
-      Mentoring, mình sẽ nói rõ trước khi bạn trả tiền.
-    </p>
-  </ChatContact>
+    <section class="section" aria-labelledby="case-study">
+      <div class="section-head">
+        <h2 id="case-study">Case study</h2>
+      </div>
+      <p class="empty-state">
+        Chưa có case study nào. {BETA.slots} học viên beta đầu tiên sẽ là những case study đầu tiên ở đây,
+        và bạn có thể là một trong số đó.
+      </p>
+    </section>
+
+    <ChatContact title="Bắt đầu bằng một tin nhắn">
+      <p>
+        Chọn kênh bạn quen dùng và nhắn cho mình. Tư vấn qua chat không mất phí; nếu việc của bạn cần
+        Mentoring, mình sẽ nói rõ trước khi bạn trả tiền.
+      </p>
+    </ChatContact>
+  </div>
 </BaseLayout>
 
 <style>
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+
+  /* ---------- Thẻ giá ---------- */
   .price-card {
-    padding: 1.25rem 1.5rem;
-    border: 1px solid var(--accent);
-    border-radius: var(--radius);
+    position: relative;
+    padding: 1.75rem;
+    border: 1.5px solid var(--accent);
+    border-radius: var(--radius-lg);
     background: var(--surface);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .price-card-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .price-card h2 {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
   }
 
   .price {
-    margin: 0 0 0.5rem;
-    font-size: 1.15rem;
+    margin: 0.75rem 0 1.25rem;
+    color: var(--muted);
+    font-size: 1.05rem;
   }
 
   .price strong {
-    font-size: 1.75rem;
+    color: var(--text);
+    font-size: clamp(2.25rem, 6vw, 2.9rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+
+  .price-list {
+    display: grid;
+    gap: 0.85rem;
+    margin: 0;
+    padding: 1.25rem 0 0;
+    border-top: 1px solid var(--border);
+    list-style: none;
+    font-size: 0.975rem;
+  }
+
+  .price-list li {
+    display: flex;
+    gap: 0.75rem;
+    line-height: 1.55;
+  }
+
+  .price-list :global(svg) {
+    width: 1.2rem;
+    height: 1.2rem;
+    flex-shrink: 0;
+    margin-top: 0.15rem;
     color: var(--accent);
   }
 
-  .price-card ul {
-    margin: 1rem 0 0;
-    padding-left: 1.25rem;
+  .price-cta {
+    width: 100%;
+    margin-top: 1.5rem;
   }
 
-  .steps li + li {
-    margin-top: 0.75rem;
+  /* ---------- Thông tin ---------- */
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
   }
 
-  .empty-state {
-    padding: 1rem 1.25rem;
-    border: 1px dashed var(--border);
-    border-radius: var(--radius);
+  .info h3 {
+    margin: 1rem 0 0.5rem;
+    font-size: 1.15rem;
+  }
+
+  .info p {
+    margin: 0;
     color: var(--muted);
+    font-size: 0.975rem;
+  }
+
+  /* ---------- Quy trình: các bước nối nhau ---------- */
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: buoc;
+  }
+
+  .steps li {
+    position: relative;
+    padding: 3.75rem 1.5rem 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    color: var(--muted);
+    counter-increment: buoc;
+  }
+
+  .steps li::before {
+    content: counter(buoc);
+    position: absolute;
+    top: 1.25rem;
+    left: 1.5rem;
+    display: grid;
+    place-items: center;
+    width: 2.1rem;
+    height: 2.1rem;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--accent-contrast);
+    font-weight: 800;
+  }
+
+  .steps li strong {
+    display: block;
+    margin-bottom: 0.35rem;
+    color: var(--text);
+  }
+
+  .steps-note {
+    margin: 1.25rem 0 0;
+    color: var(--muted);
+  }
+
+  @media (max-width: 56rem) {
+    .hero-grid,
+    .info-grid,
+    .steps {
+      grid-template-columns: 1fr;
+    }
   }
 </style>
