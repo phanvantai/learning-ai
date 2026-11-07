@@ -2,6 +2,7 @@
 import type { GetStaticPaths } from 'astro';
 import BaiChiaSeList from '../../../components/BaiChiaSeList.astro';
 import ChuDeFilter from '../../../components/ChuDeFilter.astro';
+import Icon from '../../../components/Icon.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import { DANH_SACH_HREF, getTatCaBaiChiaSe } from '../../../bai-chia-se';
 import { baiThuocChuDe, tatCaChuDe } from '../../../chu-de';
@@ -22,10 +23,24 @@ const title = `Bài chia sẻ về “${dangXem.ten}”`;
 ---
 
 <BaseLayout title={title}>
-  <section class="page-header">
-    <h1>{title}</h1>
-    <p><a href={DANH_SACH_HREF}>← Xem tất cả Bài chia sẻ</a></p>
+  <section class="page-hero">
+    <div class="container">
+      <p><a class="arrow-link back-link" href={DANH_SACH_HREF}><Icon name="arrow-left" /> Xem tất cả Bài chia sẻ</a></p>
+      <h1>{title}</h1>
+    </div>
   </section>
-  <ChuDeFilter chuDe={chuDe} current={dangXem.slug} />
-  <BaiChiaSeList tatCaBai={baiThuocChuDe(tatCaBai, dangXem.slug)} />
+  <div class="container page-body">
+    <ChuDeFilter chuDe={chuDe} current={dangXem.slug} />
+    <BaiChiaSeList tatCaBai={baiThuocChuDe(tatCaBai, dangXem.slug)} />
+  </div>
 </BaseLayout>
+
+<style>
+  .back-link {
+    font-size: 0.95rem;
+  }
+
+  .page-hero p {
+    margin: 0 0 1rem;
+  }
+</style>

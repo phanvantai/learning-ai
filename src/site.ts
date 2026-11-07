@@ -46,3 +46,15 @@ export const CHAT_CHANNELS: readonly ChatChannel[] = [
   // TODO(owner): link LinkedIn, dạng https://www.linkedin.com/in/<tên hồ sơ>
   { name: 'LinkedIn', href: null },
 ];
+
+/**
+ * Gói Mentoring beta (`docs/specs/services.md`). Đổi giá hay số suất thì chỉ sửa ở đây: Trang chủ
+ * và trang Mentoring cùng đọc từ đây.
+ */
+export const MENTORING_BETA = {
+  price: '1 triệu đồng',
+  slots: 5,
+  sessions: 4,
+  minutes: 60,
+  period: '1 tháng',
+} as const;

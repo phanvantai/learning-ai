@@ -1,5 +1,6 @@
 ---
 import { CHAT_CHANNELS } from '../site';
+import Icon from './Icon.astro';
 
 interface Props {
   title: string;
@@ -8,19 +9,23 @@ interface Props {
 const { title } = Astro.props;
 ---
 
-<section class="chat-contact" aria-labelledby="chat-contact-title">
-  <h2 id="chat-contact-title">{title}</h2>
-  <slot />
+<section id="lien-he" class="chat-contact" aria-labelledby="chat-contact-title">
+  <div class="chat-contact-copy">
+    <span class="chat-contact-icon"><Icon name="message" /></span>
+    <h2 id="chat-contact-title">{title}</h2>
+    <slot />
+  </div>
   <ul class="chat-buttons" aria-label="Kênh Tư vấn qua chat">
     {
       CHAT_CHANNELS.map(({ name, href }) => (
         <li>
           {href ? (
-            <a class="button" href={href} target="_blank" rel="noopener noreferrer">
+            <a class="chat-button" href={href} target="_blank" rel="noopener noreferrer">
               {name}
+              <Icon name="arrow-right" />
             </a>
           ) : (
-            <span class="button button-pending" aria-disabled="true">
+            <span class="chat-button chat-button-pending" aria-disabled="true">
               {name} <small>(sắp có)</small>
             </span>
           )}
@@ -32,45 +37,103 @@ const { title } = Astro.props;
 
 <style>
   .chat-contact {
-    margin-top: 3rem;
-    padding: 1.5rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: var(--surface);
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 2rem 3rem;
+    align-items: center;
+    margin-top: 4.5rem;
+    padding: clamp(1.75rem, 5vw, 3rem);
+    border-radius: var(--radius-lg);
+    background:
+      radial-gradient(30rem 16rem at 100% 0%, rgb(249 115 22 / 0.35), transparent 70%),
+      radial-gradient(24rem 14rem at 0% 100%, rgb(45 212 191 / 0.18), transparent 70%),
+      var(--ink);
+    color: var(--ink-text);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .chat-contact-icon {
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: 1rem;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #f97316, #c2410c);
+    color: #ffffff;
+  }
+
+  .chat-contact-icon :global(svg) {
+    width: 1.4rem;
+    height: 1.4rem;
   }
 
   .chat-contact h2 {
-    margin-top: 0;
+    margin: 0 0 0.75rem;
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+  }
+
+  .chat-contact-copy :global(p) {
+    margin: 0;
+    color: var(--ink-muted);
   }
 
   .chat-buttons {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 0.75rem;
-    margin: 1.25rem 0 0;
+    margin: 0;
     padding: 0;
     list-style: none;
   }
 
-  .button-pending {
+  .chat-button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    min-height: 3.25rem;
+    padding: 0.75rem 1.1rem;
+    border: 1px solid rgb(255 255 255 / 0.14);
+    border-radius: var(--radius);
+    background: rgb(255 255 255 / 0.08);
+    color: var(--ink-text);
+    font-weight: 600;
+    text-decoration: none;
+    transition:
+      background-color 180ms var(--ease),
+      border-color 180ms var(--ease),
+      transform 180ms var(--ease);
+  }
+
+  a.chat-button:hover {
+    border-color: #fb923c;
+    background: rgb(249 115 22 / 0.2);
+    color: var(--ink-text);
+    transform: translateY(-2px);
+  }
+
+  .chat-button :global(svg) {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .chat-button-pending {
+    border-style: dashed;
     background: transparent;
-    color: var(--muted);
-    border: 1px dashed var(--border);
+    color: var(--ink-muted);
     cursor: not-allowed;
   }
 
-  .button-pending small {
+  .chat-button-pending small {
     font-weight: 400;
   }
 
-  @media (max-width: 30rem) {
-    .chat-buttons li {
-      flex: 1 1 calc(50% - 0.75rem);
-    }
-
-    .chat-buttons .button {
-      display: block;
-      text-align: center;
+  @media (max-width: 50rem) {
+    .chat-contact {
+      grid-template-columns: 1fr;
     }
   }
 </style>
