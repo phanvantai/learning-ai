@@ -65,7 +65,8 @@ pub async fn execute(
                 return (
                     format!(
                         "CHƯA THỰC HIỆN. Hành động đã vào hàng chờ duyệt với id {id}. \
-                         Người dùng sẽ duyệt bằng `lai approvals approve {id}`. Đừng gọi lại công cụ này."
+                         Người dùng sẽ duyệt trong mục Chờ duyệt của app (hoặc lệnh `lai approvals approve {id}`). \
+                         Đừng gọi lại công cụ này."
                     ),
                     false,
                 )

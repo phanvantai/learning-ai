@@ -163,7 +163,7 @@ impl Tool for McpTool {
 /// Start an MCP server and return its tools, named `<server>__<tool>`.
 /// A tool is treated as needing approval unless the config lists it as read-only.
 pub async fn connect(server_name: &str, cfg: &McpServerConfig) -> Result<Vec<Arc<dyn Tool>>> {
-    let mut child = tokio::process::Command::new(&cfg.command)
+    let mut child = crate::proc::command(&cfg.command)
         .args(&cfg.args)
         .envs(&cfg.env)
         .stdin(Stdio::piped())

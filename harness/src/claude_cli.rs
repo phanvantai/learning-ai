@@ -21,7 +21,9 @@ const MCP_SERVER_NAME: &str = "lai";
 pub struct ClaudeCliSession {
     command: String,
     model: Option<String>,
-    system: String,
+    /// The agent's rules, in a file: long multi-line text does not survive
+    /// as a command-line argument to the `.cmd` shim npm installs on Windows.
+    system_file: PathBuf,
     mcp_config: PathBuf,
     /// Set after the first reply; lets follow-up messages continue the same conversation.
     session_id: Option<String>,
@@ -29,21 +31,23 @@ pub struct ClaudeCliSession {
 
 impl ClaudeCliSession {
     pub fn new(cfg: &ClaudeCliConfig, agent: &str, system: &str) -> Result<Self> {
-        let exe = std::env::current_exe().context("Không xác định được đường dẫn của lai")?;
+        let (exe, args) = crate::self_mcp_command(agent)?;
         let home = crate::config::home();
         let run_dir = home.join("run");
         std::fs::create_dir_all(&run_dir)?;
         let mcp_config = run_dir.join(format!("mcp-{agent}.json"));
         let config = json!({"mcpServers": {MCP_SERVER_NAME: {
             "command": exe,
-            "args": ["mcp-serve", "--agent", agent],
+            "args": args,
             "env": {"LAI_HOME": home},
         }}});
         std::fs::write(&mcp_config, serde_json::to_vec_pretty(&config)?)?;
+        let system_file = run_dir.join(format!("system-{agent}.txt"));
+        std::fs::write(&system_file, system)?;
         Ok(Self {
             command: cfg.command.clone(),
             model: cfg.model.clone(),
-            system: system.to_string(),
+            system_file,
             mcp_config,
             session_id: None,
         })
@@ -53,7 +57,7 @@ impl ClaudeCliSession {
 #[async_trait]
 impl Session for ClaudeCliSession {
     async fn send(&mut self, user: &str) -> Result<String> {
-        let mut cmd = tokio::process::Command::new(&self.command);
+        let mut cmd = crate::proc::command(&self.command);
         cmd.arg("-p")
             .args(["--output-format", "json"])
             .arg("--mcp-config")
@@ -61,7 +65,8 @@ impl Session for ClaudeCliSession {
             .arg("--strict-mcp-config")
             .args(["--tools", ""])
             .args(["--allowedTools", &format!("mcp__{MCP_SERVER_NAME}")])
-            .args(["--append-system-prompt", &self.system]);
+            .arg("--append-system-prompt-file")
+            .arg(&self.system_file);
         if let Some(model) = &self.model {
             cmd.args(["--model", model]);
         }

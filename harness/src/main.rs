@@ -5,8 +5,8 @@ use anyhow::{bail, Context, Result};
 use clap::{Parser, Subcommand};
 
 use lai_harness::approval::{self, ApprovalStore, Approver, Status};
-use lai_harness::config::{self, Config, ProviderConfig};
-use lai_harness::{gmail, mcp, scheduler, secrets, tools};
+use lai_harness::config::{self, Config};
+use lai_harness::{gmail, scheduler, secrets};
 
 #[derive(Parser)]
 #[command(name = "lai", version, about = "Trợ lý AI cá nhân: agent nhận việc, tự kiểm tra mail, báo cáo theo lịch")]
@@ -44,7 +44,13 @@ enum Command {
         #[command(subcommand)]
         action: JobsAction,
     },
-    /// Chạy nền, thực hiện các job đúng lịch
+    /// Mở giao diện trong trình duyệt (kèm chạy job đúng lịch)
+    Ui {
+        /// Chỉ in địa chỉ, không tự mở trình duyệt
+        #[arg(long)]
+        no_open: bool,
+    },
+    /// Chạy nền không giao diện, thực hiện các job đúng lịch
     Daemon,
     /// Xem báo cáo mới nhất của một job
     Report { job: String },
@@ -63,8 +69,11 @@ enum Command {
 
 #[derive(Subcommand)]
 enum AuthTarget {
-    /// Nhập API key Anthropic
-    Anthropic,
+    /// Nhập API key cho một provider dùng API key
+    Key {
+        /// Tên provider trong config.toml (bỏ trống nếu chỉ có một)
+        provider: Option<String>,
+    },
     /// Đăng nhập Gmail qua trình duyệt
     Gmail,
 }
@@ -99,13 +108,21 @@ async fn run(cli: Cli) -> Result<()> {
     match cli.command {
         Command::Init => init(),
         Command::Doctor => doctor(),
-        Command::Auth { target: AuthTarget::Anthropic } => {
-            let key = rpassword::prompt_password("Dán API key Anthropic (không hiện khi gõ): ")?;
-            let key = key.trim();
-            if key.is_empty() {
+        Command::Auth { target: AuthTarget::Key { provider } } => {
+            let cfg = Config::load()?;
+            let with_keys: Vec<&String> =
+                cfg.providers.iter().filter(|(_, p)| p.key_env().is_some()).map(|(name, _)| name).collect();
+            let name = match provider {
+                Some(name) if with_keys.iter().any(|n| **n == name) => name,
+                Some(name) => bail!("'{name}' không phải provider dùng API key"),
+                None if with_keys.len() == 1 => with_keys[0].clone(),
+                None => bail!("Ghi rõ provider: {}", with_keys.iter().map(|n| n.as_str()).collect::<Vec<_>>().join(", ")),
+            };
+            let key = rpassword::prompt_password(format!("Dán API key cho '{name}' (không hiện khi gõ): "))?;
+            if key.trim().is_empty() {
                 bail!("Key trống");
             }
-            secrets::set(secrets::ANTHROPIC_API_KEY, key)?;
+            secrets::set_provider_key(&name, key.trim())?;
             println!("Đã lưu API key.");
             Ok(())
         }
@@ -142,23 +159,32 @@ async fn run(cli: Cli) -> Result<()> {
             println!("{report}\n\n(Đã lưu: {})", path.display());
             Ok(())
         }
-        Command::Daemon => scheduler::run_daemon(&Config::load()?).await,
+        Command::Ui { no_open } => {
+            let url = lai_harness::server::start(Arc::new(lai_harness::NoHost)).await?;
+            println!("Giao diện: {url}\nNhấn Ctrl+C để dừng.");
+            if !no_open {
+                let _ = open::that(&url);
+            }
+            std::future::pending::<()>().await;
+            Ok(())
+        }
+        Command::Daemon => {
+            Config::load()?;
+            println!("Đang chạy các việc theo lịch. Nhấn Ctrl+C để dừng.");
+            scheduler::run_loop(Arc::new(lai_harness::NoHost)).await;
+            Ok(())
+        }
         Command::Report { job } => {
-            let dir = scheduler::reports_dir(&job);
-            let latest = std::fs::read_dir(&dir)
-                .with_context(|| format!("Job '{job}' chưa có báo cáo nào"))?
-                .filter_map(|e| e.ok().map(|e| e.path()))
-                .max()
+            let latest = scheduler::list_reports(&job)
+                .into_iter()
+                .next()
                 .with_context(|| format!("Job '{job}' chưa có báo cáo nào"))?;
-            println!("{}\n\n({})", std::fs::read_to_string(&latest)?, latest.display());
+            let path = scheduler::reports_dir(&job).join(latest);
+            println!("{}\n\n({})", std::fs::read_to_string(&path)?, path.display());
             Ok(())
         }
         Command::Approvals { action } => approvals(action).await,
-        Command::McpServe { agent } => {
-            let cfg = Config::load()?;
-            let registry = tools::build_registry(&cfg, &agent).await?;
-            mcp::serve(registry, approval::queue(), &agent).await
-        }
+        Command::McpServe { agent } => lai_harness::mcp_serve(&agent).await,
     }
 }
 
@@ -195,7 +221,7 @@ fn init() -> Result<()> {
     std::fs::create_dir_all(config::home())?;
     std::fs::write(&path, config::STARTER_CONFIG)?;
     println!(
-        "Đã tạo {}\n\nBước tiếp theo:\n  1. lai auth anthropic   (hoặc đổi agent sang provider \"goi-claude\" để dùng gói subscription)\n  2. lai auth gmail\n  3. lai doctor\n  4. lai chat",
+        "Đã tạo {}\n\nBước tiếp theo:\n  1. lai ui               (mở giao diện; hoặc tiếp tục bằng dòng lệnh)\n  2. lai auth gmail\n  3. lai doctor\n  4. lai chat\n\nMặc định trợ lý dùng gói Claude qua lệnh `claude`. Muốn dùng API key: đổi `provider` của agent rồi `lai auth key`",
         path.display()
     );
     Ok(())
@@ -207,20 +233,20 @@ fn doctor() -> Result<()> {
     let mark = |ok: bool| if ok { "✓" } else { "✗" };
 
     for (name, provider) in &cfg.providers {
-        match provider {
-            ProviderConfig::Anthropic(_) => {
-                let has_key = std::env::var("ANTHROPIC_API_KEY").is_ok_and(|k| !k.is_empty())
-                    || secrets::get(secrets::ANTHROPIC_API_KEY)?.is_some();
-                println!("{} provider '{name}': API key Anthropic{}", mark(has_key), if has_key { "" } else { " — chạy `lai auth anthropic`" });
+        let ok = match (provider.cli_command(), provider.key_env()) {
+            (Some(command), _) => {
+                let found = lai_harness::proc::resolve(command);
+                println!(
+                    "{} provider '{name}': lệnh `{command}`{}",
+                    mark(found.is_some()),
+                    if found.is_some() { " (chưa kiểm tra được trạng thái đăng nhập)" } else { " — chưa cài hoặc không tìm thấy" }
+                );
+                continue;
             }
-            ProviderConfig::ClaudeCli(p) => {
-                let found = std::process::Command::new(&p.command)
-                    .arg("--version")
-                    .output()
-                    .is_ok_and(|o| o.status.success());
-                println!("{} provider '{name}': lệnh `{}`{}", mark(found), p.command, if found { " (chưa kiểm tra được trạng thái đăng nhập)" } else { " — chưa cài Claude Code hoặc không nằm trong PATH" });
-            }
-        }
+            (None, Some(env)) => secrets::provider_key(name, env)?.is_some(),
+            (None, None) => false,
+        };
+        println!("{} provider '{name}': API key{}", mark(ok), if ok { String::new() } else { format!(" — chạy `lai auth key {name}`") });
     }
     let uses_gmail = cfg.agents.values().any(|a| a.tools.iter().any(|t| t.starts_with("gmail_")));
     if uses_gmail {
@@ -284,28 +310,13 @@ async fn approvals(action: ApprovalsAction) -> Result<()> {
             Ok(())
         }
         ApprovalsAction::Reject { id } => {
-            store.pending(&id)?;
-            store.resolve(&id, Status::Rejected, None)?;
+            lai_harness::reject_action(&id)?;
             println!("Đã từ chối {id}.");
             Ok(())
         }
         ApprovalsAction::Approve { id } => {
-            let action = store.pending(&id)?;
-            let cfg = Config::load()?;
-            let registry = tools::build_registry(&cfg, &action.agent).await?;
-            let tool = registry
-                .get(&action.tool)
-                .with_context(|| format!("Agent '{}' không còn công cụ '{}'", action.agent, action.tool))?;
-            // The human has just approved this exact input, so call the tool directly.
-            match tool.call(action.input).await {
-                Ok(result) => {
-                    store.resolve(&id, Status::Done, Some(result.clone()))?;
-                    println!("{result}");
-                    Ok(())
-                }
-                // Left pending so it can be approved again once the cause is fixed.
-                Err(e) => Err(e.context(format!("Chưa thực hiện được; '{id}' vẫn nằm trong hàng chờ"))),
-            }
+            println!("{}", lai_harness::approve_action(&id).await?);
+            Ok(())
         }
     }
 }

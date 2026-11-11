@@ -105,6 +105,10 @@ impl ApprovalStore {
         }
     }
 
+    pub fn pending_count(&self) -> usize {
+        self.all().map(|all| all.iter().filter(|a| a.status == Status::Pending).count()).unwrap_or(0)
+    }
+
     fn save(&self, items: &[PendingAction]) -> Result<()> {
         if let Some(dir) = self.path.parent() {
             std::fs::create_dir_all(dir)?;

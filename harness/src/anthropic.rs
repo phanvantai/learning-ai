@@ -10,7 +10,7 @@ use serde_json::{json, Value};
 use crate::approval::Approver;
 use crate::config::AnthropicConfig;
 use crate::tools::ToolRegistry;
-use crate::{secrets, Session};
+use crate::Session;
 
 const API_VERSION: &str = "2026-10-21";
 const FALLBACK_BETA: &str = "server-side-fallback-2026-07-01";
@@ -42,16 +42,12 @@ struct RequestConfig {
 impl AnthropicSession {
     pub fn new(
         cfg: &AnthropicConfig,
+        api_key: String,
         agent: &str,
         system: &str,
         registry: Arc<ToolRegistry>,
         approver: Arc<dyn Approver>,
     ) -> Result<Self> {
-        let api_key = match std::env::var("ANTHROPIC_API_KEY") {
-            Ok(key) if !key.is_empty() => key,
-            _ => secrets::get(secrets::ANTHROPIC_API_KEY)?
-                .context("Chưa có API key Anthropic. Chạy `lai auth anthropic`.")?,
-        };
         Ok(Self {
             http: reqwest::Client::builder().timeout(Duration::from_secs(600)).build()?,
             api_key,
@@ -130,7 +126,7 @@ impl AnthropicSession {
                     let wait = retry_after.unwrap_or(2 * attempt).min(60);
                     tokio::time::sleep(Duration::from_secs(wait)).await;
                 }
-                401 => bail!("API key Anthropic không hợp lệ. Chạy lại `lai auth anthropic`."),
+                401 => bail!("API key Anthropic không hợp lệ. Nhập lại trong mục Kết nối (hoặc `lai auth key`)."),
                 _ => {
                     let message = serde_json::from_str::<Value>(&text)
                         .ok()

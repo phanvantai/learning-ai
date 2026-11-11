@@ -24,5 +24,12 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: harness
-      - run: cargo clippy --all-targets -- -D warnings
-      - run: cargo test
+      - name: Lint and test the core
+        run: |
+          cargo clippy --all-targets -- -D warnings
+          cargo test
+      # The desktop shell needs system WebView libraries on Linux; it is
+      # checked on the two platforms we ship installers for.
+      - name: Lint the desktop app
+        if: runner.os != 'Linux'
+        run: cargo clippy -p lai-app -- -D warnings

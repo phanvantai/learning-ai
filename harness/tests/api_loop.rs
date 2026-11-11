@@ -83,9 +83,9 @@ async fn runs_read_tools_and_queues_write_tools() {
     ))
     .unwrap();
     let ProviderConfig::Anthropic(provider) = &cfg.providers["api"] else { unreachable!() };
-    std::env::set_var("ANTHROPIC_API_KEY", "test-key");
     let mut session = AnthropicSession::new(
         provider,
+        "test-key".into(),
         "tro-ly",
         "system",
         Arc::new(registry),
@@ -136,10 +136,10 @@ async fn failed_turn_leaves_conversation_usable() {
     ))
     .unwrap();
     let ProviderConfig::Anthropic(provider) = &cfg.providers["api"] else { unreachable!() };
-    std::env::set_var("ANTHROPIC_API_KEY", "test-key");
     let dir = tempfile::tempdir().unwrap();
     let mut session = AnthropicSession::new(
         provider,
+        "test-key".into(),
         "a",
         "system",
         Arc::new(ToolRegistry::default()),

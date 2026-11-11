@@ -24,6 +24,15 @@ const MAX_BODY_CHARS: usize = 20_000;
 
 // ----------------------------------------------------------------- login ---
 
+/// An OAuth client baked into the build (`LAI_GMAIL_CLIENT_ID` / `LAI_GMAIL_CLIENT_SECRET`
+/// set when compiling), so the people you hand the app to need not create their own.
+pub fn builtin_client() -> Option<(&'static str, &'static str)> {
+    match (option_env!("LAI_GMAIL_CLIENT_ID"), option_env!("LAI_GMAIL_CLIENT_SECRET")) {
+        (Some(id), Some(secret)) if !id.is_empty() => Some((id, secret)),
+        _ => None,
+    }
+}
+
 /// Browser login (authorization code + PKCE on a loopback port). Stores the refresh token.
 pub async fn login(client_id: &str, client_secret: &str) -> Result<()> {
     let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await?;

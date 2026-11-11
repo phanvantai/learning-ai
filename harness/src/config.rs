@@ -4,7 +4,7 @@ use std::collections::BTreeMap;
 use std::path::PathBuf;
 
 use anyhow::{bail, Context, Result};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 /// Where config, queued approvals and reports live. `LAI_HOME` overrides the
 /// per-OS default (`~/Library/Application Support/lai`, `%APPDATA%\lai`, `~/.config/lai`).
@@ -21,9 +21,10 @@ pub fn config_path() -> PathBuf {
     home().join("config.toml")
 }
 
-#[derive(Debug, Default, Deserialize)]
+#[derive(Debug, Default, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct Config {
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub default_agent: Option<String>,
     #[serde(default)]
     pub providers: BTreeMap<String, ProviderConfig>,
@@ -35,14 +36,69 @@ pub struct Config {
     pub mcp_servers: BTreeMap<String, McpServerConfig>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(tag = "kind", rename_all = "kebab-case")]
 pub enum ProviderConfig {
+    /// Anthropic Messages API with an API key.
     Anthropic(AnthropicConfig),
+    /// Any OpenAI-compatible Chat Completions API with an API key
+    /// (OpenAI, Gemini, OpenRouter, Ollama, ...).
+    #[serde(rename = "openai")]
+    OpenAi(OpenAiConfig),
+    /// Claude subscription through the official Claude Code CLI.
     ClaudeCli(ClaudeCliConfig),
+    /// ChatGPT subscription through the official Codex CLI. Experimental.
+    CodexCli(CodexCliConfig),
 }
 
-#[derive(Debug, Deserialize)]
+impl ProviderConfig {
+    pub fn kind(&self) -> &'static str {
+        match self {
+            Self::Anthropic(_) => "anthropic",
+            Self::OpenAi(_) => "openai",
+            Self::ClaudeCli(_) => "claude-cli",
+            Self::CodexCli(_) => "codex-cli",
+        }
+    }
+
+    /// Environment variable that can supply the API key, for API-key providers.
+    pub fn key_env(&self) -> Option<&'static str> {
+        match self {
+            Self::Anthropic(_) => Some("ANTHROPIC_API_KEY"),
+            Self::OpenAi(_) => Some("OPENAI_API_KEY"),
+            Self::ClaudeCli(_) | Self::CodexCli(_) => None,
+        }
+    }
+
+    /// The CLI this provider drives, for subscription providers.
+    pub fn cli_command(&self) -> Option<&str> {
+        match self {
+            Self::ClaudeCli(c) => Some(&c.command),
+            Self::CodexCli(c) => Some(&c.command),
+            Self::Anthropic(_) | Self::OpenAi(_) => None,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct OpenAiConfig {
+    /// Model id as the endpoint names it. Required: there is no safe default across endpoints.
+    pub model: String,
+    #[serde(default = "default_openai_base_url")]
+    pub base_url: String,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct CodexCliConfig {
+    #[serde(default = "default_codex_command")]
+    pub command: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub model: Option<String>,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct AnthropicConfig {
     #[serde(default = "default_model")]
@@ -59,16 +115,17 @@ pub struct AnthropicConfig {
     pub fallbacks: bool,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct ClaudeCliConfig {
     /// Path or name of the official Claude Code CLI.
     #[serde(default = "default_claude_command")]
     pub command: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub model: Option<String>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct AgentConfig {
     pub provider: String,
@@ -83,17 +140,18 @@ pub struct AgentConfig {
     pub mcp_servers: Vec<String>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct JobConfig {
     pub name: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub agent: Option<String>,
     /// Standard 5-field cron in local time: minute hour day month weekday.
     pub schedule: String,
     pub prompt: String,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct McpServerConfig {
     pub command: String,
@@ -120,6 +178,12 @@ fn default_base_url() -> String {
 }
 fn default_claude_command() -> String {
     "claude".into()
+}
+fn default_codex_command() -> String {
+    "codex".into()
+}
+fn default_openai_base_url() -> String {
+    "https://api.openai.com/v1".into()
 }
 fn yes() -> bool {
     true
@@ -152,8 +216,41 @@ impl Config {
         Self::parse(&text).with_context(|| format!("File cấu hình {} có lỗi", path.display()))
     }
 
+    /// Load the config, creating the starter one on first use.
+    pub fn load_or_init() -> Result<Self> {
+        let path = config_path();
+        if !path.exists() {
+            std::fs::create_dir_all(home())?;
+            std::fs::write(&path, STARTER_CONFIG)?;
+        }
+        Self::load()
+    }
+
+    /// Validate and write the config back. Comments in the file are not kept.
+    pub fn save(&self) -> Result<()> {
+        let text = toml::to_string_pretty(self)?;
+        Self::parse(&text)?;
+        let path = config_path();
+        let tmp = path.with_extension("toml.tmp");
+        std::fs::write(&tmp, text)?;
+        std::fs::rename(&tmp, &path)?;
+        Ok(())
+    }
+
     pub fn parse(text: &str) -> Result<Self> {
         let cfg: Config = toml::from_str(text)?;
+        if let Some(name) = &cfg.default_agent {
+            cfg.agent(name).context("default_agent")?;
+        }
+        let mut seen = std::collections::BTreeSet::new();
+        for job in &cfg.jobs {
+            if !job.name.chars().all(|c| c.is_ascii_alphanumeric() || c == '-' || c == '_') || job.name.is_empty() {
+                bail!("tên job '{}' chỉ được gồm chữ không dấu, số, '-' và '_'", job.name);
+            }
+            if !seen.insert(&job.name) {
+                bail!("trùng tên job '{}'", job.name);
+            }
+        }
         for (name, agent) in &cfg.agents {
             if !cfg.providers.contains_key(&agent.provider) {
                 bail!("agent '{name}' trỏ tới provider '{}' chưa khai báo", agent.provider);
@@ -199,34 +296,45 @@ impl Config {
 }
 
 /// Written by `lai init`.
-pub const STARTER_CONFIG: &str = r#"# Cấu hình lai-harness. Sửa xong chạy `lai doctor` để kiểm tra.
+pub const STARTER_CONFIG: &str = r#"# Cấu hình lai-harness. Sửa tay được, hoặc dùng app (app ghi lại file này và bỏ chú thích).
 
 default_agent = "tro-ly"
 
 # --- Provider: "bộ não" của agent -------------------------------------------
 
-# Dùng API key Anthropic (trả theo lượng dùng). Nhập key bằng `lai auth anthropic`.
-[providers.api]
+# Gói Claude (Pro/Max) qua Claude Code CLI chính thức đã đăng nhập trên máy này.
+# lai chỉ gọi lệnh `claude`, không đọc token đăng nhập.
+[providers.goi-claude]
+kind = "claude-cli"
+
+# API key Anthropic (trả theo lượng dùng).
+[providers.claude-api]
 kind = "anthropic"
 model = "claude-opus-5-5"
 effort = "medium"          # low | medium | high | xhigh | max
 
-# Dùng gói subscription qua Claude Code CLI chính thức đã đăng nhập trên máy này.
-# lai chỉ gọi lệnh `claude`, không đọc token đăng nhập.
-[providers.goi-claude]
-kind = "claude-cli"
-# command = "claude"       # đổi nếu `claude` không nằm trong PATH
+# Các lựa chọn khác, bỏ dấu # để dùng:
+#
+# Gói ChatGPT qua Codex CLI chính thức (thử nghiệm):
+# [providers.goi-chatgpt]
+# kind = "codex-cli"
+#
+# API tương thích OpenAI (OpenAI, Gemini, OpenRouter, Ollama...). Phải ghi rõ model:
+# [providers.openai-api]
+# kind = "openai"
+# model = "ten-model"
+# base_url = "https://api.openai.com/v1"
 
 # --- Agent ------------------------------------------------------------------
 
 [agents.tro-ly]
-provider = "api"           # đổi thành "goi-claude" để dùng gói subscription
+provider = "goi-claude"
 tools = ["gmail_search", "gmail_read", "gmail_send"]
 instructions = """
 Ưu tiên thư từ người thật hơn thư quảng cáo, thông báo tự động.
 """
 
-# --- Việc chạy theo lịch (cần `lai daemon` đang chạy) ------------------------
+# --- Việc chạy theo lịch ------------------------------------------------------
 # Lịch viết theo cron 5 trường, giờ máy: phút giờ ngày tháng thứ (1 = thứ Hai).
 
 [[jobs]]
@@ -255,6 +363,15 @@ mod tests {
         let cfg = Config::parse(STARTER_CONFIG).unwrap();
         assert_eq!(cfg.agent_name(None).unwrap(), "tro-ly");
         assert_eq!(cfg.jobs.len(), 1);
+    }
+
+    #[test]
+    fn survives_a_save_round_trip() {
+        let cfg = Config::parse(STARTER_CONFIG).unwrap();
+        let again = Config::parse(&toml::to_string_pretty(&cfg).unwrap()).unwrap();
+        assert_eq!(again.jobs[0].schedule, "0 7 * * 1-5");
+        assert_eq!(again.providers["claude-api"].kind(), "anthropic");
+        assert!(again.agents["tro-ly"].instructions.contains("người thật"));
     }
 
     #[test]

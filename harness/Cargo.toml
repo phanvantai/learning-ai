@@ -6,6 +6,10 @@ description = "Trợ lý AI cá nhân: agent nhận việc, tự kiểm tra mail
 license = "MIT"
 publish = false
 
+[workspace]
+members = ["app"]
+default-members = ["."]
+
 [[bin]]
 name = "lai"
 path = "src/main.rs"
@@ -13,6 +17,7 @@ path = "src/main.rs"
 [dependencies]
 anyhow = "1"
 async-trait = "0.1"
+axum = "0.8"
 base64 = "0.22"
 chrono = { version = "0.4", features = ["serde"] }
 clap = { version = "4", features = ["derive"] }

@@ -1,0 +1,18 @@
+[package]
+name = "lai-app"
+version = "0.1.0"
+edition = "2021"
+description = "Trợ lý AI: app desktop của lai-harness"
+license = "MIT"
+publish = false
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+anyhow = "1"
+lai-harness = { path = ".." }
+tauri = { version = "2", features = ["tray-icon"] }
+tauri-plugin-autostart = "2"
+tauri-plugin-notification = "2"
+tauri-plugin-single-instance = "2"

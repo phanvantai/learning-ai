@@ -7,10 +7,21 @@ use std::path::PathBuf;
 
 use anyhow::{Context, Result};
 
-pub const ANTHROPIC_API_KEY: &str = "anthropic_api_key";
 pub const GMAIL_CLIENT_ID: &str = "gmail_client_id";
 pub const GMAIL_CLIENT_SECRET: &str = "gmail_client_secret";
 pub const GMAIL_REFRESH_TOKEN: &str = "gmail_refresh_token";
+
+/// The API key for a provider: its environment variable if set, else the stored key.
+pub fn provider_key(provider: &str, env_var: &str) -> Result<Option<String>> {
+    match std::env::var(env_var) {
+        Ok(key) if !key.is_empty() => Ok(Some(key)),
+        _ => get(&format!("api_key:{provider}")),
+    }
+}
+
+pub fn set_provider_key(provider: &str, key: &str) -> Result<()> {
+    set(&format!("api_key:{provider}"), key)
+}
 
 fn use_file() -> bool {
     cfg!(not(any(target_os = "macos", target_os = "windows")))
