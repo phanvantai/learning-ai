@@ -43,8 +43,9 @@ pub fn resolve(name: &str) -> Option<PathBuf> {
     if Path::new(name).components().count() > 1 {
         return Path::new(name).is_file().then(|| name.into());
     }
-    // On Windows npm installs `.cmd` shims, which are only found by full name.
-    let extensions: &[&str] = if cfg!(windows) { &["", ".exe", ".cmd", ".bat"] } else { &[""] };
+    // On Windows only these can be started. npm also drops an extensionless
+    // shell script next to its `.cmd` shim; picking that one fails to launch.
+    let extensions: &[&str] = if cfg!(windows) { &[".exe", ".cmd", ".bat"] } else { &[""] };
     std::env::split_paths(&search_path())
         .flat_map(|dir| extensions.iter().map(move |ext| dir.join(format!("{name}{ext}"))))
         .find(|candidate| candidate.is_file())

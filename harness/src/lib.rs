@@ -70,17 +70,29 @@ fn provider_session(
     let registry = Arc::new(registry);
     Ok(match provider {
         ProviderConfig::Anthropic(p) => {
-            let key = secrets::provider_key(provider_name, "ANTHROPIC_API_KEY")?
+            let key = provider_api_key(provider_name, provider)?
                 .with_context(|| format!("Chưa có API key cho '{provider_name}'."))?;
             Box::new(anthropic::AnthropicSession::new(p, key, agent_name, system, registry, approver)?)
         }
         ProviderConfig::OpenAi(p) => {
-            let key = secrets::provider_key(provider_name, "OPENAI_API_KEY")?;
+            let key = provider_api_key(provider_name, provider)?;
             Box::new(openai::OpenAiSession::new(p, provider_name, key, agent_name, system, registry, approver)?)
         }
         ProviderConfig::ClaudeCli(p) => Box::new(claude_cli::ClaudeCliSession::new(p, agent_name, system)?),
         ProviderConfig::CodexCli(p) => Box::new(codex_cli::CodexCliSession::new(p, agent_name, system)?),
     })
+}
+
+/// The API key to use for a provider: the one saved for it, else the vendor's
+/// usual environment variable. The variable is never sent to a custom
+/// endpoint, where it would be someone else's key.
+pub fn provider_api_key(name: &str, provider: &ProviderConfig) -> Result<Option<String>> {
+    let env_var = match provider {
+        ProviderConfig::Anthropic(_) => Some("ANTHROPIC_API_KEY"),
+        ProviderConfig::OpenAi(p) if p.base_url.contains("api.openai.com") => Some("OPENAI_API_KEY"),
+        _ => None,
+    };
+    secrets::provider_key(name, env_var)
 }
 
 /// Ask a provider for one word, to prove it is reachable and signed in.
@@ -118,26 +130,35 @@ pub async fn mcp_serve(agent: &str) -> Result<()> {
 /// Carry out a queued action the user has just approved.
 pub async fn approve_action(id: &str) -> Result<String> {
     let store = approval::ApprovalStore::default();
-    let action = store.pending(id)?;
-    let cfg = Config::load()?;
-    let registry = tools::build_registry(&cfg, &action.agent).await?;
-    let tool = registry
-        .get(&action.tool)
-        .with_context(|| format!("Agent '{}' không còn công cụ '{}'", action.agent, action.tool))?;
-    // The human approved this exact input, so the tool is called directly.
-    // On failure the action stays pending and can be approved again.
-    let result = tool
-        .call(action.input)
-        .await
-        .with_context(|| format!("Chưa thực hiện được; '{id}' vẫn nằm trong hàng chờ"))?;
-    store.resolve(id, approval::Status::Done, Some(result.clone()))?;
-    Ok(result)
+    // Claim first: from here on a second click, tab or `lai approvals approve`
+    // finds it taken, so one approval can never act twice.
+    let action = store.claim(id, approval::Status::Executing)?;
+    let outcome = async {
+        let cfg = Config::load()?;
+        let registry = tools::build_registry(&cfg, &action.agent).await?;
+        let tool = registry
+            .get(&action.tool)
+            .with_context(|| format!("Agent '{}' không còn công cụ '{}'", action.agent, action.tool))?;
+        // The human approved this exact input, so the tool is called directly.
+        tool.call(action.input.clone()).await
+    }
+    .await;
+    match outcome {
+        Ok(result) => {
+            // If this write fails the action stays "executing", never pending:
+            // it has happened and must not be offered again.
+            store.resolve(id, approval::Status::Done, Some(result.clone()))?;
+            Ok(result)
+        }
+        Err(e) => {
+            store.resolve(id, approval::Status::Pending, None)?;
+            Err(e.context(format!("Chưa thực hiện được; '{id}' vẫn nằm trong hàng chờ")))
+        }
+    }
 }
 
 pub fn reject_action(id: &str) -> Result<()> {
-    let store = approval::ApprovalStore::default();
-    store.pending(id)?;
-    store.resolve(id, approval::Status::Rejected, None)
+    approval::ApprovalStore::default().claim(id, approval::Status::Rejected).map(|_| ())
 }
 
 /// What the surrounding program (desktop app or plain CLI) can do for us.

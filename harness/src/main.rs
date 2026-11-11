@@ -111,7 +111,7 @@ async fn run(cli: Cli) -> Result<()> {
         Command::Auth { target: AuthTarget::Key { provider } } => {
             let cfg = Config::load()?;
             let with_keys: Vec<&String> =
-                cfg.providers.iter().filter(|(_, p)| p.key_env().is_some()).map(|(name, _)| name).collect();
+                cfg.providers.iter().filter(|(_, p)| p.cli_command().is_none()).map(|(name, _)| name).collect();
             let name = match provider {
                 Some(name) if with_keys.iter().any(|n| **n == name) => name,
                 Some(name) => bail!("'{name}' không phải provider dùng API key"),
@@ -233,19 +233,16 @@ fn doctor() -> Result<()> {
     let mark = |ok: bool| if ok { "✓" } else { "✗" };
 
     for (name, provider) in &cfg.providers {
-        let ok = match (provider.cli_command(), provider.key_env()) {
-            (Some(command), _) => {
-                let found = lai_harness::proc::resolve(command);
-                println!(
-                    "{} provider '{name}': lệnh `{command}`{}",
-                    mark(found.is_some()),
-                    if found.is_some() { " (chưa kiểm tra được trạng thái đăng nhập)" } else { " — chưa cài hoặc không tìm thấy" }
-                );
-                continue;
-            }
-            (None, Some(env)) => secrets::provider_key(name, env)?.is_some(),
-            (None, None) => false,
-        };
+        if let Some(command) = provider.cli_command() {
+            let found = lai_harness::proc::resolve(command).is_some();
+            println!(
+                "{} provider '{name}': lệnh `{command}`{}",
+                mark(found),
+                if found { " (chạy `lai ui` rồi bấm Thử kết nối để kiểm tra đăng nhập)" } else { " — chưa cài hoặc không tìm thấy" }
+            );
+            continue;
+        }
+        let ok = lai_harness::provider_api_key(name, provider)?.is_some();
         println!("{} provider '{name}': API key{}", mark(ok), if ok { String::new() } else { format!(" — chạy `lai auth key {name}`") });
     }
     let uses_gmail = cfg.agents.values().any(|a| a.tools.iter().any(|t| t.starts_with("gmail_")));

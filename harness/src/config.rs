@@ -61,15 +61,6 @@ impl ProviderConfig {
         }
     }
 
-    /// Environment variable that can supply the API key, for API-key providers.
-    pub fn key_env(&self) -> Option<&'static str> {
-        match self {
-            Self::Anthropic(_) => Some("ANTHROPIC_API_KEY"),
-            Self::OpenAi(_) => Some("OPENAI_API_KEY"),
-            Self::ClaudeCli(_) | Self::CodexCli(_) => None,
-        }
-    }
-
     /// The CLI this provider drives, for subscription providers.
     pub fn cli_command(&self) -> Option<&str> {
         match self {

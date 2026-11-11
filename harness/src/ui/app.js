@@ -191,7 +191,7 @@ const closeDialog = () => $("dialog").close();
 
 // ------------------------------------------------------------------ shell ---
 
-async function refresh() {
+async function refresh(fromTimer) {
   try {
     state = await api("GET", "/state");
   } catch (e) {
@@ -211,7 +211,9 @@ async function refresh() {
     if (!$("onboarding").dataset.started) renderWizard();
   } else {
     delete $("onboarding").dataset.started;
-    render();
+    // The timer only keeps lists and badges fresh. Rebuilding the chat would
+    // yank the scroll position and drop a text selection every few seconds.
+    if (!(fromTimer && view === "chat")) render();
   }
 }
 
@@ -286,6 +288,7 @@ function renderChat() {
   for (const m of chat.messages) {
     if (m.role === "user") nodes.push(h("div", { class: "msg user" }, m.text));
     else if (m.role === "error") nodes.push(h("div", { class: "msg error" }, m.text));
+    else if (m.role === "note") nodes.push(h("div", { class: "msg note" }, m.text));
     else nodes.push(rich("msg bot", m.text));
   }
   if (chat.busy) nodes.push(h("div", { class: "msg note thinking" }, "Trợ lý đang làm việc"));
@@ -316,6 +319,7 @@ async function sendChat(text) {
       agent: $("chat-agent").value || null,
       message: text,
     });
+    if (reply.restarted) chat.messages.push({ role: "note", text: "Trợ lý vừa bắt đầu lại nên không còn nhớ phần trò chuyện phía trên." });
     chat.sessionId = reply.session_id;
     chat.messages.push({ role: "bot", text: reply.answer || "(Trợ lý không trả lời gì.)" });
   } catch (e) {
@@ -1075,6 +1079,8 @@ for (const item of document.querySelectorAll(".nav-item")) {
 }
 $("composer").addEventListener("submit", (event) => {
   event.preventDefault();
+  // While the assistant is working, keep what was typed instead of dropping it.
+  if (chat.busy) return;
   const input = $("chat-input");
   const text = input.value;
   input.value = "";
@@ -1103,5 +1109,5 @@ if (!token) {
   show("chat");
   refresh();
   // Keep the pending badge and job status fresh; skip while a dialog is open.
-  setInterval(() => !$("dialog").open && refresh(), 15000);
+  setInterval(() => !$("dialog").open && refresh(true), 15000);
 }

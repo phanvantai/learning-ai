@@ -234,7 +234,7 @@ fn provider_status(name: &str, provider: &ProviderConfig) -> Result<(bool, Strin
             None => (false, format!("Chưa tìm thấy lệnh `{command}` trên máy")),
         });
     }
-    let has_key = secrets::provider_key(name, provider.key_env().unwrap_or_default())?.is_some();
+    let has_key = crate::provider_api_key(name, provider)?.is_some();
     Ok(match provider {
         _ if has_key => (true, "Đã có API key".into()),
         // Local endpoints (Ollama and the like) need no key.
@@ -259,22 +259,26 @@ async fn chat(State(app): State<AppState>, Json(body): Json<ChatBody>) -> Api {
         Some(id) => app.sessions.lock().await.get(id).cloned().map(|s| (id.clone(), s)),
         None => None,
     };
-    let (id, session, first) = match existing {
-        Some((id, session)) => (id, session, false),
+    let is_new = existing.is_none();
+    let (id, session) = match existing {
+        Some(found) => found,
         None => {
             let cfg = Config::load()?;
             let agent = cfg.agent_name(body.agent.as_deref())?;
             // Nobody can answer a terminal prompt here: writes go to the queue the UI shows.
             let session = crate::open_session(&cfg, &agent, crate::approval::queue()).await?;
-            let session = Arc::new(Mutex::new(session));
-            let id = uuid::Uuid::new_v4().simple().to_string();
-            app.sessions.lock().await.insert(id.clone(), session.clone());
-            (id, session, true)
+            (uuid::Uuid::new_v4().simple().to_string(), Arc::new(Mutex::new(session)))
         }
     };
-    let message = if first { crate::with_timestamp(&body.message) } else { body.message };
+    let message = if is_new { crate::with_timestamp(&body.message) } else { body.message };
     let answer = session.lock().await.send(&message).await?;
-    Ok(Json(json!({"session_id": id, "answer": answer})))
+    if is_new {
+        // Kept only once it has answered, so failed attempts leave nothing behind.
+        app.sessions.lock().await.insert(id.clone(), session);
+    }
+    // `restarted`: the UI thought it was continuing a chat we no longer hold
+    // (settings changed, app restarted), so the model did not see the earlier turns.
+    Ok(Json(json!({"session_id": id, "answer": answer, "restarted": is_new && body.session_id.is_some()})))
 }
 
 async fn end_chat(State(app): State<AppState>, Path(session): Path<String>) -> Api {
@@ -336,13 +340,18 @@ async fn delete_job(State(app): State<AppState>, Path(name): Path<String>) -> Ap
 
 async fn run_job(State(app): State<AppState>, Path(name): Path<String>) -> Api {
     let cfg = Config::load()?;
-    let job = cfg.job(&name)?;
+    let job = cfg.job(&name)?.clone();
     if !app.running_jobs.lock().await.insert(name.clone()) {
         return Err(anyhow!("Việc '{name}' đang chạy rồi").into());
     }
-    let result = scheduler::run_job(&cfg, job).await;
-    app.running_jobs.lock().await.remove(&name);
-    let (report, path) = result?;
+    // Run detached: if the window reloads mid-run the job still finishes,
+    // files its report, and is no longer marked as running.
+    let task = tokio::spawn(async move {
+        let result = scheduler::run_job(&cfg, &job).await;
+        app.running_jobs.lock().await.remove(&job.name);
+        result
+    });
+    let (report, path) = task.await.context("Việc bị dừng đột ngột")??;
     let file = path.file_name().map(|f| f.to_string_lossy().into_owned());
     Ok(Json(json!({"report": report, "file": file})))
 }

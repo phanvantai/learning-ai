@@ -178,7 +178,14 @@ impl AnthropicSession {
                 }
                 // A server-side pause: send the conversation back to let it continue.
                 "pause_turn" => {}
-                "max_tokens" => return Ok(format!("{text}\n\n[Câu trả lời bị cắt vì chạm giới hạn max_tokens.]")),
+                "max_tokens" => {
+                    // Cut off mid tool call: the history would end on a call with
+                    // no result and poison the chat, so fail the turn (it is rolled back).
+                    if content.iter().any(|b| b["type"] == "tool_use") {
+                        bail!("Câu trả lời bị cắt giữa chừng vì chạm giới hạn max_tokens. Hãy thử lại hoặc tăng max_tokens.");
+                    }
+                    return Ok(format!("{text}\n\n[Câu trả lời bị cắt vì chạm giới hạn max_tokens.]"));
+                }
                 _ => return Ok(text),
             }
         }

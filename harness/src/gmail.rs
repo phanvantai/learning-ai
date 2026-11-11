@@ -119,10 +119,14 @@ async fn wait_for_code(listener: &tokio::net::TcpListener, state: &str) -> Resul
         let (stream, _) = listener.accept().await?;
         let mut stream = BufReader::new(stream);
         let mut request_line = String::new();
-        stream.read_line(&mut request_line).await?;
+        // Browsers open spare connections that never send anything; skip those.
+        match tokio::time::timeout(Duration::from_secs(3), stream.read_line(&mut request_line)).await {
+            Ok(Ok(_)) => {}
+            _ => continue,
+        }
         // "GET /?code=...&state=... HTTP/1.1"
         let path = request_line.split_whitespace().nth(1).unwrap_or("/");
-        let url = url::Url::parse(&format!("http://127.0.0.1{path}"))?;
+        let Ok(url) = url::Url::parse(&format!("http://127.0.0.1{path}")) else { continue };
         let param = |key: &str| url.query_pairs().find(|(k, _)| k == key).map(|(_, v)| v.to_string());
 
         let outcome = match (param("code"), param("error")) {
@@ -330,9 +334,20 @@ fn body_text(payload: &Value) -> String {
 }
 
 fn strip_html(html: &str) -> String {
+    // Drop what is not message text at all, so a large stylesheet cannot
+    // crowd the real content out of the length cap.
+    let mut text = html.to_string();
+    for (open, close) in [("<!--", "-->"), ("<style", "</style>"), ("<script", "</script>"), ("<head", "</head>")] {
+        loop {
+            let lower = text.to_ascii_lowercase();
+            let Some(start) = lower.find(open) else { break };
+            let end = lower[start..].find(close).map_or(text.len(), |i| start + i + close.len());
+            text.replace_range(start..end, " ");
+        }
+    }
     let mut out = String::new();
     let mut in_tag = false;
-    for c in html.chars() {
+    for c in text.chars() {
         match c {
             '<' => in_tag = true,
             '>' => {
@@ -343,6 +358,13 @@ fn strip_html(html: &str) -> String {
             _ => {}
         }
     }
+    let out = out
+        .replace("&nbsp;", " ")
+        .replace("&lt;", "<")
+        .replace("&gt;", ">")
+        .replace("&quot;", "\"")
+        .replace("&#39;", "'")
+        .replace("&amp;", "&");
     out.split_whitespace().collect::<Vec<_>>().join(" ")
 }
 
@@ -516,5 +538,9 @@ mod tests {
         assert_eq!(body_text(&multipart), "văn bản");
         let html_only = json!({"mimeType": "text/html", "body": {"data": b64("<p>Xin <b>chào</b></p>")}});
         assert_eq!(body_text(&html_only), "Xin chào");
+        let newsletter = json!({"mimeType": "text/html", "body": {"data": b64(
+            "<html><head><title>t</title><STYLE>p { color: red }</STYLE></head><body><!-- ẩn --><p>Tom &amp; Lan</p><script>x()</script></body></html>"
+        )}});
+        assert_eq!(body_text(&newsletter), "Tom & Lan");
     }
 }

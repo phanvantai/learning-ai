@@ -13,7 +13,10 @@ pub fn parse_schedule(expr: &str) -> Result<Cron> {
     if expr.split_whitespace().count() != 5 {
         anyhow::bail!("cần đúng 5 trường: phút giờ ngày tháng thứ");
     }
-    Ok(Cron::new(expr).parse()?)
+    let cron = Cron::new(expr).parse()?;
+    // "31 February" parses but never comes.
+    cron.find_next_occurrence(&Local::now(), false).map_err(|_| anyhow::anyhow!("lịch này không bao giờ tới"))?;
+    Ok(cron)
 }
 
 pub fn next_run(job: &JobConfig, after: DateTime<Local>) -> Result<DateTime<Local>> {
@@ -29,7 +32,10 @@ pub fn reports_dir(job: &str) -> PathBuf {
 pub async fn run_job(cfg: &Config, job: &JobConfig) -> Result<(String, PathBuf)> {
     let agent = cfg.agent_name(job.agent.as_deref())?;
     let mut session = crate::open_session(cfg, &agent, crate::approval::queue()).await?;
-    let report = session.send(&crate::with_timestamp(&job.prompt)).await?;
+    // A stuck run must not hold up every later job.
+    let report = tokio::time::timeout(std::time::Duration::from_secs(900), session.send(&crate::with_timestamp(&job.prompt)))
+        .await
+        .context("Việc chạy quá 15 phút nên đã bị dừng")??;
 
     let dir = reports_dir(&job.name);
     std::fs::create_dir_all(&dir)?;
@@ -107,6 +113,11 @@ mod tests {
         let next = next_run(&job, saturday).unwrap();
         assert_eq!(next.weekday(), Weekday::Mon);
         assert_eq!((next.day(), next.hour(), next.minute()), (16, 7, 0));
+    }
+
+    #[test]
+    fn rejects_dates_that_never_come() {
+        assert!(parse_schedule("0 7 31 2 *").is_err());
     }
 
     #[test]

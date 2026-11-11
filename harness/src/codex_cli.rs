@@ -54,7 +54,9 @@ impl Session for CodexCliSession {
         if let Some(id) = &self.thread_id {
             cmd.args(["resume", id]);
         }
-        cmd.args(["--json", "--skip-git-repo-check"])
+        // Without the user's own config, their other MCP servers are not loaded:
+        // the agent gets our tools and nothing that skips the approval queue.
+        cmd.args(["--json", "--skip-git-repo-check", "--ignore-user-config"])
             .args(config_override("sandbox_mode", "read-only".into()))
             .args(config_override("mcp_servers.lai.command", exe.to_string_lossy().into_owned().into()))
             .args(config_override(
@@ -96,7 +98,10 @@ impl Session for CodexCliSession {
         let mut stdin = child.stdin.take().expect("stdin was piped");
         stdin.write_all(prompt.as_bytes()).await?;
         drop(stdin);
-        let output = child.wait_with_output().await?;
+        // Dropping the child on timeout kills it (`kill_on_drop`).
+        let output = tokio::time::timeout(std::time::Duration::from_secs(600), child.wait_with_output())
+            .await
+            .context("Codex CLI không trả lời sau 10 phút nên đã bị dừng")??;
 
         let mut last_error = None;
         for event in String::from_utf8_lossy(&output.stdout).lines().filter_map(|l| serde_json::from_str::<Value>(l).ok())

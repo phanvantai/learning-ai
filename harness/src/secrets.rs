@@ -13,12 +13,12 @@ pub const GMAIL_REFRESH_TOKEN: &str = "gmail_refresh_token";
 /// Not secret; kept here so it lives and dies with the login.
 pub const GMAIL_ADDRESS: &str = "gmail_address";
 
-/// The API key for a provider: its environment variable if set, else the stored key.
-pub fn provider_key(provider: &str, env_var: &str) -> Result<Option<String>> {
-    match std::env::var(env_var) {
-        Ok(key) if !key.is_empty() => Ok(Some(key)),
-        _ => get(&format!("api_key:{provider}")),
+/// The API key saved for a provider, else `env_var` if one is given and set.
+pub fn provider_key(provider: &str, env_var: Option<&str>) -> Result<Option<String>> {
+    if let Some(key) = get(&format!("api_key:{provider}"))? {
+        return Ok(Some(key));
     }
+    Ok(env_var.and_then(|name| std::env::var(name).ok()).filter(|key| !key.is_empty()))
 }
 
 pub fn set_provider_key(provider: &str, key: &str) -> Result<()> {

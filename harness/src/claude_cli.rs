@@ -93,7 +93,10 @@ impl Session for ClaudeCliSession {
         stdin.write_all(user.as_bytes()).await?;
         drop(stdin);
 
-        let output = child.wait_with_output().await?;
+        // Dropping the child on timeout kills it (`kill_on_drop`).
+        let output = tokio::time::timeout(std::time::Duration::from_secs(600), child.wait_with_output())
+            .await
+            .context("Claude CLI không trả lời sau 10 phút nên đã bị dừng")??;
         let stdout = String::from_utf8_lossy(&output.stdout);
         let reply: Value = match serde_json::from_str(stdout.trim()) {
             Ok(v) => v,

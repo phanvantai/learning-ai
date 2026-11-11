@@ -34,7 +34,7 @@ async fn sends_rules_once_and_resumes_the_thread() {
 
     let calls = std::fs::read_to_string(&log).unwrap();
     let lines: Vec<&str> = calls.lines().collect();
-    assert!(lines[0].starts_with("exec --json --skip-git-repo-check -c sandbox_mode=\"read-only\""), "{}", lines[0]);
+    assert!(lines[0].starts_with("exec --json --skip-git-repo-check --ignore-user-config -c sandbox_mode=\"read-only\""), "{}", lines[0]);
     assert!(lines[0].contains("mcp_servers.lai.args=[\"mcp-serve\", \"--agent\", \"tro-ly\"]"), "{}", lines[0]);
     assert!(lines[0].contains("-m m1 -"), "{}", lines[0]);
     assert!(lines[1].contains("QUY TẮC") && lines[1].contains("việc một"), "{}", lines[1]);
