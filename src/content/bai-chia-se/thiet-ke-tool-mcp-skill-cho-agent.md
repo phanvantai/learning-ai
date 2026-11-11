@@ -2,7 +2,7 @@
 title: "Thiết kế tool cho agent: từ tool calling đến MCP và Skills"
 date: 2026-11-09
 tags: [MCP, Agent, Harness]
-description: Tool calling chạy thế nào ở mức API, viết tool sao cho model dùng đúng, vì sao nối nhiều MCP server làm phình context và ba lối ra hiện có. Kèm ví dụ tool definition xấu và tốt, bảng chọn giữa MCP, Skill và CLI.
+description: Tool calling chạy thế nào ở mức API, viết tool sao cho model dùng đúng, vì sao nối nhiều MCP server làm phình context và hai lối ra hiện có. Kèm ví dụ tool definition xấu và tốt, bảng chọn giữa MCP, Skill và CLI.
 loai: chuyen-sau
 ---
 

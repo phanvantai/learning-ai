@@ -147,7 +147,7 @@ Mỗi phiên mới bắt đầu với context trắng. Memory file (CLAUDE.md c�
 
 Kiểu hỏng phổ biến là file phình to. Mỗi dòng được nạp vào mọi phiên, kể cả phiên làm việc không liên quan. Tiêu chí lọc của tài liệu Claude Code: giữ những gì model không tự lấy được từ việc đọc repo. Tài liệu cũng nói thêm chữ "IMPORTANT" vào một dòng hay bị sót thường không giúp gì. Hoặc file đã quá dài, hoặc dòng đó là luật cứng và thuộc về hook.
 
-Bài "Harness engineering" của OpenAI (2/2026, kể về việc xây một sản phẩm nội bộ bằng Codex) được dẫn lại nhiều với cùng hướng: giữ AGENTS.md ngắn như một mục lục trỏ sang thư mục tài liệu có cấu trúc. Lưu ý về độ tin cậy: trang gốc chặn truy cập tự động nên mình chưa đọc được nguyên văn, chỉ đối chiếu được ngày đăng và ý này qua kết quả tìm kiếm. Bạn nên đọc bài gốc trước khi trích lại.
+Bài "Harness engineering" của OpenAI (2/2026, kể về việc xây một sản phẩm nội bộ bằng Codex) được dẫn lại nhiều với cùng hướng: giữ AGENTS.md ngắn như một mục lục trỏ sang thư mục tài liệu có cấu trúc. Về độ tin cậy, trang gốc chặn truy cập tự động nên mình chưa đọc được nguyên văn, chỉ đối chiếu được ngày đăng và ý này qua kết quả tìm kiếm. Bạn nên đọc bài gốc trước khi trích lại.
 
 ### 9. Vòng kiểm chứng
 
