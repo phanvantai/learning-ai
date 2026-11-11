@@ -1,24 +1,20 @@
 ---
-title: "AI cho bán hàng và chăm sóc khách hàng: 6 việc giao được và 3 việc phải giữ"
+title: "AI trong bán hàng và chăm sóc khách hàng: giao phần gõ chữ, giữ phần cam kết"
 date: 2026-11-11
 tags: [Bán hàng, Chăm sóc khách hàng, Quy trình làm việc]
 description: Chuẩn bị cuộc gặp, cập nhật CRM, soạn báo giá, trả lời câu hỏi lặp lại, xử lý khiếu nại, luyện xử lý từ chối. Mỗi việc có câu lệnh mẫu, cách kiểm tra, và ranh giới AI không được vượt.
 loai: ung-dung
 ---
 
-Phần lớn thời gian của người bán hàng không nằm ở lúc nói chuyện với khách. Nó nằm ở việc tìm hiểu trước cuộc gặp, ghi chép sau cuộc gọi, soạn báo giá, và trả lời đi trả lời lại cùng một câu hỏi trên Zalo. Đây là những việc AI đỡ được nhiều. Phần còn lại, gồm quan hệ với khách, cam kết về giá và quyết định bồi thường, vẫn phải là của người.
+Phần lớn thời gian của người bán hàng không nằm ở lúc nói chuyện với khách. Nó nằm ở việc tìm hiểu trước cuộc gặp, ghi chép sau cuộc gọi, soạn báo giá, và trả lời đi trả lời lại cùng một câu hỏi trên Zalo. Đây là những việc AI đỡ được nhiều. Quan hệ với khách, cam kết về giá và quyết định bồi thường vẫn phải là của người.
 
-Mình là kỹ sư phần mềm, không phải dân bán hàng. Bài này không dạy kỹ thuật chốt đơn. Nó chỉ ra chỗ nào trong quy trình có thể đưa AI vào, đưa như thế nào, và kiểm tra ra sao.
+Mình là kỹ sư phần mềm, không phải dân bán hàng. Bài này không dạy kỹ thuật chốt đơn, chỉ nói chỗ nào trong quy trình đưa AI vào được và kiểm tra ra sao.
 
-## Ba ranh giới đặt ra trước
-
-Nói trước ba điều này vì chúng áp dụng cho mọi việc bên dưới.
+## Hai ranh giới đặt ra trước
 
 **AI không được tự cam kết giá và chính sách.** Mô hình ngôn ngữ có thể viết ra một mức chiết khấu, thời hạn bảo hành hay điều kiện đổi trả nghe rất hợp lý và hoàn toàn không có thật. Với khách, tin nhắn gửi từ tài khoản của công ty là lời của công ty. Mọi con số và cam kết phải lấy từ bảng giá, chính sách đã duyệt, và có người đọc trước khi gửi.
 
-**Không dán dữ liệu khách hàng vào công cụ chưa được công ty cho phép.** Tên, số điện thoại, địa chỉ, lịch sử mua hàng, nội dung trao đổi là dữ liệu cá nhân, và còn là tài sản của công ty. Luật Bảo vệ dữ liệu cá nhân (số 91/2025/QH15) có hiệu lực từ 01/01/2026. Hỏi quản lý xem công ty cho dùng công cụ nào. Khi chưa rõ, thay tên bằng "khách A", "công ty B" và xóa số điện thoại, số hợp đồng trước khi dán.
-
-**Tin nhắn hàng loạt cá nhân hóa giả tạo phản tác dụng.** Phần này có một mục riêng ở cuối bài.
+**Không dán dữ liệu khách hàng vào công cụ chưa được công ty cho phép.** Tên, số điện thoại, địa chỉ, lịch sử mua hàng, nội dung trao đổi là dữ liệu cá nhân, thuộc phạm vi Luật Bảo vệ dữ liệu cá nhân (số 91/2025/QH15, hiệu lực từ 01/01/2026), và còn là tài sản của công ty. Hỏi quản lý xem công ty cho dùng công cụ nào. Khi chưa rõ, thay tên bằng "khách A", "công ty B" và xóa số điện thoại, số hợp đồng trước khi dán.
 
 ## Việc nào giao, việc nào giữ
 
@@ -34,7 +30,7 @@ Nói trước ba điều này vì chúng áp dụng cho mọi việc bên dướ
 
 ## 1. Chuẩn bị trước cuộc gặp
 
-Với khách doanh nghiệp, việc cần làm là đọc website, tin tức, trang tuyển dụng của họ để hiểu họ đang làm gì và có thể cần gì. AI làm việc này nhanh, với một điều kiện: công cụ phải có chức năng tìm kiếm web và phải đưa link nguồn. Nếu hỏi một công cụ không tra web về một công ty Việt Nam cỡ vừa, rất dễ nhận về thông tin bịa hoặc nhầm sang công ty trùng tên.
+Với khách doanh nghiệp, việc cần làm là đọc website, tin tức, trang tuyển dụng của họ để hiểu họ đang làm gì và có thể cần gì. AI làm việc này nhanh, với một điều kiện: công cụ phải có chức năng tìm kiếm web và phải đưa link nguồn. Hỏi một công cụ không tra web về một công ty Việt Nam cỡ vừa, rất dễ nhận về thông tin bịa hoặc nhầm sang công ty trùng tên.
 
 ```text
 Tôi sắp gặp [chức danh] của [tên công ty, website] để giới thiệu [sản phẩm/dịch vụ của tôi].
@@ -49,7 +45,7 @@ Hãy tìm thông tin công khai và tóm tắt trong một trang:
 
 Cách kiểm tra: bấm vào link của những ý bạn định nhắc trong cuộc gặp. Nói sai về công ty của khách ngay trước mặt họ thì tệ hơn là không chuẩn bị. Kiểm tra cả ngày tháng của tin, vì AI hay trộn tin cũ với tin mới.
 
-Với khách cá nhân, đừng dùng AI để "điều tra" trang cá nhân của họ. Dùng ghi chú từ các lần trao đổi trước là đủ, và khách cũng không thấy bị soi.
+Với khách cá nhân, đừng dùng AI để "điều tra" trang cá nhân của họ. Ghi chú từ các lần trao đổi trước là đủ, và khách cũng không thấy bị soi.
 
 ## 2. Từ ghi chú cuộc gọi thành cập nhật CRM và email follow-up
 
@@ -74,13 +70,13 @@ Chỉ dùng thông tin trong ghi chú. Không thêm giá, ưu đãi hay cam kế
 [Dán ghi chú]
 ```
 
-Cách kiểm tra: đọc mục "việc tôi đã hứa" trước tiên. AI hay làm hai lỗi ở đây: biến "để em hỏi lại sếp về mức giảm" thành "em sẽ gửi mức giảm", và tự điền một ngày hẹn cho tròn. Mỗi lời hứa trong email là một việc bạn phải làm thật.
+Cách kiểm tra: đọc mục "việc tôi đã hứa" trước tiên. AI hay làm hai lỗi ở đây: biến "để em hỏi lại sếp về mức giảm" thành "em sẽ gửi mức giảm", và tự điền một ngày hẹn cho tròn. Mỗi lời hứa trong email là một việc bạn phải làm thật. Cùng kiểu lỗi này xuất hiện ở biên bản họp, xem việc 2 trong bài [cho người quản lý nhóm](/bai-chia-se/ai-cho-quan-ly-hop-va-du-an/).
 
 Nếu công ty dùng công cụ ghi âm và tự ghi biên bản cuộc gọi, hai điều cần làm trước: công cụ đó phải được công ty duyệt, và khách phải biết cuộc gọi được ghi lại.
 
 ## 3. Soạn báo giá và đề xuất từ mẫu
 
-Một bản đề xuất có hai phần khác hẳn nhau. Phần lời (hiểu nhu cầu khách thế nào, giải pháp là gì, vì sao phù hợp) là phần AI viết tốt nếu có ghi chú cuộc gặp. Phần số (đơn giá, số lượng, chiết khấu, thuế GTGT, tổng tiền, điều khoản thanh toán) thì bạn tự điền từ bảng giá và để Excel tính.
+Một bản đề xuất có hai phần. Phần lời (hiểu nhu cầu khách thế nào, giải pháp là gì, vì sao phù hợp) là phần AI viết tốt nếu có ghi chú cuộc gặp. Phần số (đơn giá, số lượng, chiết khấu, thuế GTGT, tổng tiền, điều khoản thanh toán) thì bạn tự điền từ bảng giá và để Excel tính.
 
 ```text
 Đây là mẫu đề xuất của công ty tôi và ghi chú nhu cầu của khách A.
@@ -96,17 +92,17 @@ Không viết thêm cam kết nào ngoài những gì có trong mẫu.
 [Ghi chú nhu cầu]
 ```
 
-Cách kiểm tra: tìm (Ctrl+F) chữ "[ĐIỀN" để chắc không sót ô nào. Sau đó đọc lại phần lời xem có câu nào hứa thứ sản phẩm không làm được. AI viết đề xuất có xu hướng nói quá cho thuyết phục, kiểu "đáp ứng hoàn toàn mọi yêu cầu". Dò cả tên công ty, tên người nhận: lỗi kinh điển của việc làm từ mẫu là còn sót tên khách cũ.
+Cách kiểm tra: tìm (Ctrl+F) chữ "[ĐIỀN" để chắc không sót ô nào. Đọc lại phần lời xem có câu nào hứa thứ sản phẩm không làm được, vì AI viết đề xuất hay nói quá cho thuyết phục, kiểu "đáp ứng hoàn toàn mọi yêu cầu". Dò cả tên công ty, tên người nhận: làm từ mẫu rất dễ còn sót tên khách cũ.
 
 ## 4. Bộ câu trả lời mẫu cho câu hỏi lặp lại trên Zalo, Messenger
 
-Phí ship bao nhiêu, có xuất hóa đơn không, bảo hành thế nào, bao lâu nhận hàng. Mười câu hỏi quen thuộc thường chiếm phần lớn tin nhắn. Khi mỗi nhân viên trả lời một kiểu, khách nhận được thông tin lệch nhau và giọng mỗi lúc một khác.
+Phí ship bao nhiêu, có xuất hóa đơn không, bảo hành thế nào, bao lâu nhận hàng. Một nhóm nhỏ câu hỏi quen thuộc thường chiếm phần lớn tin nhắn. Khi mỗi nhân viên trả lời một kiểu, khách nhận được thông tin lệch nhau.
 
 Cách làm gồm ba bước:
 
 1. Gom câu hỏi thật. Chép các câu khách hay hỏi từ lịch sử chat (bỏ tên, số điện thoại) và nhờ AI gom thành nhóm.
 2. Viết câu trả lời chuẩn. Nội dung lấy từ chính sách đã duyệt, AI chỉnh giọng.
-3. Lưu thành bộ trả lời nhanh. Cả Zalo lẫn công cụ quản lý trang Facebook đều có chức năng lưu câu trả lời soạn sẵn; tên gọi và vị trí thay đổi theo phiên bản nên bạn tìm trong phần cài đặt tin nhắn.
+3. Lưu thành bộ trả lời nhanh. Zalo và công cụ quản lý trang Facebook đều có chức năng lưu câu trả lời soạn sẵn; tên gọi và vị trí thay đổi theo phiên bản nên bạn tìm trong phần cài đặt tin nhắn.
 
 ```text
 Đây là chính sách của cửa hàng (giao hàng, đổi trả, bảo hành, thanh toán)
@@ -123,11 +119,13 @@ Với mỗi câu hỏi, viết một câu trả lời mẫu:
 [Danh sách câu hỏi]
 ```
 
-Các dòng "CHƯA CÓ CHÍNH SÁCH" là kết quả có ích: chúng chỉ ra chỗ nhân viên đang phải tự ứng biến. Bộ câu trả lời cần một người duyệt và cần xem lại mỗi khi chính sách đổi, vì câu mẫu sai sẽ được gửi đi rất nhiều lần.
+Các dòng "CHƯA CÓ CHÍNH SÁCH" là kết quả có ích: chúng chỉ ra chỗ nhân viên đang phải tự ứng biến.
+
+Cách kiểm tra: đặt từng câu trả lời cạnh đoạn chính sách tương ứng, dò con số và điều kiện. Bộ câu trả lời cần một người duyệt và cần xem lại mỗi khi chính sách đổi, vì câu mẫu sai sẽ được gửi đi rất nhiều lần.
 
 ## 5. Xử lý khiếu nại
 
-Khi khách đang bực, câu trả lời đầu tiên quyết định nhiều thứ. AI giúp được ở việc soạn một bản nháp bình tĩnh, nhận đúng vấn đề, không đổ lỗi, đặc biệt lúc chính bạn cũng đang khó chịu. Quyết định xử lý (hoàn tiền, đổi hàng, bồi thường bao nhiêu, có nhận lỗi hay không) phải do người có thẩm quyền đưa ra trước, rồi mới đưa cho AI viết.
+AI giúp soạn một bản nháp bình tĩnh, nhận đúng vấn đề, không đổ lỗi, nhất là lúc chính bạn cũng đang khó chịu vì khách bực. Quyết định xử lý (hoàn tiền, đổi hàng, bồi thường bao nhiêu, có nhận lỗi hay không) phải do người có thẩm quyền đưa ra trước, rồi mới đưa cho AI viết.
 
 ```text
 Khách gửi khiếu nại dưới đây (đã bỏ tên). Hướng xử lý đã được quản lý duyệt:
@@ -143,11 +141,13 @@ Không thêm bất kỳ khoản bồi thường, ưu đãi hay cam kết nào ng
 [Tin nhắn của khách]
 ```
 
-Cách kiểm tra: so từng cam kết trong bản nháp với hướng xử lý đã duyệt. AI rất hay "tặng thêm" một mã giảm giá cho lần mua sau để xoa dịu. Với khiếu nại có yếu tố sức khỏe, an toàn, hoặc khách nhắc đến cơ quan chức năng, báo chí, luật sư: chuyển cho quản lý, đừng trả lời bằng bản nháp AI. Doanh nghiệp có nghĩa vụ theo pháp luật về bảo vệ quyền lợi người tiêu dùng, và lời nhận lỗi bằng văn bản có hệ quả.
+Cách kiểm tra: so từng cam kết trong bản nháp với hướng xử lý đã duyệt. AI rất hay "tặng thêm" một mã giảm giá cho lần mua sau để xoa dịu.
+
+Với khiếu nại có yếu tố sức khỏe, an toàn, hoặc khách nhắc đến cơ quan chức năng, báo chí, luật sư: chuyển cho quản lý, đừng trả lời bằng bản nháp AI. Những ca này có thể kéo theo trách nhiệm pháp lý của doanh nghiệp (pháp luật về bảo vệ quyền lợi người tiêu dùng có quy định về việc tiếp nhận và giải quyết khiếu nại; nội dung cụ thể cần người phụ trách pháp lý đối chiếu văn bản hiện hành), nên từng câu chữ gửi đi phải do người có thẩm quyền cân nhắc.
 
 ## 6. Luyện xử lý từ chối bằng nhập vai
 
-Việc này không tạo ra tài liệu nào, nhưng là cách dùng AI ít rủi ro nhất trong bài vì không có khách thật nào bị ảnh hưởng. Bạn nhờ AI đóng vai một khách khó tính và tập trả lời những câu như "giá cao quá", "để anh suy nghĩ thêm", "bên kia báo rẻ hơn".
+Việc này ít rủi ro nhất trong bài vì không có khách thật nào bị ảnh hưởng. Bạn nhờ AI đóng vai một khách khó tính và tập trả lời những câu như "giá cao quá", "để anh suy nghĩ thêm", "bên kia báo rẻ hơn".
 
 ```text
 Hãy đóng vai trưởng phòng mua hàng của một công ty sản xuất 200 nhân viên.
@@ -165,17 +165,19 @@ Giới hạn cần biết: AI đóng vai thường dễ tính hơn khách thật
 
 ## Tin nhắn hàng loạt cá nhân hóa giả tạo
 
-AI khiến việc viết một nghìn tin nhắn "riêng cho từng người" trở nên dễ. Kết quả thường là kiểu: "Chào anh Hùng, em rất ấn tượng với hành trình phát triển của công ty anh trong lĩnh vực logistics." Người nhận nhận ra ngay vì ba lý do: họ đã nhận nhiều tin y hệt, lời khen không gắn với việc cụ thể nào, và nếu AI lấy sai một chi tiết (nhầm chức danh, nhầm ngành) thì tin nhắn thành bằng chứng rằng bạn không hề tìm hiểu.
+AI khiến việc viết một nghìn tin nhắn "riêng cho từng người" trở nên dễ. Kết quả thường là kiểu: "Chào anh Hùng, em rất ấn tượng với hành trình phát triển của công ty anh trong lĩnh vực logistics." Lời khen không gắn với việc cụ thể nào thì đọc ra ngay là tin mẫu (bảng dấu hiệu "văn AI" trong bài [về marketing nội dung](/bai-chia-se/ai-cho-marketing-noi-dung/) áp dụng nguyên cho tin nhắn bán hàng). Tệ hơn, nếu AI lấy sai một chi tiết như chức danh hay ngành, tin nhắn thành bằng chứng rằng bạn không hề tìm hiểu.
 
 Cá nhân hóa có tác dụng khi nó dựa trên điều bạn thật sự biết: khách đã mua gì, lần trước hỏi gì, đang vướng gì. Vài nguyên tắc:
 
 - Gửi ít người hơn, mỗi tin dựa trên một dữ kiện có thật trong CRM. AI soạn nháp từ dữ kiện đó, bạn đọc từng tin trước khi gửi.
-- Nếu là tin thông báo chung (lịch nghỉ lễ, chương trình mới), cứ viết như thông báo chung. Một thông báo thẳng thắn dễ chịu hơn một lời thân mật giả.
-- Chỉ gửi cho người đã đồng ý nhận tin. Tin quảng cáo gửi cho người chưa đồng ý còn vướng quy định về chống tin nhắn rác và bảo vệ dữ liệu cá nhân; hãy đối chiếu văn bản hiện hành và quy định của nền tảng nhắn tin bạn dùng.
+- Tin thông báo chung (lịch nghỉ lễ, chương trình mới) thì cứ viết như thông báo chung. Một thông báo thẳng thắn dễ chịu hơn một lời thân mật giả.
+- Chỉ gửi cho người đã đồng ý nhận tin. Việt Nam có quy định về chống tin nhắn rác và về bảo vệ dữ liệu cá nhân, các nền tảng nhắn tin cũng có chính sách riêng về tin quảng cáo. Bài này không đi vào chi tiết các quy định đó; trước khi chạy một đợt gửi hàng loạt, hãy đối chiếu văn bản hiện hành và điều khoản của nền tảng bạn dùng.
 
 ## Nếu chỉ bắt đầu với một việc
 
-Chọn việc 2. Ngay sau cuộc gọi tới, dán ghi chú thô (đã thay tên khách) và nhờ AI viết cập nhật CRM cùng email follow-up, rồi tự dò mục "việc tôi đã hứa". Bạn sẽ thấy ngay AI đỡ được phần gõ chữ, còn phần nhớ đúng mình đã hứa gì với khách vẫn là việc của bạn.
+Chọn việc 2. Ngay sau cuộc gọi tới, dán ghi chú thô (đã thay tên khách) và nhờ AI viết cập nhật CRM cùng email follow-up, rồi tự dò mục "việc tôi đã hứa".
+
+Khi câu lệnh đã chạy ổn vài lần, lưu nó lại cùng mẫu đề xuất và bảng chính sách vào một chỗ để không phải dán lại; cách làm có ở bài [Từ hỏi từng câu đến một hệ thống làm việc với AI của riêng bạn](/bai-chia-se/xay-he-thong-ai-ca-nhan/).
 
 ## Nguồn đọc thêm
 
