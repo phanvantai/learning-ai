@@ -1,0 +1,35 @@
+name: harness
+
+on:
+  push:
+    paths: ["harness/**", ".github/workflows/harness.yml"]
+  pull_request:
+    paths: ["harness/**", ".github/workflows/harness.yml"]
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: harness
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: harness
+      - name: Lint and test the core
+        run: |
+          cargo clippy --all-targets -- -D warnings
+          cargo test
+      # The desktop shell needs system WebView libraries on Linux; it is
+      # checked on the two platforms we ship installers for.
+      - name: Lint the desktop app
+        if: runner.os != 'Linux'
+        run: cargo clippy -p lai-app -- -D warnings

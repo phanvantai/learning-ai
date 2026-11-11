@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trợ lý AI</title>
+<link rel="stylesheet" href="/app.css">
+</head>
+<body>
+<section id="onboarding" hidden></section>
+
+<aside class="sidebar">
+  <div class="brand"><span class="brand-mark" aria-hidden="true"></span>Trợ lý AI</div>
+  <nav>
+    <button class="nav-item" data-view="chat">Trò chuyện</button>
+    <button class="nav-item" data-view="jobs">Việc theo lịch</button>
+    <button class="nav-item" data-view="approvals">Chờ duyệt <span class="badge" id="pending-badge" hidden></span></button>
+    <button class="nav-item" data-view="settings">Kết nối <span class="dot warn" id="setup-dot" hidden title="Còn bước chưa xong"></span></button>
+  </nav>
+  <div class="sidebar-foot" id="version"></div>
+</aside>
+
+<main>
+  <section id="view-chat" class="view" hidden>
+    <header class="view-head">
+      <h1>Trò chuyện</h1>
+      <div class="head-actions">
+        <select id="chat-agent" hidden aria-label="Agent"></select>
+        <button class="btn ghost" id="chat-new">Cuộc trò chuyện mới</button>
+      </div>
+    </header>
+    <div class="transcript" id="transcript" aria-live="polite"></div>
+    <form class="composer" id="composer">
+      <textarea id="chat-input" rows="2" placeholder="Giao việc cho trợ lý… (Enter để gửi, Shift+Enter để xuống dòng)"></textarea>
+      <button class="btn primary" id="chat-send">Gửi</button>
+    </form>
+  </section>
+
+  <section id="view-jobs" class="view" hidden>
+    <header class="view-head">
+      <h1>Việc theo lịch</h1>
+      <div class="head-actions"><button class="btn primary" id="job-add">Thêm việc</button></div>
+    </header>
+    <p class="lead">Trợ lý tự làm các việc này đúng giờ khi app đang mở (kể cả khi đã đóng cửa sổ) và lưu kết quả thành báo cáo.</p>
+    <div id="jobs"></div>
+  </section>
+
+  <section id="view-approvals" class="view" hidden>
+    <header class="view-head"><h1>Chờ duyệt</h1></header>
+    <p class="lead">Trợ lý không tự gửi thư hay thay đổi gì bên ngoài. Mỗi hành động như vậy nằm ở đây cho tới khi bạn đồng ý.</p>
+    <div id="approvals"></div>
+  </section>
+
+  <section id="view-settings" class="view" hidden>
+    <header class="view-head"><h1>Kết nối</h1></header>
+    <div id="settings"></div>
+  </section>
+</main>
+
+<dialog id="dialog"><div id="dialog-body"></div></dialog>
+<div id="toast" role="status" hidden></div>
+<script src="/app.js"></script>
+</body>
+</html>

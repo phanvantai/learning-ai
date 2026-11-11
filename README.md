@@ -4,6 +4,7 @@ Website chia sẻ, mentoring và đào tạo ứng dụng AI cho công việc h�
 
 - Spec sản phẩm: `docs/specs/`
 - Thuật ngữ: `CONTEXT.md`
+- Trợ lý AI cá nhân (app desktop + dòng lệnh, Rust), tách riêng khỏi website: `harness/` (xem `harness/README.md`)
 
 ## Phát triển
 
