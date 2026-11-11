@@ -1,12 +1,12 @@
 name: harness-app
 
-# Builds the desktop installers. Runs when the app shell changes, on demand,
+# Builds the desktop installers. Runs when the harness changes, on demand,
 # and on a `harness-v*` tag, which also drafts a GitHub release.
 on:
   push:
     branches: ["**"]
     tags: ["harness-v*"]
-    paths: ["harness/app/**", ".github/workflows/harness-app.yml"]
+    paths: ["harness/**", ".github/workflows/harness-app.yml"]
   workflow_dispatch:
 
 permissions:
