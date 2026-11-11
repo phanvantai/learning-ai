@@ -5,8 +5,8 @@ Status: agreed
 ## Trang
 
 1. **Trang chủ**: câu định vị, Bài chia sẻ mới nhất, nút liên hệ chat, form đăng ký bản tin.
-2. **Bài chia sẻ**: danh sách + chi tiết, thẻ chủ đề; form đăng ký bản tin cuối mỗi bài.
-3. **Mentoring**: gói beta, giá, quy trình, case study (ban đầu để trống).
+2. **Bài chia sẻ**: danh sách (tách theo Loại bài) + chi tiết có mục lục, thẻ chủ đề; form đăng ký bản tin cuối mỗi bài.
+3. **Mentoring**: gói beta, giá, chương trình 4 buổi (`mentoring-program.md`), quy trình, case study (ban đầu để trống).
 4. **Doanh nghiệp**: giới thiệu Lv0–Lv2, "đang nhận thí điểm", form liên hệ.
 5. **Giới thiệu**: người sáng lập và câu chuyện.
 
