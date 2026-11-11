@@ -6,13 +6,13 @@ description: Sáu việc lặp lại của người làm nhân sự, tuyển d�
 loai: ung-dung
 ---
 
-Nhìn từ góc AI, công việc nhân sự có hai nửa. Một nửa là viết: JD, câu hỏi phỏng vấn, thư từ, tài liệu hướng dẫn. Nửa này AI làm nhanh và rủi ro thấp. Nửa kia là đánh giá con người dựa trên dữ liệu cá nhân của họ, nơi AI có thể gây hại thật và người chịu hậu quả là ứng viên.
+Nhìn từ góc AI, một nửa công việc nhân sự là viết JD, câu hỏi phỏng vấn, thư từ, tài liệu hướng dẫn. Phần này AI làm nhanh và ít rủi ro. Nửa còn lại là đánh giá con người dựa trên dữ liệu cá nhân của họ. Ở đó AI có thể gây hại, và người chịu hậu quả là ứng viên.
 
-Mình là kỹ sư phần mềm, không làm nhân sự. Bài viết từ phía hiểu AI hỏng ở đâu; phần nghiệp vụ và pháp lý bạn đối chiếu với thực tế công ty và văn bản gốc.
+Mình là kỹ sư phần mềm, không làm nhân sự. Bài viết từ phía người hiểu AI hỏng ở đâu, còn phần nghiệp vụ và pháp lý thì bạn đối chiếu với thực tế công ty và văn bản gốc.
 
 ## Việc 1: Viết JD từ ghi chú của trưởng bộ phận
 
-Trưởng bộ phận thường nhắn vài dòng qua Zalo: "cần 1 bạn kế toán tổng hợp, 3 năm kinh nghiệm, biết phần mềm, chịu được áp lực cuối tháng". AI viết JD từ mấy dòng đó rất trôi, và đó chính là vấn đề: nó lấp chỗ trống bằng những câu JD nào cũng có ("năng động, chịu được áp lực cao, có tinh thần trách nhiệm"). Nên bắt nó hỏi lại trước khi viết.
+Trưởng bộ phận thường nhắn vài dòng qua Zalo: "cần 1 bạn kế toán tổng hợp, 3 năm kinh nghiệm, biết phần mềm, chịu được áp lực cuối tháng". AI viết JD từ mấy dòng đó nghe trôi chảy, vì nó lấp chỗ trống bằng những câu JD nào cũng có ("năng động, chịu được áp lực cao, có tinh thần trách nhiệm"). Nên bắt nó hỏi lại trước khi viết.
 
 ```text
 Dưới đây là ghi chú của trưởng bộ phận về vị trí cần tuyển.
@@ -29,9 +29,9 @@ Ghi chú: [dán ghi chú]
 
 Các câu hỏi ở bước 1 bạn chuyển lại cho trưởng bộ phận.
 
-Dòng cuối của câu lệnh có lý do. Nhiều JD vẫn ghi "nam, dưới 30 tuổi" theo thói quen, trong khi pháp luật lao động có quy định cấm phân biệt đối xử trong lao động (phạm vi cụ thể bạn đối chiếu Bộ luật Lao động hiện hành). Nếu ghi chú có yêu cầu kiểu đó, AI sẽ chép lại nguyên xi trừ khi bạn dặn trước.
+Nhiều JD vẫn ghi "nam, dưới 30 tuổi" theo thói quen, trong khi pháp luật lao động có quy định cấm phân biệt đối xử trong lao động (phạm vi cụ thể bạn đối chiếu Bộ luật Lao động hiện hành). Nếu ghi chú có yêu cầu kiểu đó, AI sẽ chép lại nguyên xi trừ khi bạn dặn trước, nên câu lệnh mới có dòng cuối.
 
-**Cách kiểm tra:** gạch mọi câu mà đặt vào JD của vị trí khác vẫn đúng. Gửi trưởng bộ phận xác nhận phần yêu cầu bắt buộc, vì AI hay nâng "biết thì tốt" thành "bắt buộc". Soát phần quyền lợi từng dòng: đây là lời hứa của công ty với ứng viên.
+**Cách kiểm tra:** gạch mọi câu mà đặt vào JD của vị trí khác vẫn đúng. Gửi trưởng bộ phận xác nhận phần yêu cầu bắt buộc, vì AI hay nâng "biết thì tốt" thành "bắt buộc". Soát phần quyền lợi từng dòng, vì đây là lời hứa của công ty với ứng viên.
 
 ## Việc 2: Bộ câu hỏi phỏng vấn theo năng lực và phiếu chấm
 
@@ -53,19 +53,19 @@ Không soạn câu hỏi về tuổi, hôn nhân, kế hoạch sinh con, tôn gi
 
 ## Việc 3: Tóm tắt CV theo tiêu chí, và vì sao không để AI loại ứng viên
 
-Đọc 150 CV cho một vị trí rất mệt, nên đây là việc hấp dẫn nhất, và cũng cần dè dặt nhất.
+Đọc 150 CV cho một vị trí thì mệt, nên đây là việc người ta muốn giao cho AI nhất. Nó cũng là việc cần dè dặt nhất.
 
-### Rủi ro thứ nhất: thiên kiến
+### Thiên kiến
 
-Mô hình ngôn ngữ học từ văn bản do con người viết, nên mang theo định kiến có trong đó. Khi bạn hỏi "ứng viên này có phù hợp không", câu trả lời có thể bị kéo bởi những thứ không liên quan tới năng lực: tên gợi ra giới tính, năm sinh, tên trường, quê quán, hay chỉ là CV viết trôi chảy hơn. Mức độ lệch tùy mô hình và cách hỏi, bài này không có con số đáng tin để đưa ra. Bạn cũng không biết nó đã cân những yếu tố nào: phần "lý do" nó viết ra cũng là văn bản được sinh ra, chưa chắc phản ánh cái thật sự dẫn tới điểm số.
+Mô hình ngôn ngữ học từ văn bản do con người viết, nên mang theo định kiến có trong đó. Khi bạn hỏi "ứng viên này có phù hợp không", câu trả lời có thể bị kéo bởi những thứ không liên quan tới năng lực: tên gợi ra giới tính, năm sinh, tên trường, quê quán, hay chỉ là CV viết trôi chảy hơn. Mức độ lệch tùy mô hình và cách hỏi, bài này không có con số đáng tin để đưa ra. Bạn cũng không biết nó đã cân những yếu tố nào, vì phần "lý do" nó viết ra cũng chỉ là văn bản sinh ra, chưa chắc phản ánh cái đã dẫn tới điểm số.
 
 Cùng một CV, hỏi hai lần còn có thể ra hai điểm khác nhau, và thứ tự dán các CV cũng có thể ảnh hưởng tới kết quả. Một quy trình loại người không lặp lại được thì không công bằng.
 
-### Rủi ro thứ hai: dữ liệu cá nhân
+### Dữ liệu cá nhân của ứng viên
 
 Dán CV vào một công cụ AI là chuyển họ tên, ngày sinh, số điện thoại, địa chỉ, ảnh của ứng viên cho bên thứ ba, trong khi họ nộp hồ sơ cho công ty bạn chứ không phải cho nhà cung cấp AI.
 
-Việt Nam đã có Luật Bảo vệ dữ liệu cá nhân (Luật số 91/2025/QH15), có hiệu lực từ 1/1/2026. Phần dưới đây dựa trên bản tin báo chí và các bản tóm tắt pháp lý chứ không phải toàn văn luật, nên bạn coi là đầu mối để tra. Theo [bản tin của báo Tiền Phong](https://tienphong.vn/doanh-nghiep-khi-cham-dut-hop-dong-phai-xoa-du-lieu-ca-nhan-nguoi-lao-dong-post1764533.tpo), Điều 25 của luật quy định về tuyển dụng: bên tuyển dụng chỉ được yêu cầu thông tin phục vụ mục đích tuyển dụng, thông tin đó chỉ được dùng cho mục đích tuyển dụng hoặc mục đích khác theo thỏa thuận, và việc xử lý phải được người dự tuyển đồng ý. Một số bản tóm tắt của các hãng luật còn nêu nghĩa vụ xóa, hủy thông tin của người không được tuyển nếu không có thỏa thuận khác; điều kiện cụ thể phải đọc trong văn bản gốc.
+Việt Nam đã có Luật Bảo vệ dữ liệu cá nhân (Luật số 91/2025/QH15), có hiệu lực từ 1/1/2026. Phần dưới đây dựa trên bản tin báo chí và các bản tóm tắt pháp lý chứ không phải toàn văn luật, nên bạn coi là đầu mối để tra. Theo [bản tin của báo Tiền Phong](https://tienphong.vn/doanh-nghiep-khi-cham-dut-hop-dong-phai-xoa-du-lieu-ca-nhan-nguoi-lao-dong-post1764533.tpo), Điều 25 của luật quy định về tuyển dụng: bên tuyển dụng chỉ được yêu cầu thông tin phục vụ mục đích tuyển dụng, thông tin đó chỉ được dùng cho mục đích tuyển dụng hoặc mục đích khác theo thỏa thuận, và việc xử lý phải được người dự tuyển đồng ý. Một số bản tóm tắt của các hãng luật còn nêu nghĩa vụ xóa, hủy thông tin của người không được tuyển nếu không có thỏa thuận khác. Điều kiện cụ thể phải đọc trong văn bản gốc.
 
 Dùng công cụ AI bên ngoài để xử lý CV có nằm trong phạm vi ứng viên đã đồng ý hay không, và hồ sơ của người không trúng tuyển được giữ bao lâu, là câu hỏi cho người phụ trách pháp lý của công ty.
 
@@ -90,7 +90,7 @@ Tiêu chí: [dán]
 CV: [dán]
 ```
 
-"Không thấy trong CV" khác với "ứng viên không có": có người có đúng kinh nghiệm bạn cần nhưng viết bằng từ khác, và AI bỏ qua. Bảng này để đọc CV nhanh hơn và chuẩn bị câu hỏi, không phải bộ lọc.
+"Không thấy trong CV" chưa có nghĩa là ứng viên không có. Có người có đúng kinh nghiệm bạn cần nhưng viết bằng từ khác, và AI bỏ qua. Bảng này chỉ để đọc CV nhanh hơn và chuẩn bị câu hỏi, đừng dùng nó làm bộ lọc.
 
 **Cách kiểm tra:** tìm các câu trích trong CV gốc xem có thật không. Với mỗi đợt tuyển, lấy ngẫu nhiên khoảng mười CV mà bảng ghi nhiều "không thấy" rồi tự đọc đầy đủ. Nếu trong đó có người đáng mời, bạn biết cách trích đang bỏ sót và không nên dựa vào nó.
 
@@ -112,9 +112,9 @@ Yêu cầu:
 
 Điểm ghi nhận phải do bạn đưa vào. Để AI tự khen, thư nào cũng "ấn tượng với kinh nghiệm phong phú của anh/chị" và ứng viên nhận ra ngay là thư mẫu.
 
-Với thư mời nhận việc, AI chỉ lo phần lời văn. Mức lương, ngày bắt đầu, thời gian thử việc, phụ cấp phải chép từ quyết định đã được duyệt; dặn trong câu lệnh "chỉ dùng các thông tin sau, thiếu thì để [cần bổ sung]".
+Với thư mời nhận việc, AI chỉ lo phần lời văn. Mức lương, ngày bắt đầu, thời gian thử việc, phụ cấp phải chép từ quyết định đã được duyệt, và trong câu lệnh nhớ dặn "chỉ dùng các thông tin sau, thiếu thì để [cần bổ sung]".
 
-**Cách kiểm tra:** thư từ chối, đọc xem có câu nào nghe như lời hứa hoặc như lý do có thể bị hỏi vặn lại. Thư mời, so từng con số với bản đã duyệt và nhờ một người thứ hai đọc trước khi gửi.
+**Cách kiểm tra:** với thư từ chối, đọc xem có câu nào nghe như lời hứa hoặc như lý do có thể bị hỏi vặn lại. Với thư mời, so từng con số với bản đã duyệt và nhờ một người thứ hai đọc trước khi gửi.
 
 ## Việc 5: Tài liệu onboarding và FAQ nội quy
 
@@ -137,11 +137,11 @@ Mục "Chưa có quy định" cho bạn danh sách những chỗ nội quy còn 
 
 ## Việc 6: Tổng hợp câu trả lời mở trong khảo sát nhân viên
 
-Câu hỏi mở ("Điều gì bạn muốn công ty thay đổi nhất?") với 200 câu trả lời thường bị đọc lướt. AI nhóm chủ đề tốt, với hai lưu ý.
+Câu hỏi mở ("Điều gì bạn muốn công ty thay đổi nhất?") với 200 câu trả lời thường bị đọc lướt. AI nhóm chủ đề tốt.
 
-Thứ nhất, ẩn danh trước khi dán: xóa tên, email, phòng ban nếu phòng chỉ có vài người, và lược những chi tiết làm lộ người viết. Khảo sát đã hứa ẩn danh thì lời hứa đó phải còn nguyên khi dữ liệu rời khỏi Sheets.
+Trước khi dán phải ẩn danh: xóa tên, email, phòng ban nếu phòng chỉ có vài người, và lược những chi tiết làm lộ người viết. Khảo sát đã hứa ẩn danh thì lời hứa đó phải còn nguyên khi dữ liệu rời khỏi Sheets.
 
-Thứ hai, đừng tin AI đếm: hỏi "bao nhiêu người phàn nàn về lương" trên 200 dòng sẽ ra con số ước chừng. Tách thành hai bước:
+Cũng đừng tin AI đếm. Hỏi "bao nhiêu người phàn nàn về lương" trên 200 dòng sẽ ra con số ước chừng, nên tách thành hai bước:
 
 ```text
 Bước 1. Dưới đây là 50 câu trả lời đầu tiên cho câu hỏi "[..]". Hãy đề xuất 6-10 nhãn chủ đề,
@@ -169,13 +169,13 @@ Gắn nhãn theo lô khoảng 50 dòng, cùng một bộ nhãn đã duyệt cho 
 
 Những việc không nên giao, ngoài chấm điểm và loại ứng viên đã nói ở việc 3:
 
-- **Đánh giá hiệu suất, quyết định kỷ luật hay cho nghỉ việc.** Nhận định về một con người phải có người đứng tên và giải thích được. Bài [cho người quản lý nhóm](/bai-chia-se/ai-cho-quan-ly-hop-va-du-an/) có câu lệnh chuẩn bị buổi phản hồi mà không để AI nhận xét về nhân viên.
-- **Trả lời câu hỏi pháp lý về lao động** như cách tính trợ cấp, thời gian thử việc, mức đóng bảo hiểm. Dữ liệu của AI có thể đã cũ; dùng nó để biết nên tra điều nào, rồi đọc văn bản gốc.
-- **Xử lý hồ sơ nhân viên, bảng lương, hồ sơ sức khỏe** bằng công cụ chưa được công ty cho phép.
+- Đánh giá hiệu suất, quyết định kỷ luật hay cho nghỉ việc, vì nhận định về một con người phải có người đứng tên và giải thích được. Bài [cho người quản lý nhóm](/bai-chia-se/ai-cho-quan-ly-hop-va-du-an/) có câu lệnh chuẩn bị buổi phản hồi mà không để AI nhận xét về nhân viên.
+- Trả lời câu hỏi pháp lý về lao động như cách tính trợ cấp, thời gian thử việc, mức đóng bảo hiểm. Dữ liệu của AI có thể đã cũ, nên chỉ dùng nó để biết cần tra điều nào rồi đọc văn bản gốc.
+- Xử lý hồ sơ nhân viên, bảng lương, hồ sơ sức khỏe bằng công cụ chưa được công ty cho phép.
 
 ## Bắt đầu từ đâu
 
-Nếu chọn một việc, mình đề nghị việc 2: bộ câu hỏi và phiếu chấm không đụng tới dữ liệu cá nhân của ai.
+Nếu chọn một việc, mình đề nghị việc 2, vì bộ câu hỏi và phiếu chấm không đụng tới dữ liệu cá nhân của ai.
 
 Mỗi vị trí tuyển lại dùng gần như cùng các câu lệnh trên với tiêu chí khác. Cách lưu chúng thành mẫu có trong bài [Từ hỏi từng câu đến một hệ thống làm việc với AI của riêng bạn](/bai-chia-se/xay-he-thong-ai-ca-nhan/).
 

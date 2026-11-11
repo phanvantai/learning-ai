@@ -6,13 +6,13 @@ description: "Vì sao prompt injection chưa có lời giải triệt để ở 
 loai: chuyen-sau
 ---
 
-SQL injection có lời giải gọn: parameterized query tách hẳn câu lệnh khỏi dữ liệu, cơ sở dữ liệu không bao giờ diễn giải dữ liệu như lệnh. LLM không có cơ chế tương đương. System prompt, câu hỏi của người dùng, nội dung trang web vừa tải về, kết quả tool đều nằm chung một chuỗi token, và model quyết định làm theo cái gì dựa trên nội dung chứ không dựa trên nguồn gốc. Simon Willison tóm lại: LLM không phân biệt được một cách đáng tin cậy tầm quan trọng của chỉ dẫn theo nơi chúng xuất phát.
+SQL injection có lời giải gọn: parameterized query tách hẳn câu lệnh khỏi dữ liệu, cơ sở dữ liệu không bao giờ diễn giải dữ liệu như lệnh. LLM không có cơ chế tương đương. System prompt, câu hỏi của người dùng, nội dung trang web vừa tải về, kết quả tool đều nằm chung một chuỗi token, và model quyết định làm theo cái gì dựa trên nội dung chứ không dựa trên nguồn gốc. Simon Willison tóm lại rằng LLM không thể phân biệt cho chắc tầm quan trọng của chỉ dẫn theo nơi chúng xuất phát.
 
-Với chatbot, hậu quả là một câu trả lời sai. Với agent có tool, hậu quả là hành động sai: đọc file, gửi thư, gọi API bằng quyền của bạn. Bài này nói về cách thiết kế để khi model bị lừa thì thiệt hại bị chặn ở tầng dưới. Bài thuần phòng thủ: cơ chế tấn công chỉ được mô tả ở mức đủ hiểu để phòng, không có payload. Nhận định nào là suy luận của mình chứ không phải của nguồn, mình ghi rõ.
+Với chatbot, hậu quả là một câu trả lời sai. Với agent có tool, hậu quả là hành động sai: đọc file, gửi thư, gọi API bằng quyền của bạn. Bài này nói về cách thiết kế để khi model bị lừa thì thiệt hại bị chặn ở tầng dưới. Bài chỉ bàn phòng thủ, cơ chế tấn công mô tả vừa đủ hiểu để phòng và không có payload. Nhận định nào là suy luận của mình chứ không phải của nguồn, mình ghi rõ.
 
 ## Trực tiếp và gián tiếp
 
-OWASP xếp prompt injection là rủi ro số một (LLM01) trong Top 10 cho ứng dụng LLM và chia hai loại. **Trực tiếp**: chính đầu vào của người dùng làm đổi hành vi model, cố ý hoặc vô tình; jailbreak thuộc nhóm này. **Gián tiếp**: model nhận nội dung từ nguồn bên ngoài như trang web hay file, và nội dung đó làm đổi hành vi model; người dùng là nạn nhân, kẻ tấn công ở chỗ khác.
+OWASP xếp prompt injection là rủi ro số một (LLM01) trong Top 10 cho ứng dụng LLM và chia hai loại. **Trực tiếp**: chính đầu vào của người dùng làm đổi hành vi model, cố ý hoặc vô tình. Jailbreak thuộc nhóm này. **Gián tiếp**: model nhận nội dung từ nguồn bên ngoài như trang web hay file, và nội dung đó làm đổi hành vi model. Lúc này người dùng là nạn nhân, kẻ tấn công ở chỗ khác.
 
 Loại gián tiếp là mối lo chính của agent, vì bề mặt tấn công là mọi thứ agent đọc: trang web, email đến, issue, comment trong code, tên file, kết quả từ API bên thứ ba, bản ghi CRM do khách tự điền. Kẻ tấn công chỉ cần đặt văn bản ở nơi agent sẽ đọc tới.
 
@@ -20,17 +20,15 @@ Loại gián tiếp là mối lo chính của agent, vì bề mặt tấn công 
 
 Các nhà cung cấp có huấn luyện để model kháng injection tốt hơn, và số liệu của chính họ cho thấy cả tiến bộ lẫn giới hạn. Trong bài công bố tháng 11/2025 về phòng thủ cho agent dùng trình duyệt, Anthropic báo tỉ lệ tấn công thành công với Claude Opus 4.5 trước một attacker thích ứng nội bộ là 1,4% khi có lớp bảo vệ cải tiến (8,0% nếu chỉ có model), với 100 lần thử cho mỗi môi trường. Họ viết luôn rằng tỉ lệ 1% vẫn là rủi ro đáng kể, rằng prompt injection còn xa mới được giải quyết, và không agent trình duyệt nào miễn nhiễm.
 
-Có ba lý do con số nhỏ đó chưa đủ. Hai lý do đầu có nguồn, lý do thứ ba là lập luận của mình từ cơ chế nêu ở đầu bài.
+Con số nhỏ đó vẫn chưa đủ vì bảo mật là bài toán đối kháng. Kẻ tấn công không lấy mẫu ngẫu nhiên mà thử lại cho tới khi trúng, rồi dùng lại đúng cái trúng. Simon Willison nói về các sản phẩm guardrail quảng cáo chặn 95% tấn công rằng trong bảo mật ứng dụng web, 95% là điểm trượt.
 
-**Bảo mật là bài toán đối kháng.** Kẻ tấn công không lấy mẫu ngẫu nhiên: họ thử lại cho tới khi trúng, rồi dùng lại đúng cái trúng. Simon Willison nói về các sản phẩm guardrail quảng cáo chặn 95% tấn công: trong bảo mật ứng dụng web, 95% là điểm trượt.
+Phòng thủ còn được đánh giá bằng tấn công yếu. Paper "The Attacker Moves Second" (tháng 10/2025; 14 tác giả, tác giả đầu là Milad Nasr, theo Simon Willison gồm người của OpenAI, Anthropic và Google DeepMind) thử 12 cơ chế phòng thủ đã công bố bằng tấn công thích ứng, tức là kẻ tấn công biết thiết kế phòng thủ và tối ưu để vượt qua. Tỉ lệ thành công trên 90% với phần lớn các phòng thủ, trong khi đa số từng báo cáo tỉ lệ gần 0. Theo bản tóm tắt của Willison, vòng red-team bằng người (một cuộc thi trực tuyến 500 người tham gia) vượt qua toàn bộ.
 
-**Phòng thủ được đánh giá bằng tấn công yếu.** Paper "The Attacker Moves Second" (tháng 10/2025; 14 tác giả, tác giả đầu là Milad Nasr, theo Simon Willison gồm người của OpenAI, Anthropic và Google DeepMind) thử 12 cơ chế phòng thủ đã công bố bằng tấn công thích ứng, tức là kẻ tấn công biết thiết kế phòng thủ và tối ưu để vượt qua. Tỉ lệ thành công trên 90% với phần lớn các phòng thủ, trong khi đa số từng báo cáo tỉ lệ gần 0. Theo bản tóm tắt của Willison, vòng red-team bằng người (một cuộc thi trực tuyến 500 người tham gia) vượt qua toàn bộ.
+Hai lý do trên có nguồn. Lý do còn lại là lập luận của mình từ cơ chế nêu ở đầu bài: không có ranh giới kiểu dữ liệu. Mọi cách đánh dấu nội dung không tin cậy (bọc thẻ, thêm cảnh báo) đều là thêm văn bản vào cùng kênh với văn bản tấn công. Chúng nâng chi phí tấn công nhưng không tạo ra bảo đảm.
 
-**Không có ranh giới kiểu dữ liệu.** Mọi cách đánh dấu nội dung không tin cậy (bọc thẻ, thêm cảnh báo) đều là thêm văn bản vào cùng kênh với văn bản tấn công. Chúng nâng chi phí tấn công chứ không tạo ra bảo đảm.
+Classifier lọc đầu vào và đầu ra chịu cùng giới hạn, vì phần lớn chúng cũng là model (suy luận của mình), lại thêm false positive: tài liệu bảo mật hay email nói về phishing đều chứa văn bản giống tấn công. Chúng đáng có để giảm tấn công đại trà và tạo tín hiệu giám sát. Anthropic cũng trình bày classifier của họ như một lớp bên cạnh huấn luyện model và red-team.
 
-Classifier lọc đầu vào và đầu ra chịu cùng giới hạn, vì phần lớn chúng cũng là model (suy luận của mình), lại thêm false positive: tài liệu bảo mật hay email nói về phishing đều chứa văn bản giống tấn công. Chúng đáng có để giảm tấn công đại trà và tạo tín hiệu giám sát; Anthropic cũng trình bày classifier của họ như một lớp bên cạnh huấn luyện model và red-team.
-
-Kết luận thực hành: coi model là thành phần có thể bị điều khiển sau khi đã đọc nội dung không tin cậy, và đặt các bảo đảm ở phần code tất định bao quanh nó.
+Về thực hành thì nên coi model là thành phần có thể bị điều khiển sau khi đã đọc nội dung không tin cậy, và đặt các bảo đảm ở phần code tất định bao quanh nó.
 
 ## Lethal trifecta
 
@@ -55,7 +53,7 @@ Meta mở rộng ý này thành "Agents Rule of Two" (bài công bố ngày 31/1
 - [B] truy cập hệ thống nhạy cảm hoặc dữ liệu riêng tư;
 - [C] thay đổi trạng thái hoặc liên lạc ra ngoài.
 
-Khác biệt so với trifecta nằm ở [C]: gồm cả thay đổi trạng thái, nên bao luôn trường hợp agent bị lừa xóa hay sửa thứ gì đó. Nếu cần cả ba mà không bắt đầu phiên mới, Meta nói agent không được chạy tự động và tối thiểu phải có giám sát, ví dụ phê duyệt của người. Họ cũng nói rõ quy tắc này bổ sung chứ không thay cho least privilege.
+Khác với trifecta, [C] gồm cả thay đổi trạng thái, nên bao luôn trường hợp agent bị lừa xóa hay sửa thứ gì đó. Nếu cần cả ba mà không bắt đầu phiên mới, Meta nói agent không được chạy tự động và tối thiểu phải có giám sát, ví dụ phê duyệt của người. Họ cũng nói rõ quy tắc này bổ sung chứ không thay cho least privilege.
 
 Willison phản biện một điểm: sơ đồ ban đầu ghi tổ hợp [A]+[C] là "an toàn", trong khi đầu vào không tin cậy cộng quyền thay đổi trạng thái vẫn gây hại được. Theo ông, Meta sau đó đổi nhãn thành "rủi ro thấp hơn".
 
@@ -63,9 +61,9 @@ Willison phản biện một điểm: sơ đồ ban đầu ghi tổ hợp [A]+[C
 
 Bất cứ thứ gì khiến một request rời hệ thống với nội dung do model quyết định đều là kênh rò rỉ, nên cạnh (3) rộng hơn danh sách tool gửi tin.
 
-**Ảnh markdown.** Đường xuất hiện nhiều nhất trong các sự cố đã công bố. Giao diện chat render markdown; nếu model bị dụ xuất ra một ảnh trỏ tới máy chủ bên ngoài với dữ liệu nằm trong URL, trình duyệt của nạn nhân tự tải ảnh và dữ liệu đi theo request, không cần ai bấm gì. Cách chặn: không render ảnh từ domain ngoài, hoặc dùng Content Security Policy với allowlist domain ảnh.
+Ảnh markdown là đường xuất hiện nhiều nhất trong các sự cố đã công bố. Giao diện chat render markdown, nên nếu model bị dụ xuất ra một ảnh trỏ tới máy chủ bên ngoài với dữ liệu nằm trong URL, trình duyệt của nạn nhân tự tải ảnh và dữ liệu đi theo request, không cần ai bấm gì. Muốn chặn thì không render ảnh từ domain ngoài, hoặc dùng Content Security Policy với allowlist domain ảnh.
 
-**Allowlist cũng thủng.** Loạt sự cố Simon Willison ghi lại cho thấy allowlist domain chỉ tốt bằng domain yếu nhất trong danh sách:
+Allowlist domain cũng thủng được. Loạt sự cố Simon Willison ghi lại cho thấy nó chỉ tốt bằng domain yếu nhất trong danh sách:
 
 | Sự cố (tháng theo bài ghi chép của Simon Willison) | Vì sao bộ lọc và allowlist không cứu được |
 | --- | --- |
@@ -74,35 +72,35 @@ Bất cứ thứ gì khiến một request rời hệ thống với nội dung d
 | Salesforce AgentForce, "ForcedLeak" (9/2025) | Văn bản độc nằm trong biểu mẫu khách tự điền; CSP còn liệt kê một domain đã hết hạn, nhà nghiên cứu đăng ký lại domain đó |
 | Superhuman AI (1/2026) | CSP cho phép ảnh từ một domain dịch vụ biểu mẫu công cộng, nơi nhận và lưu dữ liệu gửi qua GET |
 
-**Link và link preview.** Link có dữ liệu trong URL cần người bấm, nên yếu hơn ảnh. Nhưng nhiều ứng dụng chat tự tải URL để dựng preview (unfurl), khi đó link cũng thành kênh không cần bấm. Agent đăng tin vào kênh chat thì nên tắt unfurl.
+Link có dữ liệu trong URL thì cần người bấm, nên yếu hơn ảnh. Nhưng nhiều ứng dụng chat tự tải URL để dựng preview (unfurl), khi đó link cũng thành kênh không cần bấm. Agent đăng tin vào kênh chat thì nên tắt unfurl.
 
-**Tool có tác dụng phụ ra ngoài.** Gửi email, đăng comment, tạo issue ở repo công khai, gọi webhook, và cả tool "chỉ đọc" như tải một URL (URL chính là dữ liệu gửi đi). Agent chạy được code thì mọi chương trình có kết nối mạng đều là đường ra, nên chặn ở từng tool là không đủ, phải chặn ở tầng mạng.
+Còn lại là các tool có tác dụng phụ ra ngoài: gửi email, đăng comment, tạo issue ở repo công khai, gọi webhook, và cả tool "chỉ đọc" như tải một URL (URL là dữ liệu gửi đi). Agent chạy được code thì mọi chương trình có kết nối mạng đều là đường ra, nên chặn ở từng tool là không đủ, phải chặn ở tầng mạng.
 
 ## Rủi ro riêng của MCP
 
-MCP (Model Context Protocol) chuẩn hóa cách nối tool vào agent; phần giao thức có trong bài [Thiết kế tool, MCP và Skill cho agent](/bai-chia-se/thiet-ke-tool-mcp-skill-cho-agent/). Ba thuật ngữ đầu dưới đây theo bài tổng hợp của Simon Willison: tool poisoning từ nghiên cứu của Invariant Labs, rug pull và tool shadowing từ bài của Elena Cross. Willison lưu ý các lỗ hổng này không nằm ở bản thân giao thức mà ở việc trao tool cho một model đang đọc nội dung không tin cậy.
+MCP (Model Context Protocol) chuẩn hóa cách nối tool vào agent. Phần giao thức có trong bài [Thiết kế tool, MCP và Skill cho agent](/bai-chia-se/thiet-ke-tool-mcp-skill-cho-agent/). Ba thuật ngữ đầu dưới đây theo bài tổng hợp của Simon Willison: tool poisoning từ nghiên cứu của Invariant Labs, rug pull và tool shadowing từ bài của Elena Cross. Willison lưu ý các lỗ hổng này không nằm ở bản thân giao thức mà ở việc trao tool cho một model đang đọc nội dung không tin cậy.
 
-**Tool poisoning.** Mô tả tool là văn bản đi thẳng vào context của model, và người dùng thường không nhìn thấy đầy đủ. Một server độc hại có thể giấu chỉ dẫn trong mô tả của một tool trông vô hại. Mô tả tool từ server bạn không kiểm soát vì thế là nội dung không tin cậy, ngang với trang web.
+**Tool poisoning** lợi dụng chỗ mô tả tool là văn bản đi thẳng vào context của model, mà người dùng thường không nhìn thấy đầy đủ. Một server độc hại có thể giấu chỉ dẫn trong mô tả của một tool trông vô hại. Mô tả tool từ server bạn không kiểm soát vì thế là nội dung không tin cậy, ngang với trang web.
 
-**Rug pull.** Server có thể đổi định nghĩa tool sau khi bạn đã duyệt. Cách phòng mình đề xuất: ghim phiên bản server, lưu hash định nghĩa tool lúc duyệt, yêu cầu duyệt lại khi hash đổi.
+**Rug pull** là khi server đổi định nghĩa tool sau khi bạn đã duyệt. Mình đề xuất phòng bằng cách ghim phiên bản server, lưu hash định nghĩa tool lúc duyệt, và yêu cầu duyệt lại khi hash đổi.
 
-**Tool shadowing.** Khi nhiều server cùng nối vào một agent, một server độc hại có thể chen vào hoặc ghi đè các lời gọi vốn dành cho server tin cậy. Trong context không có ranh giới tin cậy giữa các server.
+**Tool shadowing** xảy ra khi nhiều server cùng nối vào một agent: một server độc hại có thể chen vào hoặc ghi đè các lời gọi vốn dành cho server tin cậy. Trong context không có ranh giới tin cậy giữa các server.
 
-**Server chạy cục bộ.** Một server MCP cục bộ là một tiến trình chạy bằng quyền của bạn trên máy bạn; cài nó tương đương chạy mã của người lạ. Tài liệu bảo mật của MCP yêu cầu client có cài đặt một chạm phải hiển thị đầy đủ lệnh sẽ chạy và hỏi đồng ý trước, và khuyến nghị chạy server trong sandbox với quyền tối thiểu. Tài liệu đó còn có phần riêng về OAuth (confused deputy, token passthrough) cho người viết server.
+Server chạy cục bộ có rủi ro riêng. Một server MCP cục bộ là một tiến trình chạy bằng quyền của bạn trên máy bạn, cài nó tương đương chạy mã của người lạ. Tài liệu bảo mật của MCP yêu cầu client có cài đặt một chạm phải hiển thị đầy đủ lệnh sẽ chạy và hỏi đồng ý trước, và khuyến nghị chạy server trong sandbox với quyền tối thiểu. Tài liệu đó còn có phần riêng về OAuth (confused deputy, token passthrough) cho người viết server.
 
 ## Phòng thủ theo lớp ở tầng harness
 
-Nguyên tắc xuyên suốt: mỗi lớp giả định lớp phía trên đã thủng. Ba tầng luật tĩnh, hỏi người và sandbox đã được giới thiệu trong bài [Giải phẫu agent harness](/bai-chia-se/giai-phau-agent-harness/); phần này đi vào chi tiết liên quan tới injection.
+Mỗi lớp dưới đây giả định lớp phía trên đã thủng. Ba tầng luật tĩnh, hỏi người và sandbox đã có trong bài [Giải phẫu agent harness](/bai-chia-se/giai-phau-agent-harness/), ở đây mình chỉ nói những chi tiết liên quan tới injection.
 
 ### Sandbox filesystem và network, phải có cả hai
 
-Bài của Anthropic về sandbox cho Claude Code nêu lý do cần đủ hai lớp cô lập: thiếu cô lập mạng, agent bị chiếm quyền có thể gửi đi các file nhạy cảm như SSH key; thiếu cô lập filesystem, agent có thể thoát khỏi sandbox rồi giành lại quyền truy cập mạng. Chi tiết triển khai đáng học:
+Bài của Anthropic về sandbox cho Claude Code nêu lý do cần đủ hai lớp cô lập. Thiếu cô lập mạng thì agent bị chiếm quyền có thể gửi đi các file nhạy cảm như SSH key. Thiếu cô lập filesystem thì agent có thể thoát khỏi sandbox rồi giành lại quyền truy cập mạng. Chi tiết triển khai đáng học:
 
 - Cô lập ở tầng hệ điều hành (bubblewrap trên Linux, seatbelt trên macOS), nên áp dụng cho cả script và tiến trình con mà agent sinh ra. Kiểm tra ở tầng tool call không bao được những thứ đó.
 - Mạng đi qua một proxy chạy ngoài sandbox. Proxy là nơi áp allowlist domain và hỏi người dùng khi có domain mới.
 - Credential không nằm trong sandbox. Ở bản chạy trên web, git client trong sandbox chỉ giữ một credential phạm vi hẹp. Một proxy bên ngoài kiểm tra thao tác git (ví dụ chỉ được push lên đúng nhánh đã cấu hình) rồi mới gắn token thật trước khi chuyển tới GitHub.
 
-Điểm cuối áp dụng được rộng hơn git: thay vì đưa API key vào biến môi trường của agent, đặt key ở proxy và để proxy gắn vào request tới đúng host. Thứ agent không cầm thì agent không làm lộ được.
+Điểm cuối áp dụng được rộng hơn git: thay vì đưa API key vào biến môi trường của agent, đặt key ở proxy và để proxy gắn vào request tới đúng host, vì agent không làm lộ được thứ nó không cầm.
 
 ### Allowlist egress
 
@@ -117,11 +115,11 @@ Allowlist không chặn rò rỉ qua một host hợp lệ mà agent có quyền
 
 ### Permission prompt và mệt mỏi phê duyệt
 
-Hỏi người dùng trước mỗi hành động nghe an toàn nhất, thực tế thì không. Anthropic gọi hiện tượng này là "approval fatigue": hỏi liên tục khiến người dùng thôi chú ý vào thứ mình đang duyệt. Con số họ đưa ra từ sử dụng nội bộ: sandbox giảm 84% số lần hỏi quyền. Paper CaMeL cũng thừa nhận gánh nặng đặt lên người dùng và hiện tượng mỏi (user fatigue).
+Hỏi người dùng trước mỗi hành động nghe an toàn nhất, thực tế thì không. Anthropic gọi hiện tượng này là "approval fatigue": hỏi liên tục khiến người dùng thôi chú ý vào thứ mình đang duyệt. Theo số liệu sử dụng nội bộ họ đưa ra, sandbox giảm 84% số lần hỏi quyền. Paper CaMeL cũng thừa nhận gánh nặng đặt lên người dùng và hiện tượng mỏi (user fatigue).
 
-Hệ quả thiết kế, theo mình: coi lượt phê duyệt là tài nguyên khan hiếm.
+Theo mình, khi thiết kế nên coi lượt phê duyệt là tài nguyên khan hiếm:
 
-- Việc nằm gọn trong sandbox thì không hỏi; chỉ hỏi ở ranh giới: ra ngoài sandbox, tới host mới, hành động không đảo ngược.
+- Việc nằm gọn trong sandbox thì không hỏi. Chỉ hỏi ở ranh giới: ra ngoài sandbox, tới host mới, hành động không đảo ngược.
 - Lời hỏi phải hiện tham số thật và đầy đủ (lệnh nguyên văn, người nhận, nội dung gửi đi), không phải bản model tóm tắt. Trong một bản demo của Invariant Labs mà Willison thuật lại, dữ liệu bị lấy nằm khuất về bên phải hộp xác nhận, vì giao diện không hiện thanh cuộn ngang.
 
 ### Tách quyền đọc và ghi
@@ -173,7 +171,7 @@ def after_tool(session: Session, tool: str) -> None:
         session.tainted = True                    # không có đường gỡ cờ trong cùng phiên
 ```
 
-Quyết định nằm trong code tất định, model không tự gỡ được cờ `tainted`: muốn gửi ra ngoài mà không bị hỏi thì bắt đầu phiên mới với context sạch. Đánh dấu cả phiên là cách thô; CaMeL ở phần dưới theo dõi tới từng giá trị.
+Quyết định nằm trong code tất định, model không tự gỡ được cờ `tainted`. Muốn gửi ra ngoài mà không bị hỏi thì bắt đầu phiên mới với context sạch. Đánh dấu cả phiên là cách thô, còn CaMeL ở phần dưới theo dõi tới từng giá trị.
 
 ## Design pattern: ràng buộc agent sau khi nó đọc nội dung bẩn
 
@@ -196,46 +194,46 @@ Paper "Design Patterns for Securing LLM Agents against Prompt Injections" (thán
 
 Theo abstract của paper, trên benchmark AgentDojo CaMeL giải được 77% task với bảo đảm an toàn chứng minh được, so với 84% của hệ thống không phòng thủ. Ngoài 7 điểm đó, paper còn nêu các cái giá: phải có người viết và bảo trì chính sách bảo mật, người dùng chịu thêm gánh nặng phê duyệt, và prompt injection chưa được giải quyết hoàn toàn.
 
-Chọn pattern nào? Theo mình nên đi từ cái hẹp nhất còn đáp ứng được yêu cầu: chatbot tra cứu đơn hàng hợp với Action-Selector, pipeline tóm tắt hàng loạt tài liệu ngoài hợp với Map-Reduce, còn trợ lý đa năng trên email và lịch mới cần tới thứ như CaMeL.
+Về chuyện chọn pattern, theo mình nên đi từ cái hẹp nhất còn đáp ứng được yêu cầu: chatbot tra cứu đơn hàng hợp với Action-Selector, pipeline tóm tắt hàng loạt tài liệu ngoài hợp với Map-Reduce, còn trợ lý đa năng trên email và lịch mới cần tới thứ như CaMeL.
 
 ## Checklist threat-model cho một agent nội bộ
 
 Giả sử bạn sắp triển khai một agent nội bộ, ví dụ agent đọc ticket hỗ trợ, tra hệ thống đơn hàng và soạn trả lời. Danh sách dưới đây do mình gom từ các phần trên.
 
-**1. Kiểm kê ba cạnh**
+### 1. Kiểm kê ba cạnh
 
 - Agent đọc những nguồn nào, nguồn nào người ngoài tổ chức ghi vào được (ticket, email, trang web, trường ghi chú trong CRM, mô tả tool của MCP server bên thứ ba)?
 - Agent chạm tới dữ liệu và hệ thống nào? Có thấy dữ liệu của khách A khi đang xử lý cho khách B không?
 - Có những đường ra nào: tool gửi tin, tool gọi HTTP, render markdown, link preview, quyền ghi lên nơi công khai?
 - Phiên nào hội đủ cả ba? Bỏ cạnh nào, hoặc đặt người duyệt ở đâu?
 
-**2. Quyền và chuỗi cung ứng**
+### 2. Quyền và chuỗi cung ứng
 
 - Credential của agent có hẹp hơn quyền của người vận hành không? Đọc và ghi đã tách chưa?
 - Secret có nằm trong môi trường agent chạy không? Chuyển được ra proxy không?
 - Mỗi MCP server: ai viết, chạy bằng quyền gì, đã ghim phiên bản chưa, có phát hiện khi định nghĩa tool thay đổi không?
 
-**3. Cô lập**
+### 3. Cô lập
 
 - Agent chạy code thì đã có sandbox filesystem lẫn network ở tầng hệ điều hành chưa?
 - Egress mặc định chặn chưa? Mỗi host trong allowlist đã qua câu hỏi "bên ngoài ghi vào rồi đọc lại được không" chưa?
 - Giao diện có render ảnh hay tự tải URL từ domain ngoài không?
 
-**4. Phê duyệt**
+### 4. Phê duyệt
 
 - Hành động nào không đảo ngược? Mỗi cái đã có người duyệt, và người duyệt thấy tham số nguyên văn chưa?
 - Mỗi phiên hỏi bao nhiêu lần? Hỏi nhiều thì chuyển bớt sang sandbox hoặc dạng bản nháp.
 
-**5. Phát hiện và ứng phó**
+### 5. Phát hiện và ứng phó
 
 - Mọi tool call có được log kèm tham số, đủ để dựng lại sự việc không?
 - Thu hồi credential của agent mất bao lâu? Đã thử chưa?
 
 ## Điều còn mở, chưa chắc
 
-- **Model có bao giờ tự kháng được không.** Số liệu của Anthropic cho thấy tỉ lệ tấn công thành công giảm khi thêm lớp bảo vệ, còn "The Attacker Moves Second" cho thấy các phòng thủ đã công bố bị tấn công thích ứng vượt qua. Willison nói ông không chia sẻ sự lạc quan của các tác giả paper rằng phòng thủ đáng tin sẽ sớm có. Thiết kế hôm nay nên giả định là chưa.
-- **CaMeL và các pattern có dùng được cho agent đa năng không.** Bảo đảm của chúng đến từ việc hạn chế agent. Coding agent chạy hàng trăm bước, quyết định dựa trên thứ vừa đọc, khó khớp với Plan-Then-Execute hay Code-Then-Execute thuần túy. Theo quan sát của mình (chưa có khảo sát), các sản phẩm coding agent hiện dựa vào sandbox và phê duyệt nhiều hơn.
-- **Human-in-the-loop có bền không.** Meta, đặc tả MCP và CaMeL đều dựa vào người duyệt ở điểm cuối, trong khi Anthropic và paper CaMeL thừa nhận người duyệt sẽ mỏi. Mình chưa thấy lời giải nào cho mâu thuẫn này ngoài việc hỏi ít đi.
+- Model có bao giờ tự kháng được không. Số liệu của Anthropic cho thấy tỉ lệ tấn công thành công giảm khi thêm lớp bảo vệ, còn "The Attacker Moves Second" cho thấy các phòng thủ đã công bố bị tấn công thích ứng vượt qua. Willison nói ông không chia sẻ sự lạc quan của các tác giả paper rằng phòng thủ đáng tin sẽ sớm có. Thiết kế hôm nay nên giả định là chưa.
+- CaMeL và các pattern có dùng được cho agent đa năng không. Chúng bảo đảm được là nhờ hạn chế agent. Coding agent chạy hàng trăm bước, quyết định dựa trên thứ vừa đọc, khó khớp với Plan-Then-Execute hay Code-Then-Execute thuần túy. Theo quan sát của mình (chưa có khảo sát), các sản phẩm coding agent hiện dựa vào sandbox và phê duyệt nhiều hơn.
+- Human-in-the-loop có bền không. Meta, đặc tả MCP và CaMeL đều dựa vào người duyệt ở điểm cuối, trong khi Anthropic và paper CaMeL thừa nhận người duyệt sẽ mỏi. Mình chưa thấy lời giải nào cho mâu thuẫn này ngoài việc hỏi ít đi.
 
 ## Nguồn đọc thêm
 

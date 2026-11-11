@@ -6,7 +6,7 @@ description: Sáu việc lặp lại của kế toán doanh nghiệp nhỏ mà A
 loai: ung-dung
 ---
 
-Mình là kỹ sư phần mềm, không phải kế toán. Phần mình nắm chắc là AI làm tốt việc gì và hỏng theo kiểu nào. Phần nghiệp vụ, bài chỉ chọn những việc phổ biến ở phòng kế toán doanh nghiệp nhỏ và vừa, và cố ý không nêu thuế suất, hạn nộp hay số hiệu văn bản nào. Lý do nằm ở nguyên tắc thứ hai bên dưới.
+Mình là kỹ sư phần mềm, không phải kế toán. Mình nắm chắc AI làm tốt việc gì và hỏng theo kiểu nào, còn về nghiệp vụ thì bài chỉ chọn những việc phổ biến ở phòng kế toán doanh nghiệp nhỏ và vừa. Bài cố ý không nêu thuế suất, hạn nộp hay số hiệu văn bản nào, lý do nằm ở nguyên tắc thứ hai bên dưới.
 
 ## Ba nguyên tắc trước khi mở khung chat
 
@@ -14,11 +14,11 @@ Mình là kỹ sư phần mềm, không phải kế toán. Phần mình nắm ch
 
 Mô hình ngôn ngữ sinh ra chữ tiếp theo dựa trên xác suất, nó không có máy tính bên trong. Dán một bảng 300 dòng rồi hỏi "tổng cột tiền thuế là bao nhiêu", bạn có thể nhận một con số trông hợp lý nhưng lệch vài nghìn đồng hoặc sót vài dòng, và nó không báo lỗi.
 
-Cách dùng đúng: mô tả bảng cho AI, nhờ nó viết công thức hoặc các bước Power Query, rồi để Excel tính. Excel tính sai thì bạn lần lại được công thức. AI nhẩm sai thì không có gì để lần. Một số công cụ cho tải file lên và tự chạy code để tính; cách này chính xác hơn nhẩm, nhưng bạn khó thấy nó đã lọc dòng nào, nên vẫn phải so tổng với con số tự tính bằng Excel.
+Nên mô tả bảng cho AI, nhờ nó viết công thức hoặc các bước Power Query, rồi để Excel tính. Excel tính sai thì bạn còn lần lại được công thức, còn AI nhẩm sai thì không có gì để lần. Một số công cụ cho tải file lên và tự chạy code để tính. Cách này chính xác hơn nhẩm, nhưng bạn khó thấy nó đã lọc dòng nào, nên vẫn phải so tổng với con số tự tính bằng Excel.
 
 ### 2. Không tin AI về thuế suất, hạn nộp, số hiệu văn bản
 
-AI học từ dữ liệu cũ, trong khi quy định thuế đổi thường xuyên. Nó có thể trả lời trôi chảy theo một quy định đã hết hiệu lực, hoặc ghép số hiệu của văn bản này với nội dung của văn bản khác. Mọi con số và căn cứ pháp lý AI đưa ra chỉ là gợi ý để đi tra: mở văn bản gốc trên cổng thông tin chính thức, đọc đúng điều khoản đó và kiểm văn bản còn hiệu lực hay không.
+AI học từ dữ liệu cũ, trong khi quy định thuế đổi thường xuyên. Nó có thể trả lời trôi chảy theo một quy định đã hết hiệu lực, hoặc ghép số hiệu của văn bản này với nội dung của văn bản khác. Mọi con số và căn cứ pháp lý AI đưa ra chỉ là gợi ý để đi tra. Bạn mở văn bản gốc trên cổng thông tin chính thức, đọc đúng điều khoản đó và kiểm xem văn bản còn hiệu lực không.
 
 ### 3. Ẩn danh dữ liệu trước khi dán
 
@@ -45,15 +45,15 @@ Hãy viết công thức cho ô B2 và C2, giải thích từng tham số bằng
 và nêu 3 trường hợp công thức có thể cho kết quả sai (ví dụ số bị lưu dạng chữ).
 ```
 
-Hai chi tiết trong câu lệnh hay bị bỏ quên. Phiên bản Excel quyết định hàm nào dùng được (XLOOKUP không có ở các bản cũ). Dấu ngăn cách tham số phụ thuộc thiết lập vùng của máy: nhiều máy ở Việt Nam dùng dấu chấm phẩy, AI thì mặc định viết dấu phẩy, dán vào là Excel báo lỗi.
+Trong câu lệnh trên, người ta hay quên ghi phiên bản Excel và dấu ngăn cách tham số. Phiên bản quyết định hàm nào dùng được (XLOOKUP không có ở các bản cũ). Dấu ngăn cách thì phụ thuộc thiết lập vùng của máy. Nhiều máy ở Việt Nam dùng dấu chấm phẩy trong khi AI mặc định viết dấu phẩy, dán vào là Excel báo lỗi.
 
-Chiều ngược lại cũng đáng dùng: dán một công thức lồng năm sáu tầng do người cũ để lại và hỏi "công thức này làm gì, từng phần một, và nó sẽ sai khi nào".
+Bạn cũng có thể làm ngược lại, dán một công thức lồng năm sáu tầng do người cũ để lại và hỏi "công thức này làm gì, từng phần một, và nó sẽ sai khi nào".
 
 **Cách kiểm tra:** chọn hai ba mã khách hàng, lọc tay trên sổ chi tiết rồi so với kết quả công thức. Thử thêm một mã không có phát sinh và một mã có phát sinh nằm đúng ngày đầu và ngày cuối kỳ, vì lỗi hay nằm ở biên.
 
 ## Việc 2: Đối chiếu sao kê, công nợ với sổ
 
-Ví dụ: cuối tháng bạn có file sao kê ngân hàng và sổ tiền gửi xuất từ phần mềm kế toán, cần tìm giao dịch có bên này mà thiếu bên kia. Theo nguyên tắc 1, nhờ AI thiết kế cách so khớp chứ đừng để nó tự so.
+Cuối tháng bạn có file sao kê ngân hàng và sổ tiền gửi xuất từ phần mềm kế toán, cần tìm giao dịch có bên này mà thiếu bên kia. Theo nguyên tắc 1, nhờ AI thiết kế cách so khớp chứ đừng để nó tự so.
 
 ```text
 Tôi cần đối chiếu hai bảng trong Excel:
@@ -68,17 +68,17 @@ Hai bảng không có mã chung. Hãy:
 4. Cách xử lý khi có hai giao dịch cùng ngày cùng số tiền.
 ```
 
-Trong Power Query, phép cần dùng là Merge với kiểu nối "Left Anti": giữ lại những dòng ở bảng bên trái không tìm thấy dòng tương ứng ở bảng bên phải ([tài liệu của Microsoft về left anti join](https://learn.microsoft.com/en-us/power-query/merge-queries-left-anti)). Làm hai lần, đổi vai hai bảng, là ra hai danh sách chênh lệch.
+Trong Power Query, phép cần dùng là Merge với kiểu nối "Left Anti". Kiểu nối này giữ lại những dòng ở bảng bên trái không tìm thấy dòng tương ứng ở bảng bên phải ([tài liệu của Microsoft về left anti join](https://learn.microsoft.com/en-us/power-query/merge-queries-left-anti)). Làm hai lần, đổi vai hai bảng, là ra hai danh sách chênh lệch.
 
-Đừng bỏ bước làm sạch ở mục 3: khoảng trắng thừa, số tiền lưu dạng chữ, ngày bị đảo tháng với ngày khiến hai dòng giống nhau mà không khớp.
+Đừng bỏ bước làm sạch ở mục 3. Khoảng trắng thừa, số tiền lưu dạng chữ, ngày bị đảo tháng với ngày đều khiến hai dòng giống nhau mà không khớp.
 
-Những khoản không khớp một-một thì AI không ghép thay bạn được: một lần chuyển khoản trả gộp ba hóa đơn, phí ngân hàng bị trừ thẳng vào số tiền nhận, khách chuyển thiếu vài nghìn. Danh sách chênh lệch chỉ thu hẹp phạm vi.
+Những khoản không khớp một-một thì AI không ghép thay bạn được: một lần chuyển khoản trả gộp ba hóa đơn, phí ngân hàng bị trừ thẳng vào số tiền nhận, khách chuyển thiếu vài nghìn. Danh sách chênh lệch chỉ giúp thu hẹp phạm vi phải xem tay.
 
 **Cách kiểm tra:** số dư đầu kỳ cộng phát sinh, sau khi điều chỉnh các khoản chênh lệch đã giải thích, phải ra đúng số dư cuối kỳ trên sao kê. Nếu không ra, cách so khớp đang bỏ sót hoặc ghép nhầm. Nhóm giao dịch trùng ngày trùng tiền dễ bị ghép nhầm nhất, nên xem tay.
 
 ## Việc 3: Soát bảng kê tìm dòng bất thường
 
-Với bảng kê vài trăm dòng, hỏi AI "bảng này có gì lạ không" cho kết quả hên xui: nó chỉ ra vài dòng, bỏ qua vài dòng khác. Cách ổn định hơn là nhờ AI nghĩ ra các phép kiểm tra rồi biến chúng thành cột công thức.
+Với bảng kê vài trăm dòng, hỏi AI "bảng này có gì lạ không" cho kết quả hên xui, nó chỉ ra vài dòng và bỏ qua vài dòng khác. Cách ổn định hơn là nhờ AI nghĩ ra các phép kiểm tra rồi biến chúng thành cột công thức.
 
 ```text
 Bảng kê hóa đơn mua vào trong Excel có các cột: A = Ký hiệu hóa đơn, B = Số hóa đơn,
@@ -95,17 +95,17 @@ Không tự tính trên dữ liệu, chỉ viết công thức.
 
 Kéo công thức xuống, lọc TRUE là có danh sách cần xem. Phép kiểm tra chạy trên mọi dòng, và tháng sau dùng lại được.
 
-AI sẽ tự chọn vài tham số mà nó không có căn cứ để chọn. Ba chỗ bạn phải quyết:
+AI sẽ tự chọn vài tham số mà nó không có căn cứ để chọn, nên những chỗ sau bạn phải tự quyết:
 
-- **Làm tròn và mức lệch cho phép.** Lấy theo cách phần mềm kế toán của bạn đang tính và quy định hiện hành, đừng lấy theo con số AI gợi ý.
-- **Thế nào là hóa đơn trùng.** AI thường đề xuất ghép vài cột làm khóa (ví dụ mã số thuế người bán, ký hiệu, số hóa đơn). Tổ hợp nào đủ để coi hai dòng là một hóa đơn thì đối chiếu với quy định về hóa đơn đang áp dụng.
-- **Dòng không theo khuôn.** Thuế suất ghi bằng chữ (ví dụ hàng không chịu thuế), hóa đơn điều chỉnh hay thay thế cần xử lý riêng, nếu không sẽ báo động giả.
+- Cách làm tròn và mức lệch cho phép lấy theo cách phần mềm kế toán của bạn đang tính và quy định hiện hành, đừng lấy theo con số AI gợi ý.
+- Để tìm hóa đơn trùng, AI thường đề xuất ghép vài cột làm khóa (ví dụ mã số thuế người bán, ký hiệu, số hóa đơn). Tổ hợp nào đủ để coi hai dòng là một hóa đơn thì bạn đối chiếu với quy định về hóa đơn đang áp dụng.
+- Những dòng không theo khuôn như thuế suất ghi bằng chữ (ví dụ hàng không chịu thuế), hóa đơn điều chỉnh hay thay thế cần xử lý riêng, nếu không sẽ báo động giả.
 
 **Cách kiểm tra:** cố ý sửa sai hai ba dòng (đổi một số tiền thuế, nhân đôi một hóa đơn) rồi xem cột kiểm tra có bắt được không. Các phép này chỉ bắt lỗi nhập liệu. Hóa đơn có hợp lệ hay không, chi phí có được trừ hay không là phán đoán nghề của bạn, và tình trạng hóa đơn thì tra trên cổng hóa đơn điện tử của cơ quan thuế chứ không hỏi AI.
 
 ## Việc 4: Email nhắc công nợ và bản nháp giải trình
 
-Nhắc nợ khó ở giọng: đủ rõ để khách hiểu là cần trả, đủ mềm để còn làm ăn tiếp. AI lo phần giọng, mọi con số do bạn đưa vào.
+Nhắc nợ khó ở giọng, vì thư phải đủ rõ để khách hiểu là cần trả mà vẫn đủ mềm để còn làm ăn tiếp. AI lo phần giọng, còn mọi con số do bạn đưa vào.
 
 ```text
 Viết email nhắc thanh toán gửi khách hàng doanh nghiệp, xưng "em", gọi "anh/chị".
@@ -143,13 +143,13 @@ Không diễn giải thêm ngoài văn bản. Không chắc thì ghi "không ch�
 [Dán văn bản]
 ```
 
-Yêu cầu trích nguyên văn là chốt chặn chính: tìm câu đó trong văn bản gốc, không thấy nghĩa là AI đã bịa. Mục 3 cần vì văn bản thuế hay sửa đổi, bổ sung một văn bản trước đó, đọc riêng một tờ thì thiếu.
+Yêu cầu trích nguyên văn là chốt chặn chính. Bạn tìm câu đó trong văn bản gốc, không thấy nghĩa là AI đã bịa. Mục 3 cần vì văn bản thuế hay sửa đổi, bổ sung một văn bản trước đó, đọc riêng một tờ thì thiếu.
 
-**Cách kiểm tra:** đầu ra là danh sách điều cần đọc, không phải kết luận. Bạn vẫn đọc các điều đó trong văn bản gốc, và lướt cả mục lục để chắc AI không xếp nhầm một điều liên quan vào nhóm "bỏ qua".
+**Cách kiểm tra:** đầu ra mới là danh sách điều cần đọc, chưa phải kết luận. Bạn vẫn đọc các điều đó trong văn bản gốc, và lướt cả mục lục để chắc AI không xếp nhầm một điều liên quan vào nhóm "bỏ qua".
 
 ## Việc 6: Chuẩn hóa diễn giải bút toán
 
-Sổ có ba người nhập thì có ba kiểu diễn giải: "thu tien kh A", "KH A thanh toán HĐ 125", "A ck". Tìm kiếm và lọc về sau rất khổ.
+Sổ có ba người nhập thì có ba kiểu diễn giải: "thu tien kh A", "KH A thanh toán HĐ 125", "A ck". Về sau tìm kiếm hay lọc đều khổ.
 
 ```text
 Mẫu diễn giải chuẩn của công ty tôi:
@@ -177,16 +177,13 @@ Làm theo lô nhỏ vài chục dòng. Lô dài, AI dễ bỏ sót dòng hoặc 
 | Văn bản thuế | Khoanh vùng điều cần đọc | Đọc văn bản gốc, kết luận áp dụng |
 | Diễn giải | Viết lại theo mẫu | Định khoản, số tiền |
 
-Hai việc không nên giao, kể cả khi AI tỏ ra làm được:
-
-- **Định khoản và xác định nghĩa vụ thuế.** Người chịu trách nhiệm với cơ quan thuế là bạn và công ty.
-- **Lập báo cáo tài chính, tờ khai để nộp thẳng.** AI có thể giúp soát lỗi trình bày, không thay người lập và người ký.
+Định khoản và xác định nghĩa vụ thuế thì không nên giao, kể cả khi AI tỏ ra làm được, vì người chịu trách nhiệm với cơ quan thuế là bạn và công ty. Lập báo cáo tài chính, tờ khai để nộp thẳng cũng vậy. AI có thể giúp soát lỗi trình bày nhưng không thay được người lập và người ký.
 
 ## Bắt đầu từ đâu
 
-Nếu chỉ thử một việc trong tuần này, mình đề nghị việc 3: bộ cột kiểm tra chạy lại được mỗi kỳ mà không cần mở AI nữa.
+Nếu chỉ thử một việc trong tuần này, mình đề nghị việc 3, vì bộ cột kiểm tra chạy lại được mỗi kỳ mà không cần mở AI nữa.
 
-Sáu câu lệnh trên phải sửa cho khớp tên cột và mẫu biểu của công ty bạn. Sửa xong thì lưu lại theo cách ở bài [Từ hỏi từng câu đến một hệ thống làm việc với AI của riêng bạn](/bai-chia-se/xay-he-thong-ai-ca-nhan/). Sang việc mới thì mở cuộc trò chuyện mới và mô tả lại bảng; lý do nằm ở thói quen "chia ca" trong bài [Cùng một AI, vì sao người khác dùng hiệu quả hơn bạn?](/bai-chia-se/cung-ai-nguoi-dung-hieu-qua-hon/).
+Sáu câu lệnh trên phải sửa cho khớp tên cột và mẫu biểu của công ty bạn. Sửa xong thì lưu lại theo cách ở bài [Từ hỏi từng câu đến một hệ thống làm việc với AI của riêng bạn](/bai-chia-se/xay-he-thong-ai-ca-nhan/). Sang việc mới thì mở cuộc trò chuyện mới và mô tả lại bảng. Lý do nằm ở thói quen "chia ca" trong bài [Cùng một AI, vì sao người khác dùng hiệu quả hơn bạn?](/bai-chia-se/cung-ai-nguoi-dung-hieu-qua-hon/).
 
 ## Nguồn đọc thêm
 

@@ -6,7 +6,7 @@ description: Sáu việc lặp lại của người làm marketing nội dung c�
 loai: ung-dung
 ---
 
-Gõ "viết bài Facebook giới thiệu sản phẩm X" vào bất kỳ công cụ AI nào, bạn sẽ nhận về một bài đọc được và giống bài của rất nhiều trang khác. Khi không có chất liệu riêng, công cụ viết ra phiên bản trung bình của những bài quảng cáo nó từng đọc.
+Gõ "viết bài Facebook giới thiệu sản phẩm X" vào bất kỳ công cụ AI nào, bạn sẽ nhận về một bài đọc được và giống bài của hàng loạt trang khác. Khi không có chất liệu riêng, công cụ viết ra phiên bản trung bình của những bài quảng cáo nó từng đọc.
 
 Vì vậy mọi việc bên dưới đi theo cùng một quy trình ba bước:
 
@@ -48,11 +48,11 @@ Mỗi nhận xét phải kèm một câu trích từ bài mẫu làm bằng ch�
 [Dán các bài vào đây]
 ```
 
-Cách kiểm tra: đọc từng nhận xét và câu trích đi kèm. Nhận xét nào không có câu trích thật thì xóa. Sau đó lưu hồ sơ này cùng 2 đến 3 bài mẫu vào một không gian riêng của công cụ để không phải dán lại mỗi lần; cách tổ chức không gian đó có ở bài [Từ hỏi từng câu đến một hệ thống làm việc với AI của riêng bạn](/bai-chia-se/xay-he-thong-ai-ca-nhan/).
+Cách kiểm tra: đọc từng nhận xét và câu trích đi kèm. Nhận xét nào không có câu trích thật thì xóa. Sau đó lưu hồ sơ này cùng 2 đến 3 bài mẫu vào một không gian riêng của công cụ để không phải dán lại mỗi lần. Cách tổ chức không gian đó có ở bài [Từ hỏi từng câu đến một hệ thống làm việc với AI của riêng bạn](/bai-chia-se/xay-he-thong-ai-ca-nhan/).
 
 ## 2. Nghiên cứu chân dung khách hàng từ bình luận và đánh giá thật
 
-Nhờ AI "vẽ chân dung khách hàng mục tiêu cho tiệm bánh" thì nó sẽ dựng ra một "chị Lan, 32 tuổi, nhân viên văn phòng" nghe hợp lý và không dựa trên dữ liệu nào. Chân dung dùng được phải đi từ lời khách thật: đánh giá trên sàn thương mại điện tử, Google Maps, bình luận dưới bài đăng, tin nhắn hỏi hàng. Trước khi dán, xóa tên, số điện thoại, địa chỉ của khách.
+Nhờ AI "vẽ chân dung khách hàng mục tiêu cho tiệm bánh" thì nó sẽ dựng ra một "chị Lan, 32 tuổi, nhân viên văn phòng" nghe hợp lý nhưng không dựa trên dữ liệu nào. Chân dung dùng được phải đi từ lời khách thật: đánh giá trên sàn thương mại điện tử, Google Maps, bình luận dưới bài đăng, tin nhắn hỏi hàng. Trước khi dán, xóa tên, số điện thoại, địa chỉ của khách.
 
 ```text
 Dưới đây là khoảng 150 đánh giá và bình luận của khách về sản phẩm của tôi (đã xóa tên).
@@ -64,11 +64,11 @@ Hãy:
 Chỉ dựa trên dữ liệu được dán. Không thêm đặc điểm nhân khẩu học nếu bình luận không nói.
 ```
 
-Mục 3 thường có giá trị nhất: cách khách tự gọi vấn đề của họ là nguyên liệu tốt cho tiêu đề và câu mở.
+Mục 3 thường có giá trị nhất, vì cách khách tự gọi vấn đề của họ là nguyên liệu tốt cho tiêu đề và câu mở.
 
 Cách kiểm tra: tìm (Ctrl+F) vài câu trích trong file gốc để chắc AI không sửa lời khách. Số lượng mỗi nhóm chỉ là ước lượng, vì AI đếm trong văn bản dài hay lệch. Khi cần con số chính xác, dùng cách gắn nhãn từng dòng rồi đếm bằng công thức, mô tả ở việc 6 của bài [về nhân sự](/bai-chia-se/ai-cho-nhan-su/).
 
-Giới hạn của nguồn này: người để lại đánh giá không đại diện cho toàn bộ người mua, càng không đại diện cho người chưa mua.
+Cũng nên nhớ người để lại đánh giá không đại diện cho toàn bộ người mua, càng không đại diện cho người chưa mua.
 
 ## 3. Lên lịch nội dung
 
@@ -106,11 +106,11 @@ Nếu một phiên bản cần thông tin bài gốc không có, ghi "[CẦN B�
 [Bài gốc]
 ```
 
-Cách kiểm tra: đặt bản phái sinh cạnh bài gốc và dò từng con số, tên sản phẩm, điều kiện khuyến mãi. Lỗi hay gặp là AI làm "gọn" một điều kiện: "giảm 20% cho đơn từ 500.000 đồng" bị rút thành "giảm 20%".
+Cách kiểm tra: đặt bản phái sinh cạnh bài gốc và dò từng con số, tên sản phẩm, điều kiện khuyến mãi. Lỗi hay gặp là AI làm "gọn" một điều kiện, ví dụ "giảm 20% cho đơn từ 500.000 đồng" bị rút thành "giảm 20%".
 
 ## 5. Viết biến thể quảng cáo để chạy A/B
 
-A/B là chạy song song hai phiên bản chỉ khác nhau một yếu tố để xem bản nào hiệu quả hơn. AI tạo nhiều phiên bản nhanh. Nó không dự đoán được bản nào thắng, dù có thể trả lời rất tự tin khi bạn hỏi; chỉ dữ liệu chạy thật mới trả lời được.
+A/B là chạy song song hai phiên bản chỉ khác nhau một yếu tố để xem bản nào hiệu quả hơn. AI tạo nhiều phiên bản nhanh nhưng không dự đoán được bản nào thắng, dù khi bạn hỏi nó vẫn trả lời đầy tự tin. Muốn biết thì phải chạy thật và xem dữ liệu.
 
 ```text
 Đây là mẫu quảng cáo đang chạy: [dán tiêu đề, nội dung, lời kêu gọi].
@@ -122,13 +122,13 @@ Ghi tên góc bên cạnh từng biến thể. Không dùng từ "nhất", "số
 không hứa kết quả, không thêm thông tin ngoài phần được phép dùng.
 ```
 
-Tên góc ghi cạnh từng biến thể cho bạn biết góc nào hợp với khách của mình chứ không chỉ câu nào thắng. Chỉ thay một yếu tố mỗi lần, nếu không sẽ không biết yếu tố nào tạo ra khác biệt.
+Nhờ tên góc ghi cạnh từng biến thể, ngoài câu nào thắng bạn còn biết góc nào hợp với khách của mình. Chỉ thay một yếu tố mỗi lần, nếu không sẽ không biết yếu tố nào tạo ra khác biệt.
 
 Cách kiểm tra: dò từng biến thể với phần "thông tin được phép dùng". Biến thể góc (4) và (5) dễ có lời khách hoặc con số AI tự đặt ra.
 
 ## 6. Tổng hợp báo cáo chiến dịch từ file xuất
 
-File xuất từ trình quản lý quảng cáo hay công cụ email thường là bảng CSV hoặc Excel vài trăm dòng. Mô hình ngôn ngữ tính nhẩm trên bảng dán vào khung chat hay sai, nhất là cộng dồn nhiều dòng (bài [về kế toán](/bai-chia-se/ai-cho-ke-toan/) giải thích vì sao và cách nhờ AI viết công thức thay vì tự tính). Cách chắc nhất: bạn tự làm bảng tổng hợp (pivot) trong Excel hoặc Google Sheets, rồi đưa bảng đã tính xong cho AI viết phần diễn giải.
+File xuất từ trình quản lý quảng cáo hay công cụ email thường là bảng CSV hoặc Excel vài trăm dòng. Mô hình ngôn ngữ tính nhẩm trên bảng dán vào khung chat hay sai, nhất là cộng dồn nhiều dòng (bài [về kế toán](/bai-chia-se/ai-cho-ke-toan/) giải thích vì sao và cách nhờ AI viết công thức thay vì tự tính). Cách chắc nhất là bạn tự làm bảng tổng hợp (pivot) trong Excel hoặc Google Sheets, rồi đưa bảng đã tính xong cho AI viết phần diễn giải.
 
 ```text
 Đây là bảng tổng hợp chiến dịch tháng 10 (tôi đã tự tính, coi các con số là đúng).
@@ -142,11 +142,11 @@ Phân biệt rõ "số liệu cho thấy" và "giả thuyết cần kiểm tra".
 [Dán bảng]
 ```
 
-Cách kiểm tra: mọi con số trong đoạn nhận xét phải tìm thấy trong bảng. Soát các câu giải thích nguyên nhân ("do nội dung hấp dẫn hơn"): AI hay viết chúng dù không có dữ liệu chứng minh.
+Cách kiểm tra: mọi con số trong đoạn nhận xét phải tìm thấy trong bảng. Soát các câu giải thích nguyên nhân ("do nội dung hấp dẫn hơn"), vì AI hay viết chúng dù không có dữ liệu chứng minh.
 
 ## Nhận ra và sửa văn AI
 
-Những dấu hiệu dưới đây đã được cộng đồng biên tập Wikipedia tổng hợp khá kỹ cho tiếng Anh; trong tiếng Việt chúng hiện ra tương tự:
+Cộng đồng biên tập Wikipedia đã tổng hợp khá kỹ các dấu hiệu dưới đây cho tiếng Anh. Trong tiếng Việt chúng hiện ra tương tự:
 
 | Dấu hiệu | Ví dụ | Cách sửa |
 | --- | --- | --- |
@@ -157,13 +157,13 @@ Những dấu hiệu dưới đây đã được cộng đồng biên tập Wiki
 | Kết bài kêu gọi chung chung | "Hãy cùng chúng tôi khám phá ngay hôm nay!" | Một hành động cụ thể, hoặc bỏ |
 | Câu nào cũng dài bằng nhau | Đoạn văn đều tăm tắp | Chen câu ngắn, cắt câu thừa |
 
-Dán danh sách cấm vào câu lệnh chỉ chữa được bề mặt. Phép thử khi biên tập: thay tên thương hiệu của bạn bằng tên đối thủ. Nếu bài vẫn đúng thì bài đó chưa nói được gì về bạn. Cách chữa là thêm chất liệu chỉ bạn có: một câu khách nói thật, một con số của chính cửa hàng, một chi tiết sản xuất, một lần làm hỏng và sửa thế nào.
+Dán danh sách cấm vào câu lệnh chỉ chữa được bề mặt. Khi biên tập, thử thay tên thương hiệu của bạn bằng tên đối thủ. Nếu bài vẫn đúng thì bài đó chưa nói được gì về bạn, và phải thêm chất liệu chỉ bạn có: một câu khách nói thật, một con số của chính cửa hàng, một chi tiết sản xuất, một lần làm hỏng và sửa thế nào.
 
 ## Kiểm tra số liệu và tuyên bố về sản phẩm
 
 AI viết quảng cáo hay tự thêm những thứ nghe thuyết phục: "được hàng nghìn khách tin dùng", "hiệu quả sau 7 ngày", "chiết xuất 100% tự nhiên". Nếu chúng không đúng, người chịu trách nhiệm là doanh nghiệp và người đăng.
 
-Vài đầu mối pháp lý để tra tiếp. Mình không phải người làm luật; trước khi dựa vào điểm nào, hãy đọc văn bản gốc hoặc hỏi bộ phận pháp lý:
+Dưới đây là vài đầu mối pháp lý để tra tiếp. Mình không phải người làm luật, nên trước khi dựa vào điểm nào, bạn hãy đọc văn bản gốc hoặc hỏi bộ phận pháp lý.
 
 - Luật Quảng cáo yêu cầu nội dung quảng cáo trung thực, rõ ràng, không gây hiểu nhầm. Luật sửa đổi năm 2025 (số 75/2025/QH15, hiệu lực từ 01/01/2026), theo bài tổng hợp của LuatVietnam dẫn ở cuối bài, bổ sung trách nhiệm cho cả người trực tiếp quảng cáo, giới thiệu sản phẩm trên mạng.
 - Luật Quảng cáo 2012 có điều cấm dùng các từ như "nhất", "duy nhất", "tốt nhất", "số một" khi không có tài liệu hợp pháp chứng minh. Luật đã được sửa đổi, nên câu chữ hiện hành và loại tài liệu được chấp nhận bạn tra trong bản hợp nhất và nghị định hướng dẫn. Cách an toàn là không dùng các từ này trừ khi bộ phận pháp lý đã duyệt.
@@ -179,8 +179,8 @@ Danh sách dò trước khi đăng:
 
 ## Ranh giới dữ liệu
 
-- Danh sách khách hàng, số điện thoại, email, lịch sử mua hàng là dữ liệu cá nhân, thuộc phạm vi Luật Bảo vệ dữ liệu cá nhân (số 91/2025/QH15, hiệu lực từ 01/01/2026). Chỉ đưa loại dữ liệu này vào công cụ mà công ty đã cho phép. Việc phân tích thường không cần đến nó: xóa cột định danh trước khi dán.
-- Kế hoạch ra mắt chưa công bố, ngân sách, giá nhập: hỏi quy định của công ty trước khi dán.
+- Danh sách khách hàng, số điện thoại, email, lịch sử mua hàng là dữ liệu cá nhân, thuộc phạm vi Luật Bảo vệ dữ liệu cá nhân (số 91/2025/QH15, hiệu lực từ 01/01/2026). Chỉ đưa loại dữ liệu này vào công cụ mà công ty đã cho phép. Việc phân tích thường không cần đến nó, nên hãy xóa cột định danh trước khi dán.
+- Với kế hoạch ra mắt chưa công bố, ngân sách, giá nhập, hỏi quy định của công ty trước khi dán.
 - Nếu bạn định dùng AI để soạn tin nhắn gửi hàng loạt cho danh sách khách, đọc trước mục về cá nhân hóa giả tạo trong bài [AI trong bán hàng và chăm sóc khách hàng](/bai-chia-se/ai-cho-sales-cham-soc-khach-hang/).
 
 ## Nếu chỉ bắt đầu với một việc
