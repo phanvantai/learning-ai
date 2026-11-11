@@ -6,7 +6,7 @@ description: Cách kiểm kê công việc một tuần, chấm điểm việc n
 loai: ung-dung
 ---
 
-Bài [Cùng một AI, vì sao người khác dùng hiệu quả hơn bạn?](/bai-chia-se/cung-ai-nguoi-dung-hieu-qua-hon/) nói về năm thói quen khi làm việc với AI. Thói quen thì dễ rơi rụng: tuần bận là quên, và bạn quay về mở khung chat, gõ một câu, nhận một câu.
+Bài [Cùng một AI, vì sao người khác dùng hiệu quả hơn bạn?](/bai-chia-se/cung-ai-nguoi-dung-hieu-qua-hon/) nói về năm thói quen khi làm việc với AI. Thói quen thì dễ rơi rụng. Tuần bận là quên, và bạn lại mở khung chat, gõ một câu, nhận một câu.
 
 Bài này biến các thói quen đó thành một hệ thống có sẵn, không cần lập trình, gồm bốn thứ: một danh sách việc đã chọn lọc, một hồ sơ ngữ cảnh, vài không gian làm việc theo dự án, và một thư viện câu lệnh.
 
@@ -25,7 +25,7 @@ Hồ sơ ngữ cảnh  ->  Không gian theo dự án  ->  Thư viện câu lện
 
 ## Bước 1: Kiểm kê công việc một tuần
 
-Chọn việc giao AI theo cảm hứng (thấy ai đó khoe một câu lệnh hay thì thử) thường không trúng việc của mình. Chắc hơn là nhìn vào tuần làm việc thật: trong năm ngày làm việc, mỗi khi xong một việc mất hơn 15 phút, ghi một dòng vào file ghi chú: việc gì, mất bao lâu, đầu vào là gì, đầu ra là gì. Không cần chính xác tới phút. Cuối tuần, những dòng lặp lại là thứ cần nhìn kỹ.
+Chọn việc giao AI theo cảm hứng (thấy ai đó khoe một câu lệnh hay thì thử) thường không trúng việc của mình. Chắc hơn là nhìn vào tuần làm việc thật. Trong năm ngày làm việc, mỗi khi xong một việc mất hơn 15 phút, ghi một dòng vào file ghi chú: việc gì, mất bao lâu, đầu vào là gì, đầu ra là gì. Không cần chính xác tới phút. Cuối tuần, những dòng lặp lại là thứ cần nhìn kỹ.
 
 Nếu ngại ghi, cuối mỗi ngày mở lịch, hộp thư đã gửi và lịch sử tin nhắn công việc ra rồi chép lại.
 
@@ -53,11 +53,11 @@ Bảng chấm mẫu cho một nhân viên văn phòng (ví dụ minh họa, khô
 
 Cách đọc bảng (các ngưỡng là quy ước của bài này để dễ quyết, bạn chỉnh theo việc của mình):
 
-- **Từ 6 điểm trở lên:** đáng đầu tư dựng mẫu câu lệnh và không gian riêng.
-- **3 đến 5 điểm:** dùng AI cho từng phần, hoặc sửa điểm yếu trước. Ví dụ báo cáo tuần chỉ được 1 điểm đầu vào vì dữ liệu rải rác. Gom nó về một chỗ là điểm tăng lên.
-- **Dưới 3 điểm:** giữ lại.
+- Từ 6 điểm trở lên: đáng đầu tư dựng mẫu câu lệnh và không gian riêng.
+- 3 đến 5 điểm: dùng AI cho từng phần, hoặc sửa điểm yếu trước. Ví dụ báo cáo tuần chỉ được 1 điểm đầu vào vì dữ liệu rải rác. Gom nó về một chỗ là điểm tăng lên.
+- Dưới 3 điểm: giữ lại.
 
-Cột "hại khi sai" có quyền phủ quyết. Việc được 0 điểm ở cột này (như đối chiếu công nợ) thì dù tổng điểm cao cũng chỉ nên giao AI phần chuẩn bị, còn con số cuối cùng bạn tự kiểm từng dòng, vì AI có thể sai với giọng rất tự tin. Bài [về kế toán](/bai-chia-se/ai-cho-ke-toan/) cho thấy cách chia phần này với chính việc đối chiếu.
+Cột "hại khi sai" có quyền phủ quyết. Việc được 0 điểm ở cột này (như đối chiếu công nợ) thì dù tổng điểm cao cũng chỉ nên giao AI phần chuẩn bị, còn con số cuối cùng bạn tự kiểm từng dòng, vì AI có thể sai với giọng tự tin. Bài [về kế toán](/bai-chia-se/ai-cho-ke-toan/) cho thấy cách chia phần này với chính việc đối chiếu.
 
 Chọn ba đến năm việc điểm cao nhất để bắt đầu.
 
@@ -88,11 +88,11 @@ Không bịa số liệu, tên người, ngày tháng, điều khoản. Không c
 Khi tôi dán tài liệu, chỉ dùng thông tin trong tài liệu trừ khi tôi nói khác.
 ```
 
-Ba lưu ý khi viết:
+Đừng đưa bí mật vào hồ sơ, vì hồ sơ được gửi kèm mọi cuộc trò chuyện. Viết "công ty phân phối thiết bị y tế, khoảng 50 người" là đủ, không cần tên khách hàng hay doanh số.
 
-- **Không đưa bí mật vào hồ sơ.** Hồ sơ được gửi kèm mọi cuộc trò chuyện. Viết "công ty phân phối thiết bị y tế, khoảng 50 người" là đủ, không cần tên khách hàng hay doanh số.
-- **Đừng bỏ mục "từ ngữ riêng".** AI không biết "BBNT" ở công ty bạn là biên bản nghiệm thu. Thiếu mục này, nó đoán, và đôi khi đoán sai một cách trôi chảy.
-- **Giữ ngắn.** Hồ sơ dài ba trang thì các chỉ dẫn dễ mâu thuẫn nhau và bạn không còn biết dòng nào đang có tác dụng. Mỗi dòng nên có lý do tồn tại: nó sửa một lỗi bạn từng gặp.
+Đừng bỏ mục "từ ngữ riêng". AI không biết "BBNT" ở công ty bạn là biên bản nghiệm thu. Thiếu mục này thì nó đoán, và đôi khi đoán sai mà câu chữ vẫn trôi chảy.
+
+Giữ hồ sơ ngắn. Dài ba trang thì các chỉ dẫn dễ mâu thuẫn nhau và bạn không còn biết dòng nào đang có tác dụng. Mỗi dòng nên sửa một lỗi bạn từng gặp.
 
 **Cách kiểm tra:** mở một cuộc trò chuyện mới, giao một việc quen mà không giải thích gì thêm. Nếu kết quả vẫn sai xưng hô, sai độ dài hay hiểu nhầm từ viết tắt, hồ sơ còn thiếu dòng đó.
 
@@ -100,9 +100,9 @@ Ba lưu ý khi viết:
 
 Hồ sơ ngữ cảnh nói về bạn. Mỗi loại việc lại cần thêm bối cảnh riêng: tài liệu của dự án, mẫu báo cáo, giọng văn với một khách hàng cụ thể. Các công cụ lớn đều có một dạng không gian riêng để chứa thứ này, gồm hai phần chung: một bộ hướng dẫn riêng và một nhóm tài liệu tham chiếu. Lúc viết bài, tên gọi là Projects (ChatGPT, Claude), GPTs (ChatGPT) và Gems (Gemini).
 
-Tên gọi và giới hạn theo gói thay đổi liên tục, nên đừng học thuộc menu. Một ví dụ: trang trợ giúp của Google (dẫn ở cuối bài) thông báo rằng từ tháng 11/2026, Gems trên tài khoản Google cá nhân sẽ tự động chuyển thành "skills". Điều cần nhớ là khả năng: một chỗ lưu hướng dẫn và tài liệu để mọi cuộc trò chuyện trong đó đều có sẵn bối cảnh.
+Tên gọi và giới hạn theo gói thay đổi liên tục, nên đừng học thuộc menu. Một ví dụ: trang trợ giúp của Google (dẫn ở cuối bài) thông báo rằng từ tháng 11/2026, Gems trên tài khoản Google cá nhân sẽ tự động chuyển thành "skills". Chỉ cần nhớ đó là một chỗ lưu hướng dẫn và tài liệu, để mọi cuộc trò chuyện trong đó đều có sẵn bối cảnh.
 
-Nguyên tắc chia: mỗi không gian cho một loại việc lặp lại hoặc một dự án đang chạy, lấy từ danh sách điểm cao ở bước 2. Ví dụ:
+Mỗi không gian dành cho một loại việc lặp lại hoặc một dự án đang chạy, lấy từ danh sách điểm cao ở bước 2. Ví dụ:
 
 | Không gian | Hướng dẫn riêng | Tài liệu đính kèm |
 |---|---|---|
@@ -110,17 +110,17 @@ Nguyên tắc chia: mỗi không gian cho một loại việc lặp lại hoặc
 | Email khách hàng | Cách xưng hô, những điều không được hứa | Bảng chính sách đổi trả, câu trả lời mẫu |
 | Dự án A | Mục tiêu, mốc thời gian, ai phụ trách gì | Kế hoạch, biên bản họp gần nhất |
 
-Hai lỗi hay gặp ở bước này. Một là nhồi mọi tài liệu vào một không gian: tài liệu lạc đề làm câu trả lời loãng đi. Hai là để tài liệu cũ nằm lại: biên bản họp từ ba tháng trước có thể khiến AI trả lời theo quyết định đã bị thay.
+Ở bước này người ta hay nhồi mọi tài liệu vào một không gian, và tài liệu lạc đề làm câu trả lời loãng đi. Tài liệu cũ để quên cũng gây hại, ví dụ biên bản họp từ ba tháng trước có thể khiến AI trả lời theo quyết định đã bị thay.
 
 Trước khi tải tài liệu công ty lên, kiểm tra xem công ty cho phép dùng công cụ nào với loại dữ liệu đó.
 
 ## Bước 5: Thư viện câu lệnh cá nhân
 
-Bài trước khuyên ghi lại câu lệnh hiệu quả vào sổ. Thư viện là cuốn sổ đó khi được tổ chức để tìm lại nhanh và ngày càng tốt lên.
+Bài trước khuyên ghi lại câu lệnh hiệu quả vào sổ. Thư viện là cuốn sổ đó, nhưng sắp xếp sao cho tìm lại nhanh và sửa dần được.
 
-**Nơi lưu:** một file duy nhất (Google Docs, Notion, ghi chú trên máy), mỗi câu lệnh một mục. Ưu tiên chỗ bạn mở được cả trên máy tính lẫn điện thoại.
+Lưu tất cả vào một file duy nhất (Google Docs, Notion, ghi chú trên máy), mỗi câu lệnh một mục. Ưu tiên chỗ bạn mở được cả trên máy tính lẫn điện thoại.
 
-**Cách đặt tên:** động từ, đối tượng, biến thể, phiên bản. Ví dụ:
+Tên đặt theo thứ tự động từ, đối tượng, biến thể, phiên bản. Ví dụ:
 
 ```text
 tom-tat_chuoi-email_v3
@@ -131,7 +131,7 @@ kiem-tra_hop-dong_dieu-khoan-thanh-toan_v1
 
 Động từ đứng đầu giúp các câu lệnh cùng loại việc nằm cạnh nhau khi sắp xếp. Số phiên bản giúp bạn quay lại bản trước nếu bản sửa hóa ra tệ hơn.
 
-**Mỗi mục gồm bốn phần:**
+Mỗi mục gồm bốn phần:
 
 ```text
 TÊN: viet_bao-cao-tuan_gui-sep_v4
@@ -141,7 +141,7 @@ GHI CHÚ: v4 thêm yêu cầu ghi nguồn cho từng ý vì v3 hay tự suy di�
          Vẫn còn lỗi: đôi khi gộp hai việc khác nhau thành một dòng.
 ```
 
-Quy tắc cải tiến: khi kết quả sai theo cùng một kiểu đến lần thứ hai, sửa câu lệnh gốc trong thư viện và ghi lý do vào phần ghi chú. Chỉ sửa trong cuộc trò chuyện thì lần sau lỗi quay lại.
+Khi kết quả sai theo cùng một kiểu đến lần thứ hai, sửa câu lệnh gốc trong thư viện và ghi lý do vào phần ghi chú. Chỉ sửa trong cuộc trò chuyện thì lần sau lỗi quay lại.
 
 Câu lệnh sưu tầm trên mạng chỉ nên vào thư viện sau khi bạn đã dùng thật ít nhất hai lần và sửa cho hợp việc của mình. Nếu cần điểm xuất phát theo nghề, các bài sau có sẵn câu lệnh kèm cách kiểm tra: [kế toán](/bai-chia-se/ai-cho-ke-toan/), [nhân sự](/bai-chia-se/ai-cho-nhan-su/), [marketing nội dung](/bai-chia-se/ai-cho-marketing-noi-dung/), [bán hàng và chăm sóc khách hàng](/bai-chia-se/ai-cho-sales-cham-soc-khach-hang/), [quản lý nhóm](/bai-chia-se/ai-cho-quan-ly-hop-va-du-an/), và [tóm tắt chuỗi email dài](/bai-chia-se/tom-tat-email-dai-bang-ai/).
 
@@ -153,29 +153,29 @@ Câu lệnh sưu tầm trên mạng chỉ nên vào thư viện sau khi bạn đ
 | Cần tìm hiểu một chủ đề từ nhiều nguồn trên mạng, chấp nhận chờ | Chế độ nghiên cứu sâu (deep research) | Nó tự tìm nhiều lượt, đọc nhiều nguồn rồi viết báo cáo có dẫn nguồn |
 | Cùng một việc chạy lặp lại theo lịch hoặc theo sự kiện, đầu vào và đầu ra cố định | Công cụ tự động hóa | Không cần bạn ngồi dán từng lần |
 
-Chế độ nghiên cứu sâu chậm hơn nhiều so với chat: trang trợ giúp của Gemini ghi báo cáo thường mất khoảng 5 đến 10 phút, việc phức tạp thì lâu hơn, và số lượt bị giới hạn theo gói. Có dẫn nguồn không có nghĩa là đúng: mở nguồn của những ý bạn định dùng, vì nó vẫn có thể hiểu sai nguồn hoặc lấy từ trang kém tin cậy.
+Chế độ nghiên cứu sâu chậm hơn nhiều so với chat. Trang trợ giúp của Gemini ghi báo cáo thường mất khoảng 5 đến 10 phút, việc phức tạp thì lâu hơn, và số lượt bị giới hạn theo gói. Có dẫn nguồn chưa chắc đã đúng. Hãy mở nguồn của những ý bạn định dùng, vì nó vẫn có thể hiểu sai nguồn hoặc lấy từ trang kém tin cậy.
 
-Về tự động hóa (các công cụ nối ứng dụng với nhau như Zapier, Make, n8n, hoặc tính năng chạy tác vụ theo lịch mà một số công cụ AI có): chỉ nghĩ tới khi một việc đã chạy ổn bằng tay với cùng một câu lệnh ít nhất vài tuần, và đạt 2 điểm ở cả cột kiểm tra lẫn cột hại khi sai. Tự động hóa một quy trình chưa ổn thì lỗi ra nhanh hơn mà không còn ai nhìn từng kết quả. Với việc gửi ra ngoài (email cho khách, tin nhắn cho đối tác), giữ một bước bạn duyệt trước khi gửi.
+Tự động hóa (các công cụ nối ứng dụng với nhau như Zapier, Make, n8n, hoặc tính năng chạy tác vụ theo lịch mà một số công cụ AI có) thì chỉ nên nghĩ tới khi một việc đã chạy ổn bằng tay với cùng một câu lệnh ít nhất vài tuần, và đạt 2 điểm ở cả cột kiểm tra lẫn cột hại khi sai. Tự động hóa một quy trình chưa ổn thì lỗi ra nhanh hơn mà không còn ai nhìn từng kết quả. Với việc gửi ra ngoài (email cho khách, tin nhắn cho đối tác), giữ một bước bạn duyệt trước khi gửi.
 
 ## Bước 7: Nhịp duy trì 15 phút mỗi tuần
 
-Không bảo trì thì tài liệu hết hạn, câu lệnh không còn hợp, hồ sơ mô tả công việc của bạn nửa năm trước. Đặt một lịch cố định 15 phút, ví dụ chiều thứ Sáu, với năm việc:
+Không bảo trì thì tài liệu hết hạn, câu lệnh không còn hợp, hồ sơ mô tả công việc của bạn nửa năm trước. Đặt một lịch cố định 15 phút, ví dụ chiều thứ Sáu, và làm lần lượt:
 
-1. **Nhìn lại tuần (3 phút):** việc nào AI làm tốt, việc nào phải sửa nhiều?
-2. **Sửa một câu lệnh (5 phút):** chọn câu lệnh gây phiền nhất tuần, sửa bản gốc, tăng số phiên bản, ghi chú lý do.
-3. **Dọn không gian (3 phút):** gỡ tài liệu đã cũ, thêm tài liệu mới của dự án đang chạy.
-4. **Cập nhật hồ sơ (2 phút):** có lỗi nào lặp lại đáng thêm một dòng chỉ dẫn không? Có dòng nào thừa cần bỏ không?
-5. **Ghi một con số (2 phút):** xem phần đo bên dưới.
+1. Nhìn lại tuần (3 phút): việc nào AI làm tốt, việc nào phải sửa nhiều?
+2. Sửa một câu lệnh (5 phút): chọn câu lệnh gây phiền nhất tuần, sửa bản gốc, tăng số phiên bản, ghi chú lý do.
+3. Dọn không gian (3 phút): gỡ tài liệu đã cũ, thêm tài liệu mới của dự án đang chạy.
+4. Cập nhật hồ sơ (2 phút): có lỗi nào lặp lại đáng thêm một dòng chỉ dẫn không? Có dòng nào thừa cần bỏ không?
+5. Ghi một con số (2 phút): xem phần đo bên dưới.
 
 Mỗi tuần chỉ sửa một thứ. Sửa nhiều thứ cùng lúc thì bạn không biết thay đổi nào tạo ra khác biệt.
 
 ## Đo xem có tiết kiệm thật không
 
-Cảm giác "nhanh hơn" khi dùng AI dễ đánh lừa, vì thời gian chờ và thời gian sửa thường không được tính vào. Cách đo:
+Cảm giác "nhanh hơn" khi dùng AI dễ đánh lừa, vì thời gian chờ và thời gian sửa thường không được tính vào.
 
-**Lấy mốc trước.** Bảng kiểm kê ở bước 1 đã có thời gian làm tay cho từng việc.
+Mốc so sánh là thời gian làm tay cho từng việc, đã có trong bảng kiểm kê ở bước 1.
 
-**Tính đủ ba khoản khi làm với AI:** thời gian chuẩn bị đầu vào và viết yêu cầu, thời gian kiểm tra, thời gian sửa. Ghi tổng lại sau mỗi lần làm, trong khoảng bốn tuần.
+Khi làm với AI, tính đủ thời gian chuẩn bị đầu vào và viết yêu cầu, thời gian kiểm tra và thời gian sửa. Ghi tổng lại sau mỗi lần làm, trong khoảng bốn tuần.
 
 ```text
 Việc: báo cáo tuần
@@ -184,9 +184,9 @@ Với AI, tuần 1:       20 chuẩn bị + 15 kiểm tra + 25 sửa = 60 phút
 Với AI, tuần 4:       10 chuẩn bị + 10 kiểm tra +  5 sửa = 25 phút
 ```
 
-Các con số trên là ví dụ minh họa. Tuần đầu có thể không tiết kiệm gì, thậm chí chậm hơn, vì bạn còn đang sửa câu lệnh và gom đầu vào. Nếu sau bốn tuần tổng thời gian vẫn không giảm rõ, có ba khả năng: câu lệnh chưa đủ tốt, đầu vào vẫn lộn xộn, hoặc việc này không hợp giao AI. Trường hợp cuối thì gạch nó khỏi danh sách.
+Các con số trên là ví dụ minh họa. Tuần đầu có thể không tiết kiệm gì, thậm chí chậm hơn, vì bạn còn đang sửa câu lệnh và gom đầu vào. Nếu sau bốn tuần tổng thời gian vẫn không giảm rõ thì hoặc câu lệnh chưa đủ tốt, hoặc đầu vào vẫn lộn xộn, hoặc việc này không hợp giao AI. Trường hợp cuối thì gạch nó khỏi danh sách.
 
-**Theo dõi thêm hai dấu hiệu chất lượng:** số lỗi lọt qua tới người nhận (sếp hoặc khách phát hiện trước bạn), và số lần bạn bỏ bản AI viết để làm lại từ đầu. Tiết kiệm 30 phút mà để lọt một con số sai tới khách hàng thì không phải tiết kiệm.
+Ngoài thời gian, theo dõi thêm số lỗi lọt qua tới người nhận (sếp hoặc khách phát hiện trước bạn) và số lần bạn bỏ bản AI viết để làm lại từ đầu. Tiết kiệm 30 phút mà để lọt một con số sai tới khách hàng thì không phải tiết kiệm.
 
 Tính cả chi phí: thời gian dựng ban đầu, 15 phút mỗi tuần, và tiền gói trả phí nếu có. Với việc chỉ làm mỗi quý một lần, hệ thống này có thể không bao giờ hoàn vốn.
 
