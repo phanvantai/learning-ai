@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "identifier": "app.learningai.troly",
   "build": {
-    "frontendDist": "./dist"
+    "frontendDist": "./web"
   },
   "app": {
     "windows": [],

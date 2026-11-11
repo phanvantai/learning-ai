@@ -9,3 +9,4 @@ dist/
 
 # Rust harness
 harness/target/
+harness/app/gen/
