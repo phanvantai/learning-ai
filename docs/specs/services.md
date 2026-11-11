@@ -17,6 +17,9 @@ Status: agreed
 
 - Bài gốc trên website (blog); cắt thành bài ngắn/video đăng mạng xã hội, dẫn về website.
 - Nhịp: **2 bài/tuần**. Bài chia sẻ đồng thời là cách người sáng lập tự học và bổ sung kiến thức.
+- Hai Loại bài: **Ứng dụng** (cho Học viên cá nhân: quy trình làm việc với AI, có bài riêng theo nghề) và
+  **Chuyên sâu** (bài kỹ thuật về AI, agent, harness: sổ tay nghiên cứu của người sáng lập, viết cho người làm kỹ thuật).
+  Trang chủ và trang danh sách tách riêng hai loại để người không làm kỹ thuật không phải lội qua bài Chuyên sâu.
 
 ## Tư vấn qua chat
 
@@ -32,6 +35,7 @@ Status: agreed
 - Thanh toán bằng chuyển khoản, không thanh toán online trên web.
 - Giá công khai trên web.
 - Tối đa 1–2 học viên Mentoring cùng lúc.
+- Nội dung từng buổi, ba Hướng, tiêu chí chọn việc và tiêu chí hoàn thành: xem `mentoring-program.md`.
 
 ## Khóa đào tạo
 

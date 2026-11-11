@@ -19,28 +19,35 @@ const tatCaBai = await getTatCaBaiChiaSe();
 const chuDe = tatCaChuDe(tatCaBai);
 const dangXem = chuDe.find(({ slug }) => slug === Astro.params.slug);
 if (!dangXem) throw new Error(`Không có thẻ chủ đề "${Astro.params.slug}"`);
+
+const baiCoThe = baiThuocChuDe(tatCaBai, dangXem.slug);
 const title = `Bài chia sẻ về “${dangXem.ten}”`;
 ---
 
 <BaseLayout title={title}>
-  <section class="page-hero">
+  <section class="page-head">
     <div class="container">
-      <p><a class="arrow-link back-link" href={DANH_SACH_HREF}><Icon name="arrow-left" /> Xem tất cả Bài chia sẻ</a></p>
+      <p>
+        <a class="arrow-link" href={DANH_SACH_HREF}><Icon name="arrow-left" /> Xem tất cả Bài chia sẻ</a>
+      </p>
       <h1>{title}</h1>
+      <p class="label">{baiCoThe.length} bài có thẻ chủ đề này</p>
     </div>
   </section>
-  <div class="container page-body">
-    <ChuDeFilter chuDe={chuDe} current={dangXem.slug} />
-    <BaiChiaSeList tatCaBai={baiThuocChuDe(tatCaBai, dangXem.slug)} />
+
+  <div class="container">
+    <div class="loc">
+      <p class="label">Thẻ chủ đề</p>
+      <ChuDeFilter chuDe={chuDe} current={dangXem.slug} />
+    </div>
+    <BaiChiaSeList tatCaBai={baiCoThe} hienLoai />
   </div>
 </BaseLayout>
 
 <style>
-  .back-link {
-    font-size: 0.95rem;
-  }
-
-  .page-hero p {
-    margin: 0 0 1rem;
+  .loc {
+    display: grid;
+    gap: 0.6rem;
+    padding: 1.5rem 0 2rem;
   }
 </style>

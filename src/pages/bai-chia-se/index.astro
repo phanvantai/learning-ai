@@ -2,25 +2,62 @@
 import BaiChiaSeList from '../../components/BaiChiaSeList.astro';
 import ChuDeFilter from '../../components/ChuDeFilter.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getTatCaBaiChiaSe } from '../../bai-chia-se';
+import { LOAI_BAI, baiTheoLoai, getTatCaBaiChiaSe } from '../../bai-chia-se';
 import { tatCaChuDe } from '../../chu-de';
 
 const tatCaBai = await getTatCaBaiChiaSe();
+const theoLoai = LOAI_BAI.map((loai) => ({ ...loai, bai: baiTheoLoai(tatCaBai, loai.ma) }));
 ---
 
 <BaseLayout title="Bài chia sẻ">
-  <section class="page-hero">
+  <section class="page-head">
     <div class="container">
-      <p class="eyebrow">{tatCaBai.length} bài · cập nhật 2 bài mỗi tuần</p>
+      <p class="label">{tatCaBai.length} bài · cập nhật 2 bài mỗi tuần</p>
       <h1>Bài chia sẻ</h1>
       <p class="lead">
-        Mỗi tuần 2 bài về cách dùng AI cho công việc hằng ngày: cái gì hiệu quả, và cả những thứ mình đã thử
-        mà chưa ổn.
+        Hai loại bài: <a href="#ung-dung">Ứng dụng</a> cho công việc hằng ngày, và{' '}
+        <a href="#chuyen-sau">Chuyên sâu</a> cho người muốn hiểu kỹ thuật bên dưới. Cái gì hiệu quả thì kể,
+        cái đã thử mà chưa ổn cũng kể.
       </p>
     </div>
   </section>
-  <div class="container page-body">
-    <ChuDeFilter chuDe={tatCaChuDe(tatCaBai)} />
-    <BaiChiaSeList tatCaBai={tatCaBai} />
+
+  <div class="container">
+    <div class="loc">
+      <p class="label">Thẻ chủ đề</p>
+      <ChuDeFilter chuDe={tatCaChuDe(tatCaBai)} />
+    </div>
+
+    {
+      theoLoai.map((loai) => (
+        <section class="sheet" id={loai.ma} aria-labelledby={`${loai.ma}-heading`} data-loai={loai.ma}>
+          <div class="sheet-label">
+            <p class="label">{loai.bai.length} bài</p>
+            <h2 id={`${loai.ma}-heading`}>{loai.ten}</h2>
+            <p>{loai.moTa}</p>
+          </div>
+          <div class="sheet-body">
+            <BaiChiaSeList tatCaBai={loai.bai} headingLevel="h3" />
+          </div>
+        </section>
+      ))
+    }
   </div>
 </BaseLayout>
+
+<style>
+  .loc {
+    display: grid;
+    gap: 0.6rem;
+    padding: 1.5rem 0 0;
+  }
+
+  .loc + .sheet {
+    margin-top: 1.5rem;
+  }
+
+  .sheet-body :global(.bai-chia-se-list) {
+    border-top: 0;
+    margin-top: -1.25rem;
+  }
+</style>

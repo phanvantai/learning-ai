@@ -1,84 +1,132 @@
 ---
-import { baiChiaSeHref, type BaiChiaSe } from '../bai-chia-se';
+import { baiChiaSeHref, soPhutDoc, tenLoai, type BaiChiaSe } from '../bai-chia-se';
 import ChuDeTags from './ChuDeTags.astro';
 import PublishedDate from './PublishedDate.astro';
 
 interface Props {
   bai: BaiChiaSe;
-  /** Cấp tiêu đề của bài, theo cấu trúc trang chứa thẻ này. */
-  headingLevel?: 'h2' | 'h3';
+  /** Cấp tiêu đề của bài, theo cấu trúc trang chứa dòng này. */
+  headingLevel?: 'h2' | 'h3' | 'h4';
+  /** Ghi Loại bài trên dòng: dùng ở danh sách trộn cả hai loại. */
+  hienLoai?: boolean;
+  /** Dòng gọn: bỏ mô tả và thẻ chủ đề. */
+  gon?: boolean;
 }
 
-const { bai, headingLevel: Heading = 'h2' } = Astro.props;
+const { bai, headingLevel: Heading = 'h2', hienLoai = false, gon = false } = Astro.props;
 ---
 
-<article class="bai-chia-se-card">
-  <p class="date"><PublishedDate date={bai.data.date} /></p>
-  <Heading class="title"><a href={baiChiaSeHref(bai)}>{bai.data.title}</a></Heading>
-  <p class="description">{bai.data.description}</p>
-  <ChuDeTags bai={bai} />
+<article class:list={['dong', { gon }]}>
+  <p class="ngay label"><PublishedDate date={bai.data.date} /></p>
+  <div class="than">
+    <Heading class="tieu-de"><a href={baiChiaSeHref(bai)}>{bai.data.title}</a></Heading>
+    {!gon && <p class="mo-ta">{bai.data.description}</p>}
+    {
+      !gon && (
+        <div class="phu">
+          {hienLoai && <span class="label loai">{tenLoai(bai.data.loai)}</span>}
+          <ChuDeTags bai={bai} />
+        </div>
+      )
+    }
+  </div>
+  <p class="phut label">{soPhutDoc(bai.body ?? '')} phút đọc</p>
 </article>
 
 <style>
-  .bai-chia-se-card {
+  .dong {
     position: relative;
-    display: flex;
-    flex-direction: column;
-    padding: 1.5rem;
-    border: 1px solid var(--border);
-    border-top: 4px solid var(--accent-glow);
-    border-radius: var(--radius-lg);
-    background: var(--surface);
-    box-shadow: var(--shadow-sm);
-    transition:
-      transform 200ms var(--ease),
-      box-shadow 200ms var(--ease);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.35rem 1.5rem;
+    padding: 1.25rem 0;
+    border-bottom: 1px solid var(--rule);
   }
 
-  .bai-chia-se-card:hover {
-    box-shadow: var(--shadow-md);
-    transform: translateY(-3px);
+  .ngay {
+    grid-column: 1;
   }
 
-  .date {
-    margin: 0;
-    color: var(--muted);
-    font-size: 0.85rem;
-    font-weight: 500;
+  .phut {
+    grid-column: 2;
+    grid-row: 1;
+    white-space: nowrap;
   }
 
-  .title {
-    margin: 0.4rem 0 0.6rem;
-    font-size: 1.2rem;
-    line-height: 1.35;
+  .than {
+    grid-column: 1 / -1;
   }
 
-  /* Cả thẻ bấm được nhờ vệt phủ của link tiêu đề; link thẻ chủ đề nằm trên vệt phủ. */
-  .title a {
-    color: var(--text);
+  .tieu-de {
+    font-size: 1.375rem;
+    line-height: 1.28;
+  }
+
+  /* Cả dòng bấm được nhờ vệt phủ của link tiêu đề; link thẻ chủ đề nằm trên vệt phủ. */
+  .tieu-de a {
+    color: var(--ink);
     text-decoration: none;
   }
 
-  .title a::after {
+  .tieu-de a::after {
     content: '';
     position: absolute;
     inset: 0;
-    border-radius: inherit;
   }
 
-  .bai-chia-se-card:hover .title a {
-    color: var(--accent);
+  .dong:hover .tieu-de a {
+    background: var(--mark);
   }
 
-  .description {
-    flex: 1;
-    margin: 0 0 1.1rem;
+  .mo-ta {
+    max-width: 44rem;
+    margin-top: 0.4rem;
     color: var(--muted);
-    font-size: 0.975rem;
+    font-size: 0.9375rem;
   }
 
-  .bai-chia-se-card :global(.chu-de-tags) {
+  .phu {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.25rem 1rem;
+    margin-top: 0.6rem;
+  }
+
+  .loai {
+    color: var(--ink);
+  }
+
+  .phu :global(.chu-de-tags) {
     position: relative;
     z-index: 1;
+  }
+
+  .gon {
+    padding: 0.9rem 0;
+  }
+
+  .gon .tieu-de {
+    font-size: 1.125rem;
+  }
+
+  @media (min-width: 48rem) {
+    .dong:not(.gon) {
+      grid-template-columns: 9.5rem minmax(0, 1fr) auto;
+    }
+
+    .dong:not(.gon) .than {
+      grid-column: 2;
+      grid-row: 1;
+    }
+
+    .dong:not(.gon) .phut {
+      grid-column: 3;
+    }
+
+    .dong:not(.gon) .ngay,
+    .dong:not(.gon) .phut {
+      padding-top: 0.45rem;
+    }
   }
 </style>

@@ -15,6 +15,8 @@ const baiChiaSe = defineCollection({
     date: z.coerce.date(),
     tags: z.array(tenChuDe).min(1),
     description: z.string().min(1),
+    /** Loại bài (CONTEXT.md): `ung-dung` cho công việc hằng ngày, `chuyen-sau` cho bài kỹ thuật. */
+    loai: z.enum(['ung-dung', 'chuyen-sau']).default('ung-dung'),
   }),
 });
 

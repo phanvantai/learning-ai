@@ -92,3 +92,31 @@ describe('trang Mentoring: case study', () => {
     expect(caseStudies).toMatch(/[Cc]hưa có case study/);
   });
 });
+
+describe('trang Mentoring: chương trình 4 buổi', () => {
+  it('mô tả đủ 4 buổi theo thứ tự, mỗi buổi có sản phẩm', async () => {
+    const chuongTrinh = await section('Chương trình');
+    expect(chuongTrinh).toBeDefined();
+    const viTri = [1, 2, 3, 4].map((so) => chuongTrinh!.indexOf(`Buổi ${so} ·`));
+    expect(viTri.every((v) => v >= 0)).toBe(true);
+    expect([...viTri].sort((a, b) => a - b)).toEqual(viTri);
+    expect(chuongTrinh!.match(/Sản phẩm/g)).toHaveLength(4);
+  });
+
+  it('nêu ba hướng Skill, Automation, Tool', async () => {
+    const huong = await section('Ba hướng');
+    for (const ten of ['Skill', 'Automation', 'Tool']) expect(huong, ten).toContain(ten);
+  });
+
+  it('nói rõ ai chưa hợp với Mentoring', async () => {
+    expect(await section('Hợp và chưa hợp')).toMatch(/Chưa hợp khi/);
+  });
+
+  it('ví dụ đề bài chỉ dẫn tới Bài chia sẻ có thật', async () => {
+    const { getCollection } = await import('astro:content');
+    const ids = new Set((await getCollection('baiChiaSe')).map((bai) => bai.id));
+    const links = [...(await mentoringMain()).matchAll(/href="\/bai-chia-se\/([^/"]+)\/"/g)].map((m) => m[1]);
+    expect(links.length).toBeGreaterThan(0);
+    for (const id of links) expect(ids.has(id), id).toBe(true);
+  });
+});

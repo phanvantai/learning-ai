@@ -1,461 +1,251 @@
 ---
+import BaiChiaSeList from '../components/BaiChiaSeList.astro';
 import ChatContact from '../components/ChatContact.astro';
 import Icon from '../components/Icon.astro';
-import LatestBaiChiaSe from '../components/LatestBaiChiaSe.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { DANH_SACH_HREF, LOAI_BAI, baiTheoLoai, getTatCaBaiChiaSe } from '../bai-chia-se';
+import { BUOI } from '../mentoring-program';
 import { MENTORING_BETA as BETA } from '../site';
+
+/** Số Bài chia sẻ mới nhất của mỗi Loại bài hiện trên Trang chủ. */
+const SO_BAI = 3;
+
+const tatCaBai = await getTatCaBaiChiaSe();
+const theoLoai = LOAI_BAI.map((loai) => ({ ...loai, bai: baiTheoLoai(tatCaBai, loai.ma) }));
 ---
 
 <BaseLayout>
-  <section class="home-hero">
-    <div class="container hero-grid">
-      <div class="hero-copy">
-        <p class="eyebrow">Học công khai · 2 Bài chia sẻ mỗi tuần</p>
+  <section class="page-head home-head">
+    <div class="container head-grid">
+      <div>
+        <p class="label">Sổ tay học công khai · {tatCaBai.length} Bài chia sẻ · 2 bài mỗi tuần</p>
         <h1>
-          Kỹ sư phần mềm dùng AI mỗi ngày, chia sẻ những gì <span class="hl">thực sự hiệu quả</span>.
+          Kỹ sư phần mềm dùng AI mỗi ngày, chia sẻ những gì <span class="mark">thực sự hiệu quả</span>.
         </h1>
         <p class="lead">
-          Hướng dẫn thực tế để dân văn phòng dùng AI cho công việc hằng ngày, kể cả những thứ đã thử và
-          không thành công.
+          Cách dùng AI cho công việc hằng ngày, viết cho người không làm kỹ thuật, kèm một cuốn sổ tay
+          chuyên sâu cho ai muốn hiểu bên dưới nó chạy thế nào. Thử gì kể nấy, kể cả thứ không thành công.
         </p>
         <div class="button-row">
-          <a class="button" href="/bai-chia-se/">
-            Đọc Bài chia sẻ <Icon name="arrow-right" />
-          </a>
-          <a class="button button-secondary" href="#lien-he">
-            <Icon name="message" /> Hỏi qua chat, miễn phí
-          </a>
+          <a class="button" href={DANH_SACH_HREF}>Đọc Bài chia sẻ <Icon name="arrow-right" /></a>
+          <a class="button button-secondary" href="#lien-he">Hỏi qua chat, miễn phí</a>
         </div>
-        <ul class="hero-points" aria-label="Điểm chính">
-          <li><Icon name="check" /> Không cần biết code</li>
-          <li><Icon name="check" /> Ví dụ từ việc văn phòng thật</li>
-          <li><Icon name="check" /> Hỏi là trả lời, không cần đặt lịch</li>
-        </ul>
       </div>
 
-      <div class="hero-visual" role="img" aria-label="Minh họa một cuộc Tư vấn qua chat">
-        <div class="chat-mock">
-          <div class="chat-mock-head">
-            <span class="chat-mock-avatar"><Icon name="sparkles" /></span>
-            <div>
-              <strong>Tư vấn qua chat</strong>
-              <span>Miễn phí · không cần đặt lịch</span>
-            </div>
-          </div>
-          <div class="chat-mock-body">
-            <p class="bubble bubble-me">
-              Mình làm kế toán, cuối tuần nào cũng mất cả buổi chiều tổng hợp báo cáo. AI giúp được không?
-            </p>
-            <p class="bubble bubble-them">
-              Được! Bạn thử prompt mẫu này với bảng số liệu tuần này, rồi kể mình nghe kết quả nhé.
-            </p>
-            <div class="bubble bubble-them bubble-prompt">
-              <span class="prompt-label"><Icon name="file-text" /> Prompt mẫu</span>
-              <code>Bạn là trợ lý kế toán. Tóm tắt bảng dưới đây thành 5 ý chính cho sếp đọc trong 1 phút…</code>
-            </div>
-          </div>
-        </div>
-        <div class="float-chip float-chip-a"><Icon name="clock" /> Tiết kiệm thời gian</div>
-        <div class="float-chip float-chip-b"><Icon name="book-open" /> Làm theo được ngay</div>
-      </div>
+      <nav class="muc-luc" aria-label="Trên trang này">
+        <p class="label">Trên trang này</p>
+        <ol>
+          {
+            theoLoai.map((loai) => (
+              <li>
+                <a href={`${DANH_SACH_HREF}#${loai.ma}`}>
+                  <strong>{loai.ten}</strong>
+                  <span>{loai.moTa}</span>
+                  <span class="label">{loai.bai.length} bài</span>
+                </a>
+              </li>
+            ))
+          }
+          <li>
+            <a href="/mentoring/">
+              <strong>Mentoring</strong>
+              <span>
+                {BETA.sessions} buổi có lịch hẹn, cùng build một tool, automation hoặc skill AI chạy được.
+              </span>
+              <span class="label">Gói beta {BETA.price}</span>
+            </a>
+          </li>
+          <li>
+            <a href="/doanh-nghiep/">
+              <strong>Doanh nghiệp</strong>
+              <span>Khóa đào tạo AI cho đội ngũ, theo 3 Cấp độ.</span>
+              <span class="label">Đang nhận thí điểm</span>
+            </a>
+          </li>
+        </ol>
+      </nav>
     </div>
   </section>
-
-  <section class="container section" aria-labelledby="giup-gi">
-    <div class="section-head">
-      <div>
-        <h2 id="giup-gi">Mình giúp bạn theo 3 cách</h2>
-        <p>Bắt đầu miễn phí. Chỉ trả tiền khi bạn cần làm riêng cùng mình.</p>
-      </div>
-    </div>
-    <ul class="offer-grid">
-      <li class="card offer">
-        <span class="icon-tile"><Icon name="book-open" /></span>
-        <p class="badge badge-teal">Miễn phí</p>
-        <h3>Bài chia sẻ</h3>
-        <p>
-          2 bài mỗi tuần về cách dùng AI cho email, báo cáo, tài liệu… kèm ví dụ để bạn làm theo ngay.
-        </p>
-        <a class="arrow-link" href="/bai-chia-se/">Đọc Bài chia sẻ <Icon name="arrow-right" /></a>
-      </li>
-      <li class="card offer">
-        <span class="icon-tile"><Icon name="message" /></span>
-        <p class="badge badge-teal">Miễn phí</p>
-        <h3>Tư vấn qua chat</h3>
-        <p>
-          Nhắn câu hỏi qua Zalo, Messenger, Telegram hoặc LinkedIn. Mình trả lời và gợi ý hướng đi.
-        </p>
-        <a class="arrow-link" href="#lien-he">Nhắn cho mình <Icon name="arrow-right" /></a>
-      </li>
-      <li class="card offer offer-featured">
-        <span class="icon-tile"><Icon name="wrench" /></span>
-        <p class="badge">Gói beta {BETA.price}</p>
-        <h3>Mentoring</h3>
-        <p>
-          {BETA.sessions} buổi &times; {BETA.minutes} phút có lịch hẹn, cùng bạn build một tool,
-          automation hoặc skill AI chạy được cho công việc.
-        </p>
-        <a class="arrow-link" href="/mentoring/">Xem gói Mentoring <Icon name="arrow-right" /></a>
-      </li>
-    </ul>
-
-    <a class="business-strip" href="/doanh-nghiep/">
-      <span class="icon-tile icon-tile-teal"><Icon name="building" /></span>
-      <span class="business-strip-text">
-        <strong>Bạn là doanh nghiệp?</strong>
-        <span>Khóa đào tạo AI cho đội ngũ theo 3 Cấp độ, đang nhận doanh nghiệp thí điểm.</span>
-      </span>
-      <Icon name="arrow-right" class="business-strip-arrow" />
-    </a>
-  </section>
-
-  <LatestBaiChiaSe />
 
   <div class="container">
+    <section class="sheet sheet-first" aria-labelledby="latest-bai-chia-se">
+      <div class="sheet-label">
+        <h2 id="latest-bai-chia-se">Bài chia sẻ mới nhất</h2>
+        <p>Bài Ứng dụng cho công việc hằng ngày, bài Chuyên sâu cho người làm kỹ thuật.</p>
+        <p><a class="arrow-link" href={DANH_SACH_HREF}>Xem tất cả <Icon name="arrow-right" /></a></p>
+      </div>
+      <div class="sheet-body loai-grid">
+        {
+          theoLoai.map((loai) => (
+            <section aria-labelledby={`home-${loai.ma}`} data-loai={loai.ma}>
+              <h3 id={`home-${loai.ma}`}>{loai.ten}</h3>
+              <p class="note">{loai.moTa}</p>
+              <BaiChiaSeList tatCaBai={loai.bai.slice(0, SO_BAI)} headingLevel="h4" gon />
+              {loai.bai.length > SO_BAI && (
+                <p class="them">
+                  <a href={`${DANH_SACH_HREF}#${loai.ma}`}>Tất cả {loai.bai.length} bài {loai.ten}</a>
+                </p>
+              )}
+            </section>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="sheet" aria-labelledby="home-mentoring">
+      <div class="sheet-label">
+        <h2 id="home-mentoring">Mentoring</h2>
+        <p>
+          {BETA.sessions} buổi &times; {BETA.minutes} phút trong {BETA.period} để giải một việc lặp lại
+          của bạn bằng một sản phẩm chạy được.
+        </p>
+        <p><a class="arrow-link" href="/mentoring/">Xem chương trình <Icon name="arrow-right" /></a></p>
+      </div>
+      <div class="sheet-body">
+        <ol class="buoi-strip">
+          {
+            BUOI.map((buoi) => (
+              <li>
+                <p class="label">Buổi {buoi.so} · {buoi.tuan}</p>
+                <h3>{buoi.ten}</h3>
+                <p class="note">{buoi.sanPham}</p>
+              </li>
+            ))
+          }
+        </ol>
+        <p class="note">
+          Gói beta {BETA.price}, giới hạn {BETA.slots} suất. Bắt đầu bằng Tư vấn qua chat, chưa cần trả gì.
+        </p>
+      </div>
+    </section>
+
     <ChatContact title="Hỏi qua chat, miễn phí">
       <p>
-        Tư vấn qua chat: nhắn câu hỏi về dùng AI cho công việc của bạn, mình trả lời và gợi ý hướng đi.
-        Không cần đặt lịch.
+        Nhắn câu hỏi về dùng AI cho công việc của bạn, mình trả lời và gợi ý hướng đi. Khi việc cần gọi
+        riêng hoặc build cùng, mình sẽ nói rõ đó là Mentoring trước khi bạn trả tiền.
       </p>
     </ChatContact>
   </div>
 </BaseLayout>
 
 <style>
-  /* ---------- Hero ---------- */
-  .home-hero {
-    position: relative;
-    overflow: hidden;
-    padding: 4.5rem 0 4rem;
-    border-bottom: 1px solid var(--border);
-    background:
-      radial-gradient(48rem 26rem at 95% 0%, var(--accent-soft), transparent 65%),
-      radial-gradient(36rem 22rem at 0% 100%, var(--teal-soft), transparent 65%),
-      var(--bg-tint);
+  .home-head {
+    padding-top: 4.5rem;
   }
 
-  .hero-grid {
+  .head-grid {
     display: grid;
-    grid-template-columns: 1.15fr 1fr;
-    gap: 3.5rem;
-    align-items: center;
+    gap: 3rem;
   }
 
-  .hero-copy h1 {
-    margin: 0 0 1.25rem;
-    font-size: clamp(2.2rem, 5.6vw, 3.6rem);
+  .home-head h1 {
+    max-width: 18ch;
+    font-size: clamp(2.5rem, 6.4vw, 4.5rem);
+    line-height: 1.1;
   }
 
-  .hero-copy .lead {
-    max-width: 36rem;
-    margin: 0;
+  /* Mục lục: như trang đầu của cuốn sổ. */
+  .muc-luc {
+    align-self: end;
   }
 
-  .hero-points {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem 1.25rem;
-    margin: 1.75rem 0 0;
-    padding: 0;
+  .muc-luc ol {
+    margin-top: 0.6rem;
     list-style: none;
-    color: var(--muted);
-    font-size: 0.925rem;
+    border-top: 2px solid var(--ink);
+    background: var(--paper);
   }
 
-  .hero-points li {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-  }
-
-  .hero-points :global(svg) {
-    width: 1rem;
-    height: 1rem;
-    color: var(--teal);
-  }
-
-  /* ---------- Chat mock ---------- */
-  .hero-visual {
-    position: relative;
-    padding: 1.5rem 0;
-  }
-
-  .chat-mock {
-    position: relative;
-    overflow: hidden;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    background: var(--surface);
-    box-shadow: var(--shadow-lg);
-    transform: rotate(1.2deg);
-    animation: rise 700ms var(--ease) both;
-  }
-
-  .chat-mock-head {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.9rem 1.15rem;
-    border-bottom: 1px solid var(--border);
-    background: var(--bg-tint);
-    font-size: 0.9rem;
-    line-height: 1.35;
-  }
-
-  .chat-mock-head div {
+  .muc-luc a {
     display: grid;
-  }
-
-  .chat-mock-head span:not(.chat-mock-avatar) {
-    color: var(--muted);
-    font-size: 0.8rem;
-  }
-
-  .chat-mock-avatar {
-    display: grid;
-    place-items: center;
-    width: 2.25rem;
-    height: 2.25rem;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #f97316, #c2410c);
-    color: #ffffff;
-  }
-
-  .chat-mock-avatar :global(svg) {
-    width: 1.1rem;
-    height: 1.1rem;
-  }
-
-  .chat-mock-body {
-    display: grid;
-    gap: 0.75rem;
-    padding: 1.25rem 1.15rem 1.4rem;
-  }
-
-  .bubble {
-    max-width: 88%;
-    margin: 0;
-    padding: 0.7rem 0.95rem;
-    border-radius: 18px;
-    font-size: 0.925rem;
-    line-height: 1.55;
-    animation: rise 600ms var(--ease) both;
-  }
-
-  .bubble-me {
-    justify-self: end;
-    border-bottom-right-radius: 6px;
-    background: var(--accent);
-    color: var(--accent-contrast);
-    animation-delay: 200ms;
-  }
-
-  .bubble-them {
-    justify-self: start;
-    border-bottom-left-radius: 6px;
-    background: var(--bg-tint);
-    animation-delay: 450ms;
-  }
-
-  .bubble-prompt {
-    display: grid;
-    gap: 0.4rem;
-    border: 1px dashed var(--border-strong);
-    background: var(--surface);
-    animation-delay: 700ms;
-  }
-
-  .prompt-label {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    color: var(--accent);
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-  }
-
-  .prompt-label :global(svg) {
-    width: 0.9rem;
-    height: 0.9rem;
-  }
-
-  .bubble-prompt code {
-    font-family: var(--font);
-    font-size: 0.85rem;
-    font-style: italic;
-    line-height: 1.55;
-    color: var(--text);
-  }
-
-  .float-chip {
-    position: absolute;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.45rem 0.8rem;
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    background: var(--surface);
-    box-shadow: var(--shadow-md);
-    font-size: 0.8rem;
-    font-weight: 600;
-    white-space: nowrap;
-    animation: float 6s ease-in-out infinite;
-  }
-
-  .float-chip :global(svg) {
-    width: 0.95rem;
-    height: 0.95rem;
-    color: var(--accent);
-  }
-
-  .float-chip-a {
-    top: -0.6rem;
-    left: -1.25rem;
-    z-index: 1;
-  }
-
-  .float-chip-b {
-    right: -0.75rem;
-    bottom: 0;
-    animation-delay: -3s;
-  }
-
-  @keyframes rise {
-    from {
-      opacity: 0;
-      translate: 0 12px;
-    }
-  }
-
-  @keyframes float {
-    50% {
-      translate: 0 -6px;
-    }
-  }
-
-  /* ---------- 3 cách giúp ---------- */
-  .offer-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.25rem;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .offer {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.75rem;
-    transition:
-      transform 200ms var(--ease),
-      box-shadow 200ms var(--ease),
-      border-color 200ms var(--ease);
-  }
-
-  .offer:hover {
-    border-color: var(--border-strong);
-    box-shadow: var(--shadow-md);
-    transform: translateY(-3px);
-  }
-
-  .offer h3 {
-    margin: 0;
-    font-size: 1.3rem;
-  }
-
-  .offer p:not(.badge) {
-    flex: 1;
-    margin: 0;
-    color: var(--muted);
-  }
-
-  .offer-featured {
-    border-color: var(--accent);
-    background: linear-gradient(180deg, var(--accent-soft), var(--surface) 55%);
-  }
-
-  .business-strip {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-top: 1.25rem;
-    padding: 1.1rem 1.4rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    background: var(--surface);
-    color: var(--text);
+    gap: 0.15rem;
+    padding: 0.85rem 0.75rem;
+    border-bottom: 1px solid var(--rule);
+    color: var(--ink);
     text-decoration: none;
-    box-shadow: var(--shadow-sm);
-    transition:
-      border-color 200ms var(--ease),
-      box-shadow 200ms var(--ease);
   }
 
-  .business-strip:hover {
-    border-color: var(--teal);
-    color: var(--text);
-    box-shadow: var(--shadow-md);
+  .muc-luc a:hover strong {
+    background: var(--mark);
   }
 
-  .business-strip-text {
-    display: grid;
-    flex: 1;
+  .muc-luc strong {
+    justify-self: start;
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+
+  .muc-luc span:not(.label) {
+    color: var(--muted);
+    font-size: 0.9375rem;
     line-height: 1.5;
   }
 
-  .business-strip-text span {
-    color: var(--muted);
-    font-size: 0.95rem;
+  .loai-grid {
+    display: grid;
+    gap: 2.5rem 3rem;
   }
 
-  .business-strip :global(.business-strip-arrow) {
-    width: 1.25rem;
-    height: 1.25rem;
-    flex-shrink: 0;
-    color: var(--teal);
-    transition: transform 180ms var(--ease);
+  .loai-grid > section {
+    margin: 0;
   }
 
-  .business-strip:hover :global(.business-strip-arrow) {
-    transform: translateX(4px);
+  .loai-grid h3 {
+    font-size: 1.375rem;
   }
 
-  /* ---------- Responsive ---------- */
-  @media (max-width: 60rem) {
-    .hero-grid {
-      grid-template-columns: 1fr;
-      gap: 2.5rem;
+  .loai-grid .note {
+    margin: 0.3rem 0 1rem;
+  }
+
+  .them {
+    margin-top: 0.9rem;
+    font-size: 0.9375rem;
+  }
+
+  .buoi-strip {
+    display: grid;
+    list-style: none;
+    border-top: 1px solid var(--ink);
+  }
+
+  .buoi-strip li {
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .buoi-strip h3 {
+    margin: 0.3rem 0 0.4rem;
+    font-size: 1.1875rem;
+  }
+
+  @media (min-width: 44rem) {
+    .loai-grid {
+      grid-template-columns: 1fr 1fr;
     }
 
-    .hero-visual {
-      max-width: 30rem;
+    .buoi-strip {
+      grid-template-columns: repeat(4, 1fr);
+      border-bottom: 1px solid var(--rule);
     }
 
-    .offer-grid {
-      grid-template-columns: 1fr;
+    .buoi-strip li {
+      padding: 1rem 1rem 1.1rem;
+      border-bottom: 0;
+      border-left: 1px solid var(--rule);
+    }
+
+    .buoi-strip li:first-child {
+      padding-left: 0;
+      border-left: 0;
     }
   }
 
-  @media (max-width: 30rem) {
-    .home-hero {
-      padding-top: 3rem;
-    }
-
-    .float-chip-a {
-      left: 0;
-    }
-
-    .float-chip-b {
-      right: 0;
-    }
-
-    .button-row .button {
-      flex: 1 1 100%;
+  @media (min-width: 62rem) {
+    .head-grid {
+      grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+      gap: 4rem;
     }
   }
 </style>
