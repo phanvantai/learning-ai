@@ -36,7 +36,7 @@ Có JavaScript thì khách thấy thông báo thành công/lỗi bằng tiếng 
 
 1. Tạo file Markdown trong `src/content/bai-chia-se/`. Tên file là đường dẫn của bài, viết không dấu, nối
    bằng gạch ngang: `dung-ai-viet-bien-ban-hop.md` → `/bai-chia-se/dung-ai-viet-bien-ban-hop/`.
-2. Đầu file là frontmatter, đủ 4 mục:
+2. Đầu file là frontmatter, đủ 5 mục:
 
    ```md
    ---
@@ -44,12 +44,15 @@ Có JavaScript thì khách thấy thông báo thành công/lỗi bằng tiếng 
    date: 2026-11-11
    tags: [Họp, Prompt mẫu]
    description: Một hai câu tóm tắt bài, hiện ở danh sách và Trang chủ.
+   loai: ung-dung
    ---
 
    Nội dung bài viết bằng Markdown: ## tiêu đề mục, danh sách, **in đậm**, khối code...
    ```
 
    - `date`: ngày đăng, dạng `YYYY-MM-DD`. Danh sách xếp bài mới nhất lên đầu; Trang chủ hiện 3 bài mới nhất.
+   - `loai`: Loại bài. `ung-dung` (mặc định nếu bỏ trống) cho bài dùng AI trong công việc hằng ngày;
+     `chuyen-sau` cho bài kỹ thuật về AI, agent, harness. Trang danh sách và Trang chủ tách riêng hai loại.
    - `tags`: ít nhất một thẻ chủ đề (chủ đề của bài, ví dụ "Email", "Excel"; không phải đối tượng đọc),
      viết có dấu như muốn hiển thị. Mỗi thẻ tự có trang lọc
      (`Prompt mẫu` → `/bai-chia-se/chu-de/prompt-mau/`). Dùng lại đúng tên thẻ cũ để bài vào chung một nhóm.
@@ -59,3 +62,20 @@ Có JavaScript thì khách thấy thông báo thành công/lỗi bằng tiếng 
 4. Commit và mở PR; merge vào `main` là bài lên web.
 
 Bài mẫu: `src/content/bai-chia-se/tom-tat-email-dai-bang-ai.md`.
+
+Trong bài, khối code ` ```text ` dùng cho câu lệnh mẫu (trang tự thêm nút "Sao chép"); tiêu đề `##` tự vào mục lục bên trái bài.
+
+## Giao diện
+
+Ý tưởng: cuốn vở ghi của người đang học. Nền sáng là trang vở kẻ ô ly (mực xanh, bút dạ quang vàng, bút đỏ);
+nền tối là bảng đen. Không gradient, không đổ bóng, không bo góc: thứ bậc đến từ chữ, đường kẻ và khoảng trắng.
+
+- Token màu và chữ: đầu file `src/styles/global.css`. Component không viết mã màu trực tiếp.
+- Chữ: Source Serif 4 (tiêu đề, nội dung bài), Be Vietnam Pro (giao diện), JetBrains Mono (nhãn, code).
+- Khối dựng trang: `.page-head` (đầu trang), `.sheet` (một mục: tiêu đề bên trái, nội dung bên phải),
+  `.facts`, `.rows`, `.ticks`, `.table`.
+
+## Chương trình Mentoring
+
+Nội dung 4 buổi, ba Hướng, phiếu khởi động và tiêu chí nằm ở `src/mentoring-program.ts` (trang Mentoring và
+Trang chủ cùng đọc); thiết kế và lý do ở `docs/specs/mentoring-program.md`. Sửa chương trình thì sửa cả hai.

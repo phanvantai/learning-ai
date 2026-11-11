@@ -1,11 +1,12 @@
 ---
 import type { GetStaticPaths } from 'astro';
 import { getEntry, render } from 'astro:content';
+import BaiChiaSeList from '../../components/BaiChiaSeList.astro';
 import ChuDeTags from '../../components/ChuDeTags.astro';
 import Icon from '../../components/Icon.astro';
 import PublishedDate from '../../components/PublishedDate.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { DANH_SACH_HREF, getTatCaBaiChiaSe, soPhutDoc } from '../../bai-chia-se';
+import { DANH_SACH_HREF, baiTheoLoai, getTatCaBaiChiaSe, soPhutDoc, tenLoai } from '../../bai-chia-se';
 
 export const getStaticPaths = (async () => {
   const tatCaBai = await getTatCaBaiChiaSe();
@@ -15,82 +16,206 @@ export const getStaticPaths = (async () => {
 /** Trang tự tìm bài theo `id` trên đường dẫn, không nhận props. */
 type Props = Record<string, never>;
 
+/** Số bài cùng Loại bài gợi ý đọc tiếp ở cuối trang. */
+const SO_BAI_DOC_TIEP = 3;
+
 const bai = await getEntry('baiChiaSe', Astro.params.id);
 if (!bai) throw new Error(`Không có Bài chia sẻ "${Astro.params.id}"`);
-const { Content } = await render(bai);
+
+const { Content, headings } = await render(bai);
 const phutDoc = soPhutDoc(bai.body ?? '');
+const mucLuc = headings.filter((heading) => heading.depth === 2);
+
+// Đọc tiếp: bài cùng Loại bài, ưu tiên bài chung thẻ chủ đề, rồi tới bài mới nhất.
+const chungThe = (khac: typeof bai) => khac.data.tags.filter((the) => bai.data.tags.includes(the)).length;
+const docTiep = baiTheoLoai(await getTatCaBaiChiaSe(), bai.data.loai)
+  .filter((khac) => khac.id !== bai.id)
+  .map((khac, thuTu) => ({ khac, thuTu }))
+  .sort((a, b) => chungThe(b.khac) - chungThe(a.khac) || a.thuTu - b.thuTu)
+  .slice(0, SO_BAI_DOC_TIEP)
+  .map(({ khac }) => khac);
 ---
 
 <BaseLayout title={bai.data.title} description={bai.data.description}>
   <article class="bai-chia-se">
-    <header class="page-hero">
-      <div class="container container-narrow">
+    <header class="page-head">
+      <div class="container">
         <p class="back">
           <a class="arrow-link" href={DANH_SACH_HREF}><Icon name="arrow-left" /> Tất cả Bài chia sẻ</a>
         </p>
-        <ChuDeTags bai={bai} />
-        <h1>{bai.data.title}</h1>
-        <p class="description">{bai.data.description}</p>
-        <p class="meta">
-          <span><Icon name="calendar" /> <PublishedDate date={bai.data.date} /></span>
-          <span><Icon name="clock" /> {phutDoc} phút đọc</span>
+        <p class="label">
+          {tenLoai(bai.data.loai)} · <PublishedDate date={bai.data.date} /> · {phutDoc} phút đọc
         </p>
+        <h1>{bai.data.title}</h1>
+        <p class="lead">{bai.data.description}</p>
+        <ChuDeTags bai={bai} />
       </div>
     </header>
-    <div class="container container-narrow page-body">
-      <div class="prose">
+
+    <div class="container body-grid">
+      {
+        mucLuc.length > 1 && (
+          <nav class="toc" aria-label="Mục lục">
+            <p class="label">Trong bài</p>
+            <ol>
+              {mucLuc.map((heading) => (
+                <li>
+                  <a href={`#${heading.slug}`}>{heading.text}</a>
+                </li>
+              ))}
+            </ol>
+          </nav>
+        )
+      }
+      <div class="prose" data-prose>
         <Content />
       </div>
-      <p class="end">
-        <a class="button button-secondary" href={DANH_SACH_HREF}>
-          <Icon name="arrow-left" /> Đọc thêm Bài chia sẻ khác
-        </a>
-      </p>
     </div>
   </article>
+
+  <div class="container">
+    {
+      docTiep.length > 0 && (
+        <section class="sheet" aria-labelledby="doc-tiep">
+          <div class="sheet-label">
+            <h2 id="doc-tiep">Đọc tiếp</h2>
+            <p>Bài {tenLoai(bai.data.loai)} khác, gần chủ đề này nhất.</p>
+          </div>
+          <div class="sheet-body">
+            <BaiChiaSeList tatCaBai={docTiep} headingLevel="h3" gon />
+          </div>
+        </section>
+      )
+    }
+    <p class="end">
+      <a class="button button-secondary" href={DANH_SACH_HREF}>
+        <Icon name="arrow-left" /> Đọc thêm Bài chia sẻ khác
+      </a>
+      <a class="arrow-link" href="/#lien-he">Có câu hỏi về bài này? Nhắn cho mình <Icon name="arrow-right" /></a>
+    </p>
+  </div>
 </BaseLayout>
+
+<script>
+  // Nút sao chép cho khối code (câu lệnh mẫu dán được ngay). Không có JavaScript thì chỉ thiếu nút.
+  for (const pre of document.querySelectorAll<HTMLPreElement>('[data-prose] pre')) {
+    if (!navigator.clipboard) break;
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'copy';
+    button.textContent = 'Sao chép';
+    button.addEventListener('click', async () => {
+      await navigator.clipboard.writeText(pre.querySelector('code')?.innerText ?? '');
+      button.textContent = 'Đã chép';
+      setTimeout(() => (button.textContent = 'Sao chép'), 1500);
+    });
+    const wrap = document.createElement('div');
+    wrap.className = 'code-wrap';
+    pre.replaceWith(wrap);
+    wrap.append(button, pre);
+  }
+</script>
 
 <style>
   .back {
-    margin: 0 0 1.5rem;
-    font-size: 0.95rem;
+    margin-bottom: 2rem;
+    font-size: 0.9375rem;
   }
 
-  h1 {
-    margin: 1rem 0 0.75rem;
-    font-size: clamp(1.9rem, 5vw, 2.75rem);
+  .page-head h1 {
+    max-width: 24ch;
+    font-size: clamp(2rem, 5vw, 3.25rem);
   }
 
-  .description {
-    margin: 0 0 1.25rem;
+  .page-head .lead {
+    margin-bottom: 1.25rem;
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+  }
+
+  .body-grid {
+    display: grid;
+    gap: 2rem 4rem;
+    padding-top: 2.5rem;
+  }
+
+  .prose {
+    min-width: 0;
+    max-width: var(--measure);
+  }
+
+  .prose > :global(:first-child) {
+    margin-top: 0;
+  }
+
+  .toc ol {
+    display: grid;
+    gap: 0.45rem;
+    margin-top: 0.6rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--ink);
+    list-style: none;
+    font-size: 0.9375rem;
+    line-height: 1.4;
+  }
+
+  .toc a {
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .toc a:hover {
+    color: var(--blue);
+    text-decoration: underline;
+  }
+
+  .prose :global(.code-wrap) {
+    position: relative;
+  }
+
+  .prose :global(.copy) {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0.3rem 0.6rem;
+    border: 1px solid var(--rule);
+    border-radius: 0;
+    background: var(--paper);
     color: var(--muted);
-    font-size: 1.15rem;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    cursor: pointer;
   }
 
-  .meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem 1.25rem;
-    margin: 0;
-    color: var(--muted);
-    font-size: 0.9rem;
+  .prose :global(.copy:hover) {
+    color: var(--blue);
+    border-color: var(--blue);
   }
 
-  .meta span {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-  }
-
-  .meta :global(svg) {
-    width: 1rem;
-    height: 1rem;
-    color: var(--accent);
+  .prose :global(.code-wrap pre) {
+    padding-top: 2.1rem;
   }
 
   .end {
-    margin: 3rem 0 0;
-    padding-top: 2rem;
-    border-top: 1px solid var(--border);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 2rem;
+    margin-top: 3rem;
+  }
+
+  @media (min-width: 64rem) {
+    .body-grid {
+      grid-template-columns: 15rem minmax(0, 1fr);
+      gap: 3rem;
+    }
+
+    .toc {
+      position: sticky;
+      top: 1.5rem;
+      align-self: start;
+      max-height: calc(100vh - 3rem);
+      overflow-y: auto;
+    }
   }
 </style>

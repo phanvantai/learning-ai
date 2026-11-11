@@ -1,5 +1,4 @@
 ---
-import Icon from '../components/Icon.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { FOUNDER } from '../site';
 ---
@@ -9,141 +8,103 @@ import { FOUNDER } from '../site';
   description="Người đứng sau Learning AI: một kỹ sư phần mềm dùng AI mỗi ngày và học công khai."
 >
   <article>
-    <header class="page-hero">
-      <div class="container container-narrow intro">
-        <span class="avatar"><Icon name="user" /></span>
-        <div>
-          <p class="eyebrow">Học công khai</p>
-          <h1>Giới thiệu</h1>
-          <p class="lead">
-            Chào bạn, mình là <strong>{FOUNDER.name}</strong>, một kỹ sư phần mềm dùng AI mỗi ngày trong
-            công việc.
-          </p>
-        </div>
+    <header class="page-head">
+      <div class="container">
+        <p class="label">Giới thiệu · học công khai</p>
+        <h1>Mình không phải “chuyên gia”. Mình <span class="mark">thử, rồi kể lại</span>.</h1>
+        <p class="lead">
+          Chào bạn, mình là <strong>{FOUNDER.name}</strong>, một kỹ sư phần mềm dùng AI mỗi ngày trong
+          công việc.
+        </p>
       </div>
     </header>
 
-    <div class="container container-narrow page-body">
-      <div class="prose">
-        <h2>Vì sao có Learning AI</h2>
-        <p>
-          Mình bắt đầu dùng AI để làm việc nhanh hơn, rồi hướng dẫn lại cho người thân và bạn bè, những
-          người không làm kỹ thuật. Learning AI là nơi mình ghi lại những gì thực sự hiệu quả để nhiều người
-          cùng dùng được.
-        </p>
-        <p class="todo">TODO(owner): kể câu chuyện của bạn: bắt đầu dùng AI khi nào, đã giúp ai, thay đổi gì.</p>
-
-        <h2>Học công khai</h2>
-        <blockquote>
+    <div class="container">
+      <section class="sheet sheet-first" aria-labelledby="vi-sao">
+        <div class="sheet-label">
+          <h2 id="vi-sao">Vì sao có Learning AI</h2>
+        </div>
+        <div class="sheet-body prose">
           <p>
-            Mình không phải "chuyên gia" gì cả. Mình chia sẻ theo kiểu học công khai: thử gì thì kể nấy, kể
-            cả những thứ không thành công. Mỗi tuần 2 Bài chia sẻ cũng là cách mình tự học thêm.
+            Mình bắt đầu dùng AI để làm việc nhanh hơn, rồi hướng dẫn lại cho người thân và bạn bè, những
+            người không làm kỹ thuật. Learning AI là nơi mình ghi lại những gì thực sự hiệu quả để nhiều người
+            cùng dùng được.
           </p>
-        </blockquote>
+          <p class="todo">TODO(owner): kể câu chuyện của bạn: bắt đầu dùng AI khi nào, đã giúp ai, thay đổi gì.</p>
+        </div>
+      </section>
 
-        <h2>Mình giúp được gì</h2>
-      </div>
-      <ul class="help-list">
-        <li>
-          <a class="card help" href="/bai-chia-se/">
-            <span class="icon-tile"><Icon name="book-open" /></span>
-            <span><strong>Bài chia sẻ</strong>: miễn phí, 2 bài mỗi tuần.</span>
-          </a>
-        </li>
-        <li>
-          <a class="card help" href="/#lien-he">
-            <span class="icon-tile icon-tile-teal"><Icon name="message" /></span>
-            <span><strong>Tư vấn qua chat</strong>: nhắn hỏi là mình trả lời, miễn phí.</span>
-          </a>
-        </li>
-        <li>
-          <a class="card help" href="/mentoring/">
-            <span class="icon-tile"><Icon name="wrench" /></span>
-            <span>
+      <section class="sheet" aria-labelledby="hoc-cong-khai">
+        <div class="sheet-label">
+          <h2 id="hoc-cong-khai">Học công khai</h2>
+        </div>
+        <div class="sheet-body prose">
+          <p>
+            Mình chia sẻ theo kiểu học công khai: thử gì thì kể nấy, kể cả những thứ không thành công. Mỗi
+            tuần 2 Bài chia sẻ cũng là cách mình tự học thêm.
+          </p>
+          <p>
+            Vì thế trang này có hai loại bài. Bài Ứng dụng viết cho người không làm kỹ thuật. Bài Chuyên sâu
+            là sổ tay mình ghi khi tự nghiên cứu về agent, harness và những thứ bên dưới; mình để công khai
+            cho ai cùng quan tâm.
+          </p>
+        </div>
+      </section>
+
+      <section class="sheet" aria-labelledby="giup-gi">
+        <div class="sheet-label">
+          <h2 id="giup-gi">Mình giúp được gì</h2>
+        </div>
+        <ul class="sheet-body rows help-list">
+          <li>
+            <a href="/bai-chia-se/"><strong>Bài chia sẻ</strong>: miễn phí, 2 bài mỗi tuần.</a>
+          </li>
+          <li>
+            <a href="/#lien-he"><strong>Tư vấn qua chat</strong>: nhắn hỏi là mình trả lời, miễn phí.</a>
+          </li>
+          <li>
+            <a href="/mentoring/">
               <strong>Mentoring</strong>: trả phí, theo buổi có lịch hẹn, cùng bạn build một tool,
               automation hoặc skill AI cho công việc.
-            </span>
-          </a>
-        </li>
-      </ul>
+            </a>
+          </li>
+        </ul>
+      </section>
     </div>
   </article>
 </BaseLayout>
 
 <style>
-  .intro {
-    display: flex;
-    align-items: center;
-    gap: 1.75rem;
+  .prose {
+    max-width: var(--measure);
   }
 
-  .intro h1 {
-    margin-bottom: 0.75rem;
-  }
-
-  .avatar {
-    display: grid;
-    flex-shrink: 0;
-    place-items: center;
-    width: 7rem;
-    height: 7rem;
-    border: 4px solid var(--surface);
-    border-radius: 50%;
-    background: linear-gradient(135deg, #fdba74, #c2410c);
-    color: #ffffff;
-    box-shadow: var(--shadow-lg);
-  }
-
-  .avatar :global(svg) {
-    width: 3rem;
-    height: 3rem;
+  .todo {
+    padding: 0.75rem 1rem;
+    border: 1px dashed var(--red);
+    color: var(--red);
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
   }
 
   .help-list {
-    display: grid;
-    gap: 0.85rem;
-    margin: 0;
-    padding: 0;
-    list-style: none;
+    max-width: var(--measure);
+    font-size: 1.0625rem;
   }
 
-  .help {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1.1rem 1.25rem;
-    color: var(--text);
+  .help-list a {
+    display: block;
+    color: var(--ink);
     text-decoration: none;
-    transition:
-      border-color 180ms var(--ease),
-      transform 180ms var(--ease);
   }
 
-  .help:hover {
-    border-color: var(--accent);
-    color: var(--text);
-    transform: translateX(4px);
+  .help-list a:hover strong {
+    background: var(--mark);
   }
 
-  .help .icon-tile {
-    flex-shrink: 0;
-  }
-
-  @media (max-width: 36rem) {
-    .intro {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 1.25rem;
-    }
-
-    .avatar {
-      width: 5rem;
-      height: 5rem;
-    }
-
-    .avatar :global(svg) {
-      width: 2.25rem;
-      height: 2.25rem;
-    }
+  .help-list strong {
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+    font-weight: 600;
   }
 </style>

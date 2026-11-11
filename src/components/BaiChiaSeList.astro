@@ -4,17 +4,19 @@ import BaiChiaSeCard from './BaiChiaSeCard.astro';
 
 interface Props {
   tatCaBai: BaiChiaSe[];
-  headingLevel?: 'h2' | 'h3';
+  headingLevel?: 'h2' | 'h3' | 'h4';
+  hienLoai?: boolean;
+  gon?: boolean;
 }
 
-const { tatCaBai, headingLevel } = Astro.props;
+const { tatCaBai, headingLevel, hienLoai, gon } = Astro.props;
 ---
 
 {
   tatCaBai.length > 0 ? (
     <div class="bai-chia-se-list">
       {tatCaBai.map((bai) => (
-        <BaiChiaSeCard bai={bai} headingLevel={headingLevel} />
+        <BaiChiaSeCard bai={bai} headingLevel={headingLevel} hienLoai={hienLoai} gon={gon} />
       ))}
     </div>
   ) : (
@@ -24,8 +26,6 @@ const { tatCaBai, headingLevel } = Astro.props;
 
 <style>
   .bai-chia-se-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
-    gap: 1.25rem;
+    border-top: 1px solid var(--ink);
   }
 </style>
