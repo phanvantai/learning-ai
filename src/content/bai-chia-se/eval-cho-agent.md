@@ -242,7 +242,7 @@ CÂU TRẢ LỜI:
 Trả về JSON: {"khang_dinh": [...], "ly_do": "...", "nhan": "PASS" | "FAIL" | "UNKNOWN"}
 ```
 
-Các lựa chọn trong rubric đều có lý do từ nguồn. Mỗi judge một tiêu chí là lời khuyên của cả Anthropic (judge tách biệt cho từng chiều) lẫn Hamel (mỗi failure mode một judge, chỉ đưa cho judge phần trace nó cần). Lối thoát "UNKNOWN" có vì Anthropic khuyên cho judge một cách nói không biết để nó khỏi bịa phán quyết. Lý do đặt trước nhãn để model lập luận rồi mới kết luận. Đây là lựa chọn của mình, dựa trên việc model sinh tuần tự (xem [LLM dưới nắp máy](/bai-chia-se/llm-duoi-nap-may-cho-ky-su/)). Nhãn nhị phân theo lập luận ở phần trên.
+Phần lớn lựa chọn trong rubric có lý do từ nguồn. Mỗi judge một tiêu chí là lời khuyên của cả Anthropic (judge tách biệt cho từng chiều) lẫn Hamel (mỗi failure mode một judge, chỉ đưa cho judge phần trace nó cần). Lối thoát "UNKNOWN" có vì Anthropic khuyên cho judge một cách nói không biết để nó khỏi bịa phán quyết. Lý do đặt trước nhãn để model lập luận rồi mới kết luận. Đây là lựa chọn của mình, dựa trên việc model sinh tuần tự (xem [LLM dưới nắp máy](/bai-chia-se/llm-duoi-nap-may-cho-ky-su/)). Nhãn nhị phân theo lập luận ở phần trên.
 
 Về chuyện dùng cùng model với agent để làm judge, bộ FAQ cho rằng thường là ổn, vì judge làm một việc khác với pipeline chính. Thứ quyết định vẫn là độ khớp với nhãn người.
 
