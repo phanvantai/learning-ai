@@ -23,7 +23,8 @@ describe('trang danh sách Bài chia sẻ', () => {
     const html = mainContent(await renderPage(DanhSach, '/bai-chia-se/'));
     expect(tatCaBai.length).toBeGreaterThan(0);
     expect(listedBai(html).map((bai) => bai.id).sort()).toEqual(tatCaBai.map((bai) => bai.id).sort());
-    for (const bai of tatCaBai) expect(html).toContain(bai.data.title);
+    // Tiêu đề có dấu nháy được HTML hóa thành &quot; khi render.
+    for (const bai of tatCaBai) expect(html).toContain(bai.data.title.replaceAll('"', '&quot;'));
   });
 
   it('tách bài theo Loại bài, trong mỗi loại xếp bài mới nhất lên đầu', async () => {
