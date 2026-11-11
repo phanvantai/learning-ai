@@ -105,7 +105,17 @@ async fn ui_api_round_trip() {
     assert_eq!(state["gmail"]["connected"], false);
     assert_eq!(state["autostart"], false);
 
+    assert_eq!(state["onboarded"], false);
+    assert!(state["jobs"].as_array().unwrap().is_empty());
+
+    // A connection test without a key fails with a usable message.
+    let (status, error) = client.call(Method::POST, "/providers/api/test", None).await;
+    assert_eq!(status, 400);
+    assert!(error["error"].as_str().unwrap().contains("API key"), "{error}");
     client.ok(Method::POST, "/providers/api/key", Some(json!({"key": "sk-test"}))).await;
+    client.ok(Method::POST, "/onboarding", Some(json!({"done": true}))).await;
+    assert_eq!(client.ok(Method::GET, "/state", None).await["onboarded"], true);
+    assert!(home.path().join("run/ui-loaded").exists());
     let state = client.ok(Method::GET, "/state", None).await;
     assert_eq!(state["providers"][0]["ready"], true);
 

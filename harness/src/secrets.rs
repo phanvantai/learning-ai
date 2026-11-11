@@ -10,6 +10,8 @@ use anyhow::{Context, Result};
 pub const GMAIL_CLIENT_ID: &str = "gmail_client_id";
 pub const GMAIL_CLIENT_SECRET: &str = "gmail_client_secret";
 pub const GMAIL_REFRESH_TOKEN: &str = "gmail_refresh_token";
+/// Not secret; kept here so it lives and dies with the login.
+pub const GMAIL_ADDRESS: &str = "gmail_address";
 
 /// The API key for a provider: its environment variable if set, else the stored key.
 pub fn provider_key(provider: &str, env_var: &str) -> Result<Option<String>> {

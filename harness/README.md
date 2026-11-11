@@ -18,7 +18,11 @@ Bộ cài **chưa được ký** bằng chứng chỉ của Apple/Microsoft, nê
 
 Muốn hết cảnh báo thì cần tài khoản Apple Developer và chứng chỉ ký code cho Windows; phần này chưa cấu hình.
 
-## Thiết lập lần đầu (trong app, mục Kết nối)
+## Thiết lập lần đầu
+
+Lần đầu mở, app dẫn qua năm bước: giới thiệu, chọn bộ não và **hỏi thử mô hình một câu** để chắc là dùng được, kết nối Gmail (đọc lại địa chỉ hộp thư để chắc là đã vào được), bật việc tóm tắt thư mỗi sáng và tự mở cùng máy, rồi tổng kết cái gì đã xong, cái gì còn thiếu. Bước nào cũng có "Để sau"; mở lại hướng dẫn ở cuối mục Kết nối. Không có việc nào chạy theo lịch cho tới khi bạn tự bật.
+
+Chi tiết từng phần:
 
 ### 1. Chọn "bộ não"
 

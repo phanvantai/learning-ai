@@ -336,15 +336,16 @@ instructions = """
 
 # --- Việc chạy theo lịch ------------------------------------------------------
 # Lịch viết theo cron 5 trường, giờ máy: phút giờ ngày tháng thứ (1 = thứ Hai).
-
-[[jobs]]
-name = "tom-tat-mail-sang"
-schedule = "0 7 * * 1-5"   # 7:00 sáng, thứ Hai đến thứ Sáu
-prompt = """
-Kiểm tra hộp thư: các thư chưa đọc trong 24 giờ qua (newer_than:1d is:unread).
-Viết báo cáo ngắn: thư nào cần tôi trả lời hoặc xử lý hôm nay (ai gửi, việc gì, hạn nếu có),
-sau đó liệt kê gọn các thư còn lại theo nhóm. Không gửi thư nào.
-"""
+# Bỏ dấu # để bật (hoặc thêm trong app):
+#
+# [[jobs]]
+# name = "tom-tat-mail-sang"
+# schedule = "0 7 * * 1-5"   # 7:00 sáng, thứ Hai đến thứ Sáu
+# prompt = """
+# Kiểm tra các thư chưa đọc trong 24 giờ qua (newer_than:1d is:unread).
+# Viết báo cáo ngắn: thư nào cần tôi trả lời hoặc xử lý hôm nay (ai gửi, việc gì, hạn nếu có),
+# sau đó liệt kê gọn các thư còn lại theo nhóm. Không gửi thư nào.
+# """
 
 # --- MCP server ngoài (tùy chọn) --------------------------------------------
 # [mcp_servers.lich]
@@ -362,12 +363,13 @@ mod tests {
     fn starter_config_is_valid() {
         let cfg = Config::parse(STARTER_CONFIG).unwrap();
         assert_eq!(cfg.agent_name(None).unwrap(), "tro-ly");
-        assert_eq!(cfg.jobs.len(), 1);
+        assert!(cfg.jobs.is_empty(), "no job runs until the user opts in");
     }
 
     #[test]
     fn survives_a_save_round_trip() {
-        let cfg = Config::parse(STARTER_CONFIG).unwrap();
+        let mut cfg = Config::parse(STARTER_CONFIG).unwrap();
+        cfg.jobs.push(JobConfig { name: "j".into(), agent: None, schedule: "0 7 * * 1-5".into(), prompt: "p".into() });
         let again = Config::parse(&toml::to_string_pretty(&cfg).unwrap()).unwrap();
         assert_eq!(again.jobs[0].schedule, "0 7 * * 1-5");
         assert_eq!(again.providers["claude-api"].kind(), "anthropic");

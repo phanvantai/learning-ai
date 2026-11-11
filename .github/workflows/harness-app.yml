@@ -43,6 +43,26 @@ jobs:
           LAI_GMAIL_CLIENT_ID: ${{ secrets.LAI_GMAIL_CLIENT_ID }}
           LAI_GMAIL_CLIENT_SECRET: ${{ secrets.LAI_GMAIL_CLIENT_SECRET }}
         run: npx --yes @tauri-apps/cli@2 build ${{ matrix.args }}
+      # Start the app we just built and wait for its window to load the UI
+      # and call back with the access token only that window holds.
+      - name: Check the built app opens
+        shell: bash
+        run: |
+          export LAI_HOME="$RUNNER_TEMP/lai-smoke"
+          mkdir -p "$LAI_HOME"
+          if [ "$RUNNER_OS" = "macOS" ]; then
+            app=$(ls -d harness/target/universal-apple-darwin/release/bundle/macos/*.app)
+            "$app"/Contents/MacOS/* &
+          else
+            ./harness/target/release/lai-app.exe &
+          fi
+          for i in $(seq 1 90); do
+            if [ -f "$LAI_HOME/run/ui-loaded" ]; then echo "Window loaded the UI after ${i}s"; exit 0; fi
+            sleep 1
+          done
+          echo "The window never loaded the UI"
+          ls -R "$LAI_HOME" || true
+          exit 1
       - uses: actions/upload-artifact@v4
         with:
           name: tro-ly-ai-${{ runner.os }}

@@ -70,6 +70,8 @@ fn router(app: AppState) -> Router {
         .route("/reports/{job}/{file}", get(report))
         .route("/providers/{name}", put(put_provider).delete(delete_provider))
         .route("/providers/{name}/key", post(set_key))
+        .route("/providers/{name}/test", post(test_provider))
+        .route("/onboarding", post(set_onboarded))
         .route("/agents/{name}", put(put_agent))
         .route("/gmail/login", post(gmail_login))
         .route("/autostart", post(set_autostart))
@@ -157,7 +159,19 @@ async fn edit_config(app: &App, change: impl FnOnce(&mut Config) -> Result<()>) 
 
 // ----------------------------------------------------------------- state ---
 
+fn onboarded_marker() -> std::path::PathBuf {
+    crate::config::home().join("onboarded")
+}
+
 async fn state(State(app): State<AppState>) -> Api {
+    // Only the UI holds the token, so the first call here means the window
+    // really loaded and ran. Leave a trace that an install check can look for.
+    static UI_SEEN: std::sync::Once = std::sync::Once::new();
+    UI_SEEN.call_once(|| {
+        let run_dir = crate::config::home().join("run");
+        let _ = std::fs::create_dir_all(&run_dir);
+        let _ = std::fs::write(run_dir.join("ui-loaded"), "");
+    });
     let cfg = Config::load()?;
     let now = chrono::Local::now();
 
@@ -196,12 +210,15 @@ async fn state(State(app): State<AppState>) -> Api {
 
     Ok(Json(json!({
         "version": env!("CARGO_PKG_VERSION"),
+        "os": std::env::consts::OS,
+        "onboarded": onboarded_marker().exists(),
         "config_path": crate::config::config_path(),
         "default_agent": cfg.agent_name(None).ok(),
         "agents": agents,
         "providers": providers,
         "gmail": {
             "connected": secrets::get(secrets::GMAIL_REFRESH_TOKEN)?.is_some(),
+            "address": secrets::get(secrets::GMAIL_ADDRESS)?,
             "builtin_client": gmail::builtin_client().is_some(),
         },
         "jobs": jobs,
@@ -388,6 +405,27 @@ async fn set_key(Path(name): Path<String>, Json(body): Json<KeyBody>) -> Api {
     ok()
 }
 
+async fn test_provider(Path(name): Path<String>) -> Api {
+    let cfg = Config::load()?;
+    let answer = crate::test_provider(&cfg, &name).await?;
+    Ok(Json(json!({"answer": answer})))
+}
+
+#[derive(Deserialize)]
+struct OnboardedBody {
+    done: bool,
+}
+
+async fn set_onboarded(Json(body): Json<OnboardedBody>) -> Api {
+    let marker = onboarded_marker();
+    if body.done {
+        std::fs::write(marker, "")?;
+    } else if marker.exists() {
+        std::fs::remove_file(marker)?;
+    }
+    ok()
+}
+
 #[derive(Deserialize)]
 struct AgentBody {
     provider: String,
@@ -426,7 +464,13 @@ async fn gmail_login(Json(body): Json<GmailBody>) -> Api {
         },
     };
     gmail::login(&id, &secret).await?;
-    ok()
+    // Reading the address doubles as proof that the new login really works.
+    let address = gmail::GmailClient::from_secrets()
+        .profile_email()
+        .await
+        .context("Đã đăng nhập nhưng chưa đọc được hộp thư")?;
+    secrets::set(secrets::GMAIL_ADDRESS, &address)?;
+    Ok(Json(json!({"address": address})))
 }
 
 #[derive(Deserialize)]

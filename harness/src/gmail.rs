@@ -33,8 +33,36 @@ pub fn builtin_client() -> Option<(&'static str, &'static str)> {
     }
 }
 
+/// Where Google lives. Only tests point these elsewhere.
+#[derive(Clone)]
+pub struct Endpoints {
+    pub auth: String,
+    pub token: String,
+    pub api: String,
+}
+
+impl Default for Endpoints {
+    fn default() -> Self {
+        Self { auth: AUTH_URL.into(), token: TOKEN_URL.into(), api: API_URL.into() }
+    }
+}
+
 /// Browser login (authorization code + PKCE on a loopback port). Stores the refresh token.
 pub async fn login(client_id: &str, client_secret: &str) -> Result<()> {
+    login_with(client_id, client_secret, &Endpoints::default(), |url| {
+        println!("Mở trình duyệt để đăng nhập Google. Nếu không tự mở, dán địa chỉ này vào trình duyệt:\n\n{url}\n");
+        let _ = open::that(url);
+    })
+    .await
+}
+
+/// `login` with the way the user reaches the consent page made explicit.
+pub async fn login_with(
+    client_id: &str,
+    client_secret: &str,
+    endpoints: &Endpoints,
+    show_consent_page: impl FnOnce(&str),
+) -> Result<()> {
     let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await?;
     let redirect_uri = format!("http://127.0.0.1:{}", listener.local_addr()?.port());
     let state = uuid::Uuid::new_v4().simple().to_string();
@@ -42,7 +70,7 @@ pub async fn login(client_id: &str, client_secret: &str) -> Result<()> {
     let challenge = URL_SAFE_NO_PAD.encode(Sha256::digest(verifier.as_bytes()));
 
     let auth_url = url::Url::parse_with_params(
-        AUTH_URL,
+        &endpoints.auth,
         &[
             ("client_id", client_id),
             ("redirect_uri", &redirect_uri),
@@ -55,15 +83,14 @@ pub async fn login(client_id: &str, client_secret: &str) -> Result<()> {
             ("code_challenge_method", "S256"),
         ],
     )?;
-    println!("Mở trình duyệt để đăng nhập Google. Nếu không tự mở, dán địa chỉ này vào trình duyệt:\n\n{auth_url}\n");
-    let _ = open::that(auth_url.as_str());
+    show_consent_page(auth_url.as_str());
 
     let code = tokio::time::timeout(Duration::from_secs(300), wait_for_code(&listener, &state))
         .await
         .context("Hết 5 phút chờ đăng nhập")??;
 
     let token: Value = reqwest::Client::new()
-        .post(TOKEN_URL)
+        .post(&endpoints.token)
         .form(&[
             ("code", code.as_str()),
             ("client_id", client_id),
@@ -133,16 +160,31 @@ enum Auth {
 pub struct GmailClient {
     http: reqwest::Client,
     base_url: String,
+    token_url: String,
     auth: Auth,
 }
 
 impl GmailClient {
     pub fn from_secrets() -> Self {
-        Self { http: reqwest::Client::new(), base_url: API_URL.into(), auth: Auth::Stored(Mutex::new(None)) }
+        Self::from_secrets_at(&Endpoints::default())
+    }
+
+    pub fn from_secrets_at(endpoints: &Endpoints) -> Self {
+        Self {
+            http: reqwest::Client::new(),
+            base_url: endpoints.api.clone(),
+            token_url: endpoints.token.clone(),
+            auth: Auth::Stored(Mutex::new(None)),
+        }
     }
 
     pub fn with_static_token(base_url: &str, token: &str) -> Self {
-        Self { http: reqwest::Client::new(), base_url: base_url.into(), auth: Auth::Static(token.into()) }
+        Self {
+            http: reqwest::Client::new(),
+            base_url: base_url.into(),
+            token_url: TOKEN_URL.into(),
+            auth: Auth::Static(token.into()),
+        }
     }
 
     async fn access_token(&self) -> Result<String> {
@@ -162,7 +204,7 @@ impl GmailClient {
         let refresh = secrets::get(secrets::GMAIL_REFRESH_TOKEN)?.context(missing)?;
         let reply: Value = self
             .http
-            .post(TOKEN_URL)
+            .post(&self.token_url)
             .form(&[
                 ("client_id", client_id.as_str()),
                 ("client_secret", client_secret.as_str()),
@@ -196,6 +238,12 @@ impl GmailClient {
 
     fn url(&self, path: &str) -> String {
         format!("{}/gmail/v1/users/me/{path}", self.base_url)
+    }
+
+    /// The address of the connected mailbox.
+    pub async fn profile_email(&self) -> Result<String> {
+        let profile = self.request(self.http.get(self.url("profile"))).await?;
+        Ok(profile["emailAddress"].as_str().unwrap_or_default().to_string())
     }
 
     /// Search with Gmail query syntax; returns sender/subject/date/snippet per message.

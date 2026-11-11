@@ -47,29 +47,58 @@ pub async fn open_session(
     approver: Arc<dyn Approver>,
 ) -> Result<Box<dyn Session>> {
     let agent = cfg.agent(agent_name)?;
-    let provider = cfg.providers.get(&agent.provider).with_context(|| {
-        format!(
-            "Agent '{agent_name}' dùng provider '{}' nhưng provider này chưa khai báo trong config.toml",
-            agent.provider
-        )
-    })?;
-    let system = agent.system_prompt();
-    match provider {
+    let registry = match cfg.providers.get(&agent.provider) {
+        // The CLI providers get the tools from our MCP server instead.
+        Some(p) if p.cli_command().is_some() => tools::ToolRegistry::default(),
+        _ => tools::build_registry(cfg, agent_name).await?,
+    };
+    provider_session(cfg, &agent.provider, agent_name, &agent.system_prompt(), registry, approver)
+}
+
+fn provider_session(
+    cfg: &Config,
+    provider_name: &str,
+    agent_name: &str,
+    system: &str,
+    registry: tools::ToolRegistry,
+    approver: Arc<dyn Approver>,
+) -> Result<Box<dyn Session>> {
+    let provider = cfg
+        .providers
+        .get(provider_name)
+        .with_context(|| format!("Bộ não '{provider_name}' chưa khai báo trong config.toml"))?;
+    let registry = Arc::new(registry);
+    Ok(match provider {
         ProviderConfig::Anthropic(p) => {
-            let key = secrets::provider_key(&agent.provider, "ANTHROPIC_API_KEY")?.with_context(|| {
-                format!("Chưa có API key cho '{}'. Nhập trong mục Kết nối (hoặc `lai auth key {}`).", agent.provider, agent.provider)
-            })?;
-            let registry = Arc::new(tools::build_registry(cfg, agent_name).await?);
-            Ok(Box::new(anthropic::AnthropicSession::new(p, key, agent_name, &system, registry, approver)?))
+            let key = secrets::provider_key(provider_name, "ANTHROPIC_API_KEY")?
+                .with_context(|| format!("Chưa có API key cho '{provider_name}'."))?;
+            Box::new(anthropic::AnthropicSession::new(p, key, agent_name, system, registry, approver)?)
         }
         ProviderConfig::OpenAi(p) => {
-            let key = secrets::provider_key(&agent.provider, "OPENAI_API_KEY")?;
-            let registry = Arc::new(tools::build_registry(cfg, agent_name).await?);
-            Ok(Box::new(openai::OpenAiSession::new(p, &agent.provider, key, agent_name, &system, registry, approver)?))
+            let key = secrets::provider_key(provider_name, "OPENAI_API_KEY")?;
+            Box::new(openai::OpenAiSession::new(p, provider_name, key, agent_name, system, registry, approver)?)
         }
-        ProviderConfig::ClaudeCli(p) => Ok(Box::new(claude_cli::ClaudeCliSession::new(p, agent_name, &system)?)),
-        ProviderConfig::CodexCli(p) => Ok(Box::new(codex_cli::CodexCliSession::new(p, agent_name, &system)?)),
-    }
+        ProviderConfig::ClaudeCli(p) => Box::new(claude_cli::ClaudeCliSession::new(p, agent_name, system)?),
+        ProviderConfig::CodexCli(p) => Box::new(codex_cli::CodexCliSession::new(p, agent_name, system)?),
+    })
+}
+
+/// Ask a provider for one word, to prove it is reachable and signed in.
+/// Returns what it answered.
+pub async fn test_provider(cfg: &Config, provider_name: &str) -> Result<String> {
+    let agent = cfg.agent_name(None)?;
+    let mut session = provider_session(
+        cfg,
+        provider_name,
+        &agent,
+        "Đây là bước kiểm tra kết nối. Trả lời thật ngắn, không dùng công cụ.",
+        tools::ToolRegistry::default(),
+        approval::queue(),
+    )?;
+    let answer = tokio::time::timeout(std::time::Duration::from_secs(120), session.send("Trả lời đúng một từ: OK"))
+        .await
+        .context("Không thấy trả lời sau 2 phút")??;
+    Ok(answer.trim().to_string())
 }
 
 /// How a vendor CLI should start our MCP server for `agent`: this same

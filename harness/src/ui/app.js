@@ -203,7 +203,16 @@ async function refresh() {
   $("pending-badge").hidden = pending === 0;
   $("setup-dot").hidden = setupProblems().length === 0;
   $("version").textContent = `Phiên bản ${state.version}`;
-  render();
+  const setup = !state.onboarded;
+  document.body.classList.toggle("setup", setup);
+  $("onboarding").hidden = !setup;
+  // The wizard keeps what the user typed; it redraws itself when a step changes.
+  if (setup) {
+    if (!$("onboarding").dataset.started) renderWizard();
+  } else {
+    delete $("onboarding").dataset.started;
+    render();
+  }
 }
 
 function currentAgent() {
@@ -530,11 +539,19 @@ function renderSettings() {
       save.addEventListener("click", () => act(save, () => api("POST", `/providers/${p.name}/key`, { key: key.value }), "Đã lưu key.").then(rerender));
       rows.push(h("div", { class: "row" }, h("div", { class: "grow" }, key), save));
     }
+    const test = h("button", { class: "btn small" }, "Thử kết nối");
+    test.addEventListener("click", () => {
+      test.textContent = "Đang thử…";
+      act(test, async () => {
+        const reply = await api("POST", `/providers/${p.name}/test`);
+        toast(`Kết nối tốt. Mô hình trả lời: “${reply.answer.slice(0, 60)}”`);
+      });
+    });
     const remove = h("button", { class: "btn small danger" }, "Gỡ");
     remove.addEventListener("click", () => {
       if (confirm(`Gỡ bộ não "${p.name}"?`)) act(remove, () => api("DELETE", `/providers/${p.name}`), "Đã gỡ.").then(rerender);
     });
-    rows.push(h("div", { class: "actions" }, remove));
+    rows.push(h("div", { class: "actions" }, test, remove));
     return h("div", { class: "card" }, rows);
   });
   sections.push(
@@ -548,7 +565,7 @@ function renderSettings() {
       "div",
       { class: "card-head" },
       h("h2", null, "Gmail"),
-      h("div", { class: "status" }, h("span", { class: `dot ${state.gmail.connected ? "ok" : "warn"}` }), state.gmail.connected ? "Đã kết nối" : "Chưa kết nối"),
+      h("div", { class: "status" }, h("span", { class: `dot ${state.gmail.connected ? "ok" : "warn"}` }), state.gmail.connected ? `Đã kết nối${state.gmail.address ? ": " + state.gmail.address : ""}` : "Chưa kết nối"),
     ),
     h("p", { class: "hint" }, "Trợ lý được quyền đọc thư và gửi thư. Việc gửi luôn phải qua bước bạn duyệt."),
   ];
@@ -604,7 +621,12 @@ function renderSettings() {
     );
   }
 
-  sections.push(h("p", { class: "hint" }, `File cấu hình: ${state.config_path}`));
+  const guide = h("button", { class: "btn" }, "Mở lại hướng dẫn thiết lập");
+  guide.addEventListener("click", async () => {
+    await api("POST", "/onboarding", { done: false }).catch((e) => toast(e.message, true));
+    await refresh();
+  });
+  sections.push(h("div", { class: "row" }, guide), h("p", { class: "hint" }, `File cấu hình: ${state.config_path}`));
   root.replaceChildren(...sections);
 }
 
@@ -650,6 +672,396 @@ function addProvider(done) {
     urlRow,
     keyRow,
     h("div", { class: "actions" }, h("button", { class: "btn", onclick: closeDialog }, "Hủy"), save),
+  );
+}
+
+
+// ------------------------------------------------------------- onboarding ---
+
+const MORNING_JOB = {
+  name: "tom-tat-mail-sang",
+  prompt:
+    "Kiểm tra các thư chưa đọc trong 24 giờ qua (newer_than:1d is:unread).\n" +
+    "Viết báo cáo ngắn: thư nào cần tôi trả lời hoặc xử lý hôm nay (ai gửi, việc gì, hạn nếu có),\n" +
+    "sau đó liệt kê gọn các thư còn lại theo nhóm. Không gửi thư nào.\n",
+};
+
+const BRAINS = [
+  {
+    kind: "claude-cli",
+    name: "goi-claude",
+    title: "Tôi đang trả tiền gói Claude (Pro, Max…)",
+    note: "Dùng luôn gói đó, không tốn thêm tiền. Cần cài Claude Code trên máy này.",
+    command: "claude",
+    login: "claude",
+    install: {
+      macos: "curl -fsSL https://claude.ai/install.sh | bash",
+      linux: "curl -fsSL https://claude.ai/install.sh | bash",
+      windows: "irm https://claude.ai/install.ps1 | iex",
+    },
+  },
+  {
+    kind: "anthropic",
+    name: "claude-api",
+    title: "Tôi có API key của Anthropic",
+    note: "Trả theo lượng dùng. Lấy key tại console.anthropic.com.",
+  },
+  {
+    kind: "openai",
+    name: "openai-api",
+    title: "Tôi có API key của OpenAI, Gemini, OpenRouter…",
+    note: "Mọi dịch vụ có API tương thích OpenAI, kể cả mô hình chạy trên máy (Ollama).",
+  },
+  {
+    kind: "codex-cli",
+    name: "goi-chatgpt",
+    title: "Tôi đang trả tiền gói ChatGPT (thử nghiệm)",
+    note: "Dùng qua Codex CLI. Đường này chưa được kiểm chứng kỹ bằng gói Claude.",
+    command: "codex",
+    login: "codex login",
+    install: {
+      macos: "npm install -g @openai/codex",
+      linux: "npm install -g @openai/codex",
+      windows: "npm install -g @openai/codex",
+    },
+  },
+];
+
+const WIZARD_STEPS = ["welcome", "brain", "gmail", "routine", "done"];
+let wizard = { step: 0, brain: null, brainOk: false, gmailSkipped: false };
+
+function commandLine(text) {
+  const code = h("code", null, text);
+  const copy = h("button", { class: "btn small" }, "Sao chép");
+  copy.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast("Đã sao chép.");
+    } catch {
+      // No clipboard access in this window: select the text so Ctrl/Cmd+C works.
+      getSelection().selectAllChildren(code);
+      toast("Đã bôi đen lệnh, nhấn Ctrl+C (hoặc ⌘C) để sao chép.");
+    }
+  });
+  return h("div", { class: "cmd" }, code, copy);
+}
+
+function terminalName() {
+  return state.os === "windows" ? "PowerShell (bấm Start, gõ PowerShell)" : state.os === "macos" ? "Terminal (⌘ + Space, gõ Terminal)" : "Terminal";
+}
+
+function goStep(delta) {
+  wizard.step = Math.max(0, Math.min(WIZARD_STEPS.length - 1, wizard.step + delta));
+  renderWizard();
+}
+
+async function finishOnboarding() {
+  try {
+    await api("POST", "/onboarding", { done: true });
+  } catch (e) {
+    return toast(e.message, true);
+  }
+  wizard = { step: 0, brain: null, brainOk: false, gmailSkipped: false };
+  view = "chat";
+  await refresh();
+  show("chat");
+}
+
+function wizardFrame(title, lead, body, foot) {
+  const root = $("onboarding");
+  root.dataset.started = "1";
+  const position = wizard.step;
+  root.replaceChildren(
+    h(
+      "div",
+      { class: "wizard" },
+      h("div", { class: "steps", "aria-hidden": "true" }, WIZARD_STEPS.map((_, i) => h("span", { class: i <= position ? "done" : "" }))),
+      h("div", { class: "step-label" }, `Bước ${position + 1} / ${WIZARD_STEPS.length}`),
+      h("h1", null, title),
+      lead ? h("p", { class: "lead" }, lead) : null,
+      body,
+      h("div", { class: "wizard-foot" }, foot),
+    ),
+  );
+  root.scrollTop = 0;
+}
+
+function renderWizard() {
+  if (!state) return;
+  ({ welcome: stepWelcome, brain: stepBrain, gmail: stepGmail, routine: stepRoutine, done: stepDone })[WIZARD_STEPS[wizard.step]]();
+}
+
+function stepWelcome() {
+  wizardFrame(
+    "Chào bạn, đây là Trợ lý AI",
+    "Một trợ lý chạy ngay trên máy của bạn: đọc hộp thư giúp bạn, báo việc cần xử lý, soạn sẵn thư trả lời, và tự làm những việc lặp lại theo giờ bạn đặt.",
+    h(
+      "div",
+      { class: "promise" },
+      h("strong", null, "Ba điều trợ lý luôn giữ"),
+      h(
+        "ul",
+        null,
+        h("li", null, "Không tự gửi thư. Thư trợ lý soạn nằm chờ, bạn đọc rồi bấm đồng ý mới gửi."),
+        h("li", null, "Mật khẩu và key lưu trong kho bảo mật của máy bạn, không gửi đi đâu khác."),
+        h("li", null, "Thư của bạn chỉ được gửi tới mô hình AI mà bạn chọn ở bước sau, để nó đọc và tóm tắt."),
+      ),
+    ),
+    [
+      h("button", { class: "link", onclick: finishOnboarding }, "Bỏ qua, tôi tự thiết lập"),
+      h("button", { class: "btn primary", onclick: () => goStep(1) }, "Bắt đầu (khoảng 5 phút)"),
+    ],
+  );
+}
+
+function stepBrain() {
+  const chosen = BRAINS.find((b) => b.kind === wizard.brain);
+  const panel = h("div");
+  const next = h("button", { class: "btn primary", disabled: !wizard.brainOk }, "Tiếp tục");
+  next.addEventListener("click", () => goStep(1));
+
+  const choices = BRAINS.map((brain) => {
+    const button = h(
+      "button",
+      { class: `choice ${brain.kind === wizard.brain ? "selected" : ""}`, "aria-pressed": brain.kind === wizard.brain },
+      h("span", { class: "radio" }),
+      h("span", null, h("strong", null, brain.title), h("span", { class: "meta" }, brain.note)),
+    );
+    button.addEventListener("click", () => {
+      wizard.brain = brain.kind;
+      wizard.brainOk = false;
+      renderWizard();
+    });
+    return button;
+  });
+
+  if (chosen) {
+    const existing = state.providers.find((p) => p.kind === chosen.kind);
+    const result = h("div");
+    const say = (kind, text) => result.replaceChildren(h("div", { class: `result ${kind}` }, text));
+    const test = h("button", { class: "btn primary" }, "Kiểm tra kết nối");
+    const fields = [];
+    let key, model, baseUrl;
+
+    if (chosen.command) {
+      const found = existing && existing.ready;
+      fields.push(
+        h("p", null, found ? `Đã thấy lệnh ${chosen.command} trên máy. Bấm kiểm tra để chắc là đã đăng nhập.` : `Chưa thấy lệnh ${chosen.command} trên máy này. Làm ba bước sau:`),
+        found
+          ? null
+          : h(
+              "ol",
+              null,
+              h("li", null, `Mở ${terminalName()}.`),
+              h("li", null, "Dán lệnh cài đặt rồi nhấn Enter, chờ tới khi xong:", commandLine(chosen.install[state.os] || chosen.install.linux)),
+              h("li", null, "Mở một cửa sổ lệnh mới, chạy lệnh dưới đây và đăng nhập theo hướng dẫn trên trình duyệt:", commandLine(chosen.login)),
+            ),
+        h("p", { class: "hint" }, "App chỉ gọi lệnh chính thức này, không đọc và không lưu thông tin đăng nhập của bạn."),
+      );
+    } else {
+      key = h("input", { type: "password", placeholder: existing && existing.ready ? "Đã có key, để trống nếu giữ nguyên" : "Dán API key", autocomplete: "off" });
+      if (chosen.kind === "openai") {
+        model = h("input", { placeholder: "Tên model, ghi đúng như nhà cung cấp đặt", value: (existing && existing.model) || "" });
+        baseUrl = h("input", { placeholder: "https://api.openai.com/v1", value: (existing && existing.base_url) || "" });
+        fields.push(
+          h("label", null, "Model"),
+          model,
+          h("label", null, "Địa chỉ API"),
+          baseUrl,
+          h("p", { class: "hint" }, "Để trống nếu dùng OpenAI. Dịch vụ khác: điền địa chỉ API tương thích OpenAI mà họ cung cấp."),
+        );
+      }
+      fields.push(h("label", null, "API key"), key);
+    }
+
+    test.addEventListener("click", async () => {
+      test.disabled = true;
+      say("wait", "Đang hỏi thử mô hình một câu… có thể mất tới một phút.");
+      try {
+        const name = existing ? existing.name : chosen.name;
+        if (chosen.kind === "openai") {
+          if (!model.value.trim()) throw new Error("Hãy điền tên model.");
+          const body = { kind: "openai", model: model.value.trim() };
+          if (baseUrl.value.trim()) body.base_url = baseUrl.value.trim();
+          await api("PUT", `/providers/${name}`, body);
+        } else if (!existing) {
+          // An existing brain keeps its settings; only a missing one is created.
+          await api("PUT", `/providers/${name}`, { kind: chosen.kind });
+        }
+        if (key && key.value.trim()) await api("POST", `/providers/${name}/key`, { key: key.value.trim() });
+        state = await api("GET", "/state");
+        const now = state.providers.find((p) => p.name === name);
+        if (chosen.command && !now.ready) throw new Error(`Vẫn chưa thấy lệnh ${chosen.command}. Cài xong hãy đóng và mở lại app rồi thử lại.`);
+        const reply = await api("POST", `/providers/${name}/test`);
+        const agent = currentAgent();
+        await api("PUT", `/agents/${agent.name}`, { provider: name, instructions: agent.instructions });
+        state = await api("GET", "/state");
+        wizard.brainOk = true;
+        next.disabled = false;
+        say("ok", `Kết nối tốt. Mô hình vừa trả lời: “${reply.answer.slice(0, 80)}”`);
+      } catch (e) {
+        wizard.brainOk = false;
+        next.disabled = true;
+        const notInstalled = e.message.includes("chưa thấy lệnh");
+        const hint = notInstalled
+          ? ""
+          : chosen.command
+            ? ` Nếu chưa đăng nhập: mở cửa sổ lệnh, chạy “${chosen.login}”, đăng nhập xong thì thử lại.`
+            : " Kiểm tra lại key (và tên model, địa chỉ API nếu có).";
+        say("bad", `Chưa kết nối được: ${e.message}${hint}`);
+      }
+      test.disabled = false;
+    });
+    panel.append(h("div", { class: "panel" }, fields, h("div", { class: "row" }, test), result));
+    if (wizard.brainOk) say("ok", "Đã kết nối.");
+  }
+
+  wizardFrame(
+    "Trợ lý suy nghĩ bằng gì?",
+    "Trợ lý cần một mô hình AI làm “bộ não”. Chọn thứ bạn đang có; sau này đổi được trong mục Kết nối.",
+    [choices, panel],
+    [h("button", { class: "link", onclick: () => goStep(-1) }, "Quay lại"), h("div", { class: "row" }, h("button", { class: "link", onclick: () => goStep(1) }, "Để sau"), next)],
+  );
+}
+
+function stepGmail() {
+  const result = h("div");
+  const say = (kind, text) => result.replaceChildren(h("div", { class: `result ${kind}` }, text));
+  const next = h("button", { class: "btn primary", disabled: !state.gmail.connected }, "Tiếp tục");
+  next.addEventListener("click", () => goStep(1));
+  const clientId = h("input", { placeholder: "Client ID", autocomplete: "off" });
+  const clientSecret = h("input", { type: "password", placeholder: "Client secret", autocomplete: "off" });
+  const connect = h("button", { class: "btn primary" }, state.gmail.connected ? "Kết nối lại bằng tài khoản khác" : "Kết nối Gmail");
+  connect.addEventListener("click", async () => {
+    connect.disabled = true;
+    say("wait", "Trình duyệt vừa mở trang đăng nhập Google. Chọn tài khoản, bấm cho phép, rồi quay lại đây.");
+    try {
+      const reply = await api("POST", "/gmail/login", { client_id: clientId.value, client_secret: clientSecret.value });
+      state = await api("GET", "/state");
+      wizard.gmailSkipped = false;
+      next.disabled = false;
+      say("ok", `Đã kết nối hộp thư ${reply.address}.`);
+    } catch (e) {
+      say("bad", `Chưa kết nối được: ${e.message}`);
+    }
+    connect.disabled = false;
+  });
+
+  const body = [];
+  if (state.gmail.connected) body.push(h("div", { class: "result ok" }, `Đang kết nối với ${state.gmail.address || "Gmail"}.`));
+  if (state.gmail.builtin_client) {
+    body.push(h("p", null, "Bấm nút dưới đây, đăng nhập Google trên trình duyệt và cho phép app đọc và gửi thư."));
+  } else {
+    body.push(
+      h("p", null, "Google yêu cầu mỗi app tự đăng ký một “mã ứng dụng” trước khi được đọc thư. Việc này làm một lần, mất khoảng 10 phút:"),
+      h(
+        "div",
+        { class: "panel" },
+        h(
+          "ol",
+          null,
+          h("li", null, "Mở ", h("a", { href: "https://console.cloud.google.com/projectcreate" }, "Google Cloud Console"), " và tạo một project (tên tùy ý)."),
+          h("li", null, "Bật Gmail API cho project: ", h("a", { href: "https://console.cloud.google.com/apis/library/gmail.googleapis.com" }, "mở trang Gmail API"), " rồi bấm Enable."),
+          h("li", null, "Mở ", h("a", { href: "https://console.cloud.google.com/apis/credentials/consent" }, "trang OAuth consent screen"), ": chọn loại người dùng External, điền tên app và email của bạn, rồi thêm chính email đó vào danh sách Test users."),
+          h("li", null, "Mở ", h("a", { href: "https://console.cloud.google.com/apis/credentials" }, "trang Credentials"), ": tạo OAuth client ID, chọn loại ứng dụng Desktop app. Google hiện Client ID và Client secret."),
+          h("li", null, "Dán hai giá trị đó vào đây:"),
+        ),
+        h("div", { class: "row" }, h("div", { class: "grow" }, clientId), h("div", { class: "grow" }, clientSecret)),
+        h("p", { class: "hint" }, "Khi đăng nhập, Google sẽ cảnh báo “app chưa được xác minh”. Đó là app của chính bạn vừa tạo: bấm Advanced → Go to… để tiếp tục."),
+      ),
+    );
+  }
+  body.push(h("div", { class: "row" }, connect), result);
+
+  wizardFrame(
+    "Kết nối hộp thư Gmail",
+    "Để trợ lý đọc thư và soạn thư trả lời giúp bạn. Trợ lý được quyền đọc và gửi, nhưng việc gửi luôn phải qua bước bạn duyệt.",
+    body,
+    [
+      h("button", { class: "link", onclick: () => goStep(-1) }, "Quay lại"),
+      h(
+        "div",
+        { class: "row" },
+        h("button", { class: "link", onclick: () => ((wizard.gmailSkipped = true), goStep(1)) }, "Để sau"),
+        next,
+      ),
+    ],
+  );
+}
+
+function stepRoutine() {
+  const hasGmail = state.gmail.connected;
+  const existing = state.jobs.find((j) => j.name === MORNING_JOB.name);
+  const parsed = existing ? parseSchedule(existing.schedule) : { kind: "weekdays", time: "07:00" };
+  const enabled = h("input", { type: "checkbox" });
+  enabled.checked = hasGmail;
+  enabled.disabled = !hasGmail;
+  const days = h("select", null, h("option", { value: "weekdays" }, "Thứ Hai đến thứ Sáu"), h("option", { value: "daily" }, "Hằng ngày"));
+  days.value = parsed.kind === "daily" ? "daily" : "weekdays";
+  const time = h("input", { type: "time", value: parsed.time || "07:00" });
+  const autostart = h("input", { type: "checkbox" });
+  autostart.checked = state.autostart !== false;
+
+  const next = h("button", { class: "btn primary" }, "Tiếp tục");
+  next.addEventListener("click", async () => {
+    next.disabled = true;
+    try {
+      if (enabled.checked) {
+        await api("PUT", `/jobs/${MORNING_JOB.name}`, { agent: null, schedule: buildSchedule(days.value, time.value), prompt: MORNING_JOB.prompt });
+      } else if (existing) {
+        await api("DELETE", `/jobs/${MORNING_JOB.name}`);
+      }
+      if (state.autostart !== null && autostart.checked !== state.autostart) {
+        await api("POST", "/autostart", { enabled: autostart.checked });
+      }
+      state = await api("GET", "/state");
+      goStep(1);
+    } catch (e) {
+      toast(e.message, true);
+      next.disabled = false;
+    }
+  });
+
+  wizardFrame(
+    "Việc tự động đầu tiên",
+    "Trợ lý có thể tự làm việc theo giờ. Gợi ý một việc để bắt đầu; bạn thêm, sửa, tắt sau trong mục Việc theo lịch.",
+    [
+      h(
+        "div",
+        { class: "card" },
+        h("label", { class: "check" }, enabled, h("span", null, h("strong", null, "Mỗi sáng, tóm tắt thư cần xử lý"), h("br"), "Trợ lý đọc thư chưa đọc trong 24 giờ, chỉ ra thư nào cần bạn trả lời, và lưu thành báo cáo. Không gửi thư nào.")),
+        hasGmail ? h("div", { class: "row" }, days, h("div", null, time)) : h("p", { class: "hint" }, "Cần kết nối Gmail trước. Bạn có thể quay lại bước trước, hoặc bật việc này sau."),
+      ),
+      state.autostart !== null
+        ? h(
+            "div",
+            { class: "card" },
+            h("label", { class: "check" }, autostart, h("span", null, h("strong", null, "Tự mở app khi bật máy"), h("br"), "Việc theo lịch chỉ chạy khi app đang mở. Bật mục này để app tự nằm sẵn ở khay hệ thống.")),
+          )
+        : h("p", { class: "hint" }, "Việc theo lịch chỉ chạy khi chương trình này đang mở."),
+    ],
+    [h("button", { class: "link", onclick: () => goStep(-1) }, "Quay lại"), next],
+  );
+}
+
+function stepDone() {
+  const agent = currentAgent();
+  const provider = agent && state.providers.find((p) => p.name === agent.provider);
+  const job = state.jobs.find((j) => j.name === MORNING_JOB.name);
+  const line = (ok, text) => h("li", null, h("span", { class: `dot ${ok ? "ok" : "warn"}` }), text);
+  const ready = wizard.brainOk && state.gmail.connected;
+  wizardFrame(
+    ready ? "Xong rồi, trợ lý sẵn sàng" : "Gần xong",
+    ready ? "Thử giao việc đầu tiên ngay bây giờ." : "Còn bước chưa làm. Trợ lý chưa dùng được đầy đủ cho tới khi bạn hoàn tất trong mục Kết nối.",
+    h(
+      "ul",
+      { class: "summary" },
+      line(wizard.brainOk, wizard.brainOk ? `Bộ não: ${KIND_LABEL[provider.kind]}, đã thử và trả lời được.` : "Bộ não: chưa kiểm tra kết nối."),
+      line(state.gmail.connected, state.gmail.connected ? `Gmail: ${state.gmail.address || "đã kết nối"}.` : "Gmail: chưa kết nối."),
+      line(!!job, job ? `Việc tự động: ${describeSchedule(job.schedule).toLowerCase()}, tóm tắt thư cần xử lý.` : "Việc tự động: chưa bật việc nào."),
+      state.autostart !== null ? line(state.autostart, state.autostart ? "App tự mở khi bật máy." : "App không tự mở khi bật máy.") : null,
+    ),
+    [h("button", { class: "link", onclick: () => goStep(-1) }, "Quay lại"), h("button", { class: "btn primary", onclick: finishOnboarding }, ready ? "Bắt đầu dùng" : "Vào app")],
   );
 }
 
