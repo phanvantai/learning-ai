@@ -8,7 +8,7 @@ loai: chuyen-sau
 
 SQL injection có lời giải gọn: parameterized query tách hẳn câu lệnh khỏi dữ liệu, cơ sở dữ liệu không bao giờ diễn giải dữ liệu như lệnh. LLM không có cơ chế tương đương. System prompt, câu hỏi của người dùng, nội dung trang web vừa tải về, kết quả tool đều nằm chung một chuỗi token, và model quyết định làm theo cái gì dựa trên nội dung chứ không dựa trên nguồn gốc. Simon Willison tóm lại rằng LLM không thể phân biệt cho chắc tầm quan trọng của chỉ dẫn theo nơi chúng xuất phát.
 
-Với chatbot, hậu quả là một câu trả lời sai. Với agent có tool, hậu quả là hành động sai: đọc file, gửi thư, gọi API bằng quyền của bạn. Bài này nói về cách thiết kế để khi model bị lừa thì thiệt hại bị chặn ở tầng dưới. Bài chỉ bàn phòng thủ, cơ chế tấn công mô tả vừa đủ hiểu để phòng và không có payload. Nhận định nào là suy luận của mình chứ không phải của nguồn, mình ghi rõ.
+Với chatbot, hậu quả là một câu trả lời sai. Agent có tool thì hành động sai: đọc file, gửi thư, gọi API bằng quyền của bạn. Bài này nói về cách thiết kế để khi model bị lừa thì thiệt hại bị chặn ở tầng dưới. Bài chỉ bàn phòng thủ, cơ chế tấn công mô tả vừa đủ hiểu để phòng và không có payload. Nhận định nào là suy luận của mình chứ không phải của nguồn, mình ghi rõ.
 
 ## Trực tiếp và gián tiếp
 
@@ -53,7 +53,7 @@ Meta mở rộng ý này thành "Agents Rule of Two" (bài công bố ngày 31/1
 - [B] truy cập hệ thống nhạy cảm hoặc dữ liệu riêng tư;
 - [C] thay đổi trạng thái hoặc liên lạc ra ngoài.
 
-Khác với trifecta, [C] gồm cả thay đổi trạng thái, nên bao luôn trường hợp agent bị lừa xóa hay sửa thứ gì đó. Nếu cần cả ba mà không bắt đầu phiên mới, Meta nói agent không được chạy tự động và tối thiểu phải có giám sát, ví dụ phê duyệt của người. Họ cũng nói rõ quy tắc này bổ sung chứ không thay cho least privilege.
+Khác với trifecta, [C] gồm cả thay đổi trạng thái, nên bao luôn trường hợp agent bị lừa xóa hay sửa thứ gì đó. Nếu cần cả ba mà không bắt đầu phiên mới, Meta nói agent không được chạy tự động và tối thiểu phải có giám sát, ví dụ phê duyệt của người. Họ cũng nói rõ quy tắc này bổ sung cho least privilege, không thay nó.
 
 Willison phản biện một điểm: sơ đồ ban đầu ghi tổ hợp [A]+[C] là "an toàn", trong khi đầu vào không tin cậy cộng quyền thay đổi trạng thái vẫn gây hại được. Theo ông, Meta sau đó đổi nhãn thành "rủi ro thấp hơn".
 
