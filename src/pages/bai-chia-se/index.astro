@@ -6,7 +6,10 @@ import { LOAI_BAI, baiTheoLoai, getTatCaBaiChiaSe } from '../../bai-chia-se';
 import { tatCaChuDe } from '../../chu-de';
 
 const tatCaBai = await getTatCaBaiChiaSe();
-const theoLoai = LOAI_BAI.map((loai) => ({ ...loai, bai: baiTheoLoai(tatCaBai, loai.ma) }));
+// Loại bài chưa có bài nào thì không hiện.
+const theoLoai = LOAI_BAI.map((loai) => ({ ...loai, bai: baiTheoLoai(tatCaBai, loai.ma) })).filter(
+  (loai) => loai.bai.length > 0,
+);
 ---
 
 <BaseLayout title="Bài chia sẻ">
@@ -15,8 +18,8 @@ const theoLoai = LOAI_BAI.map((loai) => ({ ...loai, bai: baiTheoLoai(tatCaBai, l
       <p class="label">{tatCaBai.length} bài · cập nhật 2 bài mỗi tuần</p>
       <h1>Bài chia sẻ</h1>
       <p class="lead">
-        Hai loại bài: <a href="#ung-dung">Ứng dụng</a> cho công việc hằng ngày, và{' '}
-        <a href="#chuyen-sau">Chuyên sâu</a> cho người muốn hiểu kỹ thuật bên dưới. Cái gì hiệu quả thì kể,
+        Bài Ứng dụng cho công việc hằng ngày. Bài kỹ thuật cho người muốn hiểu bên dưới nằm ở{' '}
+        <a href="https://boolery.taiphanvan.dev/ai/">mục AI của Boolery Studio</a>. Cái gì hiệu quả thì kể,
         cái đã thử mà chưa ổn cũng kể.
       </p>
     </div>

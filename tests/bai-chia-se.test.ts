@@ -30,8 +30,13 @@ describe('trang danh sách Bài chia sẻ', () => {
   it('tách bài theo Loại bài, trong mỗi loại xếp bài mới nhất lên đầu', async () => {
     const html = mainContent(await renderPage(DanhSach, '/bai-chia-se/'));
     for (const loai of LOAI_BAI) {
-      const listed = listedBai(mucCuaLoai(html, loai.ma));
       const cuaLoai = tatCaBai.filter((bai) => bai.data.loai === loai.ma);
+      // Loại bài chưa có bài nào thì không có mục trên trang.
+      if (cuaLoai.length === 0) {
+        expect(html, loai.ten).not.toContain(`data-loai="${loai.ma}"`);
+        continue;
+      }
+      const listed = listedBai(mucCuaLoai(html, loai.ma));
       expect(listed.map((bai) => bai.id).sort(), loai.ten).toEqual(cuaLoai.map((bai) => bai.id).sort());
       expect(isNewestFirst(listed.map((bai) => bai.date)), loai.ten).toBe(true);
     }
@@ -93,8 +98,12 @@ describe('Trang chủ', () => {
     const html = mainContent(await renderPage(Home));
     expect(html).toMatch(/<h2[^>]*>Bài chia sẻ mới nhất<\/h2>/);
     for (const loai of LOAI_BAI) {
-      const listed = listedBai(mucCuaLoai(html, loai.ma));
       const cuaLoai = moiNhatTruoc(tatCaBai.filter((bai) => bai.data.loai === loai.ma));
+      if (cuaLoai.length === 0) {
+        expect(html, loai.ten).not.toContain(`data-loai="${loai.ma}"`);
+        continue;
+      }
+      const listed = listedBai(mucCuaLoai(html, loai.ma));
       expect(listed.map((bai) => bai.id), loai.ten).toEqual(cuaLoai.slice(0, 3).map((bai) => bai.id));
     }
   });
