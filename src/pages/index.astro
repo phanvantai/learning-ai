@@ -11,7 +11,10 @@ import { MENTORING_BETA as BETA } from '../site';
 const SO_BAI = 3;
 
 const tatCaBai = await getTatCaBaiChiaSe();
-const theoLoai = LOAI_BAI.map((loai) => ({ ...loai, bai: baiTheoLoai(tatCaBai, loai.ma) }));
+// Loại bài chưa có bài nào thì không hiện.
+const theoLoai = LOAI_BAI.map((loai) => ({ ...loai, bai: baiTheoLoai(tatCaBai, loai.ma) })).filter(
+  (loai) => loai.bai.length > 0,
+);
 ---
 
 <BaseLayout>
@@ -23,8 +26,8 @@ const theoLoai = LOAI_BAI.map((loai) => ({ ...loai, bai: baiTheoLoai(tatCaBai, l
           Kỹ sư phần mềm dùng AI mỗi ngày, chia sẻ những gì <span class="mark">thực sự hiệu quả</span>.
         </h1>
         <p class="lead">
-          Cách dùng AI cho công việc hằng ngày, viết cho người không làm kỹ thuật, kèm một cuốn sổ tay
-          chuyên sâu cho ai muốn hiểu bên dưới nó chạy thế nào. Thử gì kể nấy, kể cả thứ không thành công.
+          Cách dùng AI cho công việc hằng ngày, viết cho người không làm kỹ thuật. Thử gì kể nấy, kể cả
+          thứ không thành công.
         </p>
         <div class="button-row">
           <a class="button" href={DANH_SACH_HREF}>Đọc Bài chia sẻ <Icon name="arrow-right" /></a>
@@ -71,7 +74,10 @@ const theoLoai = LOAI_BAI.map((loai) => ({ ...loai, bai: baiTheoLoai(tatCaBai, l
     <section class="sheet sheet-first" aria-labelledby="latest-bai-chia-se">
       <div class="sheet-label">
         <h2 id="latest-bai-chia-se">Bài chia sẻ mới nhất</h2>
-        <p>Bài Ứng dụng cho công việc hằng ngày, bài Chuyên sâu cho người làm kỹ thuật.</p>
+        <p>
+          Bài Ứng dụng cho công việc hằng ngày. Bài kỹ thuật cho người làm phần mềm nằm ở{' '}
+          <a href="https://boolery.taiphanvan.dev/ai/">mục AI của Boolery Studio</a>.
+        </p>
         <p><a class="arrow-link" href={DANH_SACH_HREF}>Xem tất cả <Icon name="arrow-right" /></a></p>
       </div>
       <div class="sheet-body loai-grid">
